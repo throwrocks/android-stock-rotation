@@ -1,10 +1,11 @@
-package rocks.athrow.android_stock_rotation;
+package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
