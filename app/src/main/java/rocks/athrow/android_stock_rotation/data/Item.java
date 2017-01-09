@@ -11,6 +11,7 @@ import io.realm.annotations.PrimaryKey;
 public class Item extends RealmObject {
     @PrimaryKey
     private String id;
+    private int serialNumber;
     private int tagNumber;
     private int SKU;
     private String Description;
@@ -25,6 +26,14 @@ public class Item extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     public int getTagNumber() {
