@@ -15,7 +15,9 @@ import rocks.athrow.android_stock_rotation.R;
  */
 
 public class RotationActivity extends AppCompatActivity {
-    String mRotationType;
+    public static final String ADD_ITEM_ACTION = "action";
+    public static final String ACTION_SCAN = "scan";
+    private String mRotationType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,7 @@ public class RotationActivity extends AppCompatActivity {
             case R.id.rotation_add_item:
                 Intent intent = new Intent(this, ScanActivity.class);
                 intent.putExtra(MainActivity.MODULE_TYPE, mRotationType);
+                intent.putExtra(ADD_ITEM_ACTION, ACTION_SCAN);
                 startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);

@@ -14,20 +14,24 @@ import rocks.athrow.android_stock_rotation.zxing.IntentResult;
  */
 
 public class ScanActivity extends AppCompatActivity {
-
     private static final String SCAN_ITEM = "item";
     private static final String SCAN_LOCATION = "location";
+    private String mRotationType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rotation);
+        setContentView(R.layout.activity_scan);
         Intent intent = getIntent();
-        String rotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
-        scan(SCAN_ITEM);
+        mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
+        String action = intent.getStringExtra(RotationActivity.ADD_ITEM_ACTION);
+        if ( action.equals(RotationActivity.ACTION_SCAN)){
+            //scan(SCAN_ITEM);
+        }
+
     }
 
-    public void scan(String type){
+    public void scan(String type) {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.initiateScan();
     }
