@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,10 +10,97 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="rocks.athrow.android_stock_rotation.activity.MainActivity">
 
-    <Button
-        android:id="@+id/scanButton"
-        android:onClick="scan"
-        android:layout_width="wrap_content"
+    <LinearLayout
+
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Scan" />
-</RelativeLayout>
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/moduleReceiving"
+            style="@style/Base.Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Receiving" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="10" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/moduleMoving"
+            style="@style/Base.Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Moving" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/modulePicking"
+            style="@style/Base.Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Picking" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/moduleSalvage"
+            style="@style/Base.Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Salvage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="10" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
