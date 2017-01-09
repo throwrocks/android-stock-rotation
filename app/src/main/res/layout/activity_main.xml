@@ -10,8 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="rocks.athrow.android_stock_rotation.MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/scanButton"
+        android:onClick="scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Scan" />
 </RelativeLayout>
