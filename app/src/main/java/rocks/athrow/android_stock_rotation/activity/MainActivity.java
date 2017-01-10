@@ -21,10 +21,12 @@ import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.api.FetchTask;
+import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Request;
 import rocks.athrow.android_stock_rotation.interfaces.OnTaskComplete;
 import rocks.athrow.android_stock_rotation.service.UpdateDBService;
 import rocks.athrow.android_stock_rotation.util.Utilities;
+
 
 public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     public static final String MODULE_TYPE = "type";
@@ -43,17 +45,17 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
-        //LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
+        LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
-        /*moduleReceiving.setOnClickListener(new View.OnClickListener() {
+        moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(MODULE_RECEIVING);
             }
-        });*/
+        });
         moduleMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,10 +96,21 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     }
 
     private void sync(){
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Number itemLastSerialNumber = realm.where(Item.class).findAll().max(Item.FIELD_SERIAL_NUMBER);
+        String serialNumber = null;
+        if ( itemLastSerialNumber != null ){
+            serialNumber = itemLastSerialNumber.toString();
+        }
+        realm.commitTransaction();
+        realm.close();
         FetchTask fetchItems = new FetchTask(onTaskCompleted);
         //FetchTask fetchLocations = new FetchTask(onTaskCompleted);
         //FetchTask fetchTransactions = new FetchTask(onTaskCompleted);
-        fetchItems.execute(FetchTask.ITEMS, null);
+        fetchItems.execute(FetchTask.ITEMS, serialNumber);
         //fetchLocations.execute(FetchTask.LOCATIONS, null);
         //fetchTransactions.execute(FetchTask.TRANSACTIONS);
 
@@ -154,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         break;
                     }
                 default:
-                    Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
+                    Utilities.showToast(getApplicationContext(), "Nothing found.", Toast.LENGTH_SHORT);
                     break;
             }
         }

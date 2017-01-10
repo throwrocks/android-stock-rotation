@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Stock Rotation</string>
+
+    <!-- Item Labels-->
+    <string name="label_pack_size">Pack Size: </string>
+    <string name="dummy_pack_size">1 LB / BAG"</string>
+    <string name="dummy_current_location">FS-19"</string>
+    <string name="hint_current_location">Current Location: </string>
 </resources>

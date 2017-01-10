@@ -21,7 +21,7 @@ public class Item extends RealmObject {
     @PrimaryKey
     private String id;
     private int serialNumber;
-    private int tagNumber;
+    private String tagNumber;
     private int SKU;
     private String description;
     private String packSize;
@@ -45,11 +45,11 @@ public class Item extends RealmObject {
         this.serialNumber = serialNumber;
     }
 
-    public int getTagNumber() {
+    public String getTagNumber() {
         return tagNumber;
     }
 
-    public void setTagNumber(int tagNumber) {
+    public void setTagNumber(String tagNumber) {
         this.tagNumber = tagNumber;
     }
 
@@ -66,7 +66,7 @@ public class Item extends RealmObject {
     }
 
     public void setDescription(String description) {
-        description = description;
+        this.description = description;
     }
 
     public String getPackSize() {

@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--
         <LinearLayout
             android:id="@+id/module_receiving"
             style="@style/Base.Widget.AppCompat.Button"
@@ -39,7 +38,6 @@
                 android:text="10" />
 
         </LinearLayout>
-        -->
 
         <LinearLayout
             android:id="@+id/module_moving"

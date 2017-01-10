@@ -51,7 +51,6 @@ public class UpdateDBService extends IntentService {
             responseText = results.get(0).getAPIResponseText();
         }
         realm.commitTransaction();
-        realm.close();
         JSONArray jsonArray = getJSONArray(responseText);
         switch (type) {
             case FetchTask.ITEMS:
@@ -63,7 +62,7 @@ public class UpdateDBService extends IntentService {
                         JSONObject record = jsonArray.getJSONObject(i);
                         item.setId(record.getString(Item.FIELD_ID));
                         item.setSerialNumber(record.getInt(Item.FIELD_SERIAL_NUMBER));
-                        item.setTagNumber(record.getInt(Item.FIELD_TAG_NUMBER));
+                        item.setTagNumber(record.getString(Item.FIELD_TAG_NUMBER));
                         item.setSKU(record.getInt(Item.FIELD_SKU));
                         item.setDescription(record.getString(Item.FIELD_DESCRIPTION));
                         item.setPackSize(record.getString(Item.FIELD_PACK_SIZE));
@@ -72,7 +71,6 @@ public class UpdateDBService extends IntentService {
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
                         realm.copyToRealmOrUpdate(item);
                         realm.commitTransaction();
-                        realm.close();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
@@ -83,6 +81,8 @@ public class UpdateDBService extends IntentService {
                 break;
             case FetchTask.TRANSACTIONS:
                 break;
+            default:
+                realm.close();
         }
     }
 

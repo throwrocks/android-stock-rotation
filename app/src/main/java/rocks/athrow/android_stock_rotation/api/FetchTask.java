@@ -28,7 +28,6 @@ public class FetchTask extends AsyncTask<String, Void, APIResponse> {
         if ( param != null ){
             serialNumber = Integer.parseInt(param);
         }
-
         switch (type) {
             case ITEMS:
                 apiResponse = API.getItems(serialNumber);
