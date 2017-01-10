@@ -9,12 +9,21 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Item extends RealmObject {
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_SERIAL_NUMBER = "serialNumber";
+    public static final String FIELD_TAG_NUMBER = "tagNumber";
+    public static final String FIELD_SKU = "SKU";
+    public static final String FIELD_DESCRIPTION = "description";
+    public static final String FIELD_PACK_SIZE = "packSize";
+    public static final String FIELD_RECEIVING_ID = "receivingId";
+    public static final String FIELD_RECEIVED_DATE = "receivedDate";
+    public static final String FIELD_ITEM_TYPE = "itemType";
     @PrimaryKey
     private String id;
     private int serialNumber;
     private int tagNumber;
     private int SKU;
-    private String Description;
+    private String description;
     private String packSize;
     private int receivingId;
     private String receivedDate;
@@ -53,11 +62,11 @@ public class Item extends RealmObject {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        description = description;
     }
 
     public String getPackSize() {

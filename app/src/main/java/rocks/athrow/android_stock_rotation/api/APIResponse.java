@@ -7,11 +7,20 @@ package rocks.athrow.android_stock_rotation.api;
 
 public final class APIResponse {
 
+    private String requestURI;
     private String responseText;
     private int responseCode;
     private String meta;
 
     APIResponse() {
+    }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
     }
 
     /**

@@ -21,7 +21,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/itemSKU"
+                    android:id="@+id/input_item_sku"
                     style="@style/PrimaryTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/itemDescription"
+                    android:id="@+id/input_item_description"
                     style="@style/PrimaryTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -45,14 +45,14 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/labelPackSize"
+                    android:id="@+id/label_pack_size"
                     style="@style/LabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Pack Size: " />
 
                 <TextView
-                    android:id="@+id/itemPackSize"
+                    android:id="@+id/input_pack_size"
                     style="@style/PrimaryTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -66,14 +66,14 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/labelReceivedDate"
+                    android:id="@+id/label_received_date"
                     style="@style/LabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Received Date: " />
 
                 <TextView
-                    android:id="@+id/receivedDate"
+                    android:id="@+id/input_received_date"
                     style="@style/PrimaryTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
                 android:layout_weight="1">
 
                 <EditText
-                    android:id="@+id/inputCaseQty"
+                    android:id="@+id/input_case_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Case Qty"
@@ -133,7 +133,7 @@
                 android:layout_weight="1">
 
                 <EditText
-                    android:id="@+id/inputLooseQty"
+                    android:id="@+id/input_loose_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/inputCurrentLocation"
+                        android:id="@+id/input_current_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -209,7 +209,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/inputNewLocation"
+                        android:id="@+id/input_new_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

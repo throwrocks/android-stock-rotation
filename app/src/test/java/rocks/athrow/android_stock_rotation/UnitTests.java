@@ -39,10 +39,10 @@ public class UnitTests extends Robolectric {
             mContext = RuntimeEnvironment.application.getApplicationContext();
         }
         if (mItems == null) {
-            mItems = getItems(2200);
+            mItems = getItems(0);
         }
         if (mLocations == null) {
-            mLocations = getLocations(400);
+            mLocations = getLocations(0);
         }
     }
 

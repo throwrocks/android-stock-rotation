@@ -53,6 +53,7 @@ public final class API {
      */
     private static APIResponse httpConnect(String queryURL) {
         APIResponse apiResponse = new APIResponse();
+        apiResponse.setRequestURI(queryURL);
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try {
