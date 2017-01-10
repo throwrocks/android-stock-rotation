@@ -2,6 +2,7 @@ package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,10 @@ public class RotationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rotation);
         Intent intent = getIntent();
         mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
+        ActionBar ab = getSupportActionBar();
+        if ( ab != null){
+            ab.setTitle(mRotationType);
+        }
     }
 
     @Override

@@ -10,10 +10,10 @@ import rocks.athrow.android_stock_rotation.R;
 
 public class MainActivity extends AppCompatActivity {
     public static final String MODULE_TYPE = "type";
-    private static final String MODULE_RECEIVING = "receiving";
-    private static final String MODULE_MOVING = "moving";
-    private static final String MODULE_PICKING = "picking";
-    private static final String MODULE_SALVAGE = "salvage";
+    private static final String MODULE_RECEIVING = "Receiving";
+    private static final String MODULE_MOVING = "Moving";
+    private static final String MODULE_PICKING = "Picking";
+    private static final String MODULE_SALVAGE = "Salvage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

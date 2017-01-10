@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="PrimaryTextStyle">
+        <item name="android:textColor">@color/primaryText</item>
+    </style>
+
+    <style name="LabelStyle">
+        <item name="android:textColor">@color/secondaryText</item>
+    </style>
+
 </resources>
