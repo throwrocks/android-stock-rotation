@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by joselopez on 1/9/17.
  */
 
-public class Transfer extends RealmObject {
+public class Transaction extends RealmObject {
     @PrimaryKey
     private String id;
     private Date date;
