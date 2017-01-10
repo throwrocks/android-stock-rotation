@@ -22,12 +22,12 @@
 
         <TextView
             android:layout_marginStart="8dp"
-            android:id="@+id/input_pack_size"
+            android:id="@+id/input_current_location"
             style="@style/PrimaryTextStyle"
             android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dummy_current_location"
+            android:text="@string/n_a"
             android:textStyle="italic" />
     </LinearLayout>
 

@@ -13,6 +13,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.api.FetchTask;
 import rocks.athrow.android_stock_rotation.data.Item;
+import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
 
 /**
@@ -54,8 +55,8 @@ public class UpdateDBService extends IntentService {
         JSONArray jsonArray = getJSONArray(responseText);
         switch (type) {
             case FetchTask.ITEMS:
-                int count = jsonArray.length();
-                for (int i = 0; i < count; i++) {
+                int countItems = jsonArray.length();
+                for (int i = 0; i < countItems; i++) {
                     realm.beginTransaction();
                     try {
                         Item item = new Item();
@@ -78,6 +79,23 @@ public class UpdateDBService extends IntentService {
                 }
                 break;
             case FetchTask.LOCATIONS:
+                int countLocations = jsonArray.length();
+                for (int i = 0; i < countLocations; i++) {
+                    realm.beginTransaction();
+                    try {
+                        Location location = new Location();
+                        JSONObject record = jsonArray.getJSONObject(i);
+                        location.setSerialNumber(record.getInt(Location.FIELD_SERIAL_NUMBER));
+                        location.setBarcode(record.getString(Location.FIELD_BARCODE));
+                        location.setLocation(record.getString(Location.FIELD_LOCATION));
+                        location.setType(record.getString(Location.FIELD_TYPE));
+                        realm.copyToRealmOrUpdate(location);
+                        realm.commitTransaction();
+                    } catch (JSONException e) {
+                        realm.cancelTransaction();
+                        e.printStackTrace();
+                    }
+                }
                 break;
             case FetchTask.TRANSACTIONS:
                 break;

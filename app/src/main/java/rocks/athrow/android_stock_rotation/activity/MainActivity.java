@@ -22,6 +22,7 @@ import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.api.FetchTask;
 import rocks.athrow.android_stock_rotation.data.Item;
+import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
 import rocks.athrow.android_stock_rotation.interfaces.OnTaskComplete;
 import rocks.athrow.android_stock_rotation.service.UpdateDBService;
@@ -101,17 +102,22 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Number itemLastSerialNumber = realm.where(Item.class).findAll().max(Item.FIELD_SERIAL_NUMBER);
-        String serialNumber = null;
+        String itemSerialNumber = null;
         if ( itemLastSerialNumber != null ){
-            serialNumber = itemLastSerialNumber.toString();
+            itemSerialNumber = itemLastSerialNumber.toString();
+        }
+        Number locationLastSerialNumber = realm.where(Location.class).findAll().max(Location.FIELD_SERIAL_NUMBER);
+        String locationSerialNumber = null;
+        if ( locationLastSerialNumber != null ){
+            locationSerialNumber = locationLastSerialNumber.toString();
         }
         realm.commitTransaction();
         realm.close();
         FetchTask fetchItems = new FetchTask(onTaskCompleted);
-        //FetchTask fetchLocations = new FetchTask(onTaskCompleted);
+        FetchTask fetchLocations = new FetchTask(onTaskCompleted);
         //FetchTask fetchTransactions = new FetchTask(onTaskCompleted);
-        fetchItems.execute(FetchTask.ITEMS, serialNumber);
-        //fetchLocations.execute(FetchTask.LOCATIONS, null);
+        fetchItems.execute(FetchTask.ITEMS, itemSerialNumber);
+        fetchLocations.execute(FetchTask.LOCATIONS, locationSerialNumber);
         //fetchTransactions.execute(FetchTask.TRANSACTIONS);
 
     }

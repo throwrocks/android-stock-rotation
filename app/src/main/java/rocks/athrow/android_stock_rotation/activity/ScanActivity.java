@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -13,9 +14,9 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Item;
+import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
-
 
 /**
  * ScanActivity
@@ -24,8 +25,10 @@ import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
 public class ScanActivity extends AppCompatActivity {
     private static final String SCAN_ITEM = "item";
-    private static final String SCAN_LOCATION = "location";
+    private static final String SCAN_CURRENT_LOCATION = "currentLocation";
+    private static final String SCAN_NEW_LOCATION = "newLocation";
     private String mRotationType;
+    private String scanType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,22 @@ public class ScanActivity extends AppCompatActivity {
         buttonScanItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                scan(SCAN_ITEM);
+                scanType = SCAN_ITEM;
+                scan();
+            }
+        });
+        buttonScanCurrentLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scanType = SCAN_CURRENT_LOCATION;
+                scan();
+            }
+        });
+        buttonScanNewLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scanType = SCAN_NEW_LOCATION;
+                scan();
             }
         });
 
@@ -53,40 +71,65 @@ public class ScanActivity extends AppCompatActivity {
     }
 
 
-    public void scan(String type) {
+    public void scan() {
         IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setMessage(type);
         integrator.initiateScan();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (scanType == null) {
+            return;
+        }
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult == null) {
             return;
         }
         String contents = scanResult.getContents();
-        if (contents != null) {
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
-            Realm.setDefaultConfiguration(realmConfig);
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            RealmResults<Item> items = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, contents).findAll();
-            if ( items.size() > 0 ){
-                Item item = items.get(0);
-                String sku = Integer.toString(item.getSKU());
-                String description = item.getDescription();
-                String packSize = item.getPackSize();
-                String receivedDate = item.getReceivedDate();
-                String itemType = item.getItemType();
-                setItemViews(sku, description, packSize, receivedDate, itemType);
-
-            }
-            realm.commitTransaction();
-            realm.close();
+        if (contents == null) {
+            return;
         }
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        switch (scanType) {
+            case SCAN_ITEM:
+                RealmResults<Item> items = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, contents).findAll();
+                if (items.size() > 0) {
+                    Item record = items.get(0);
+                    String sku = Integer.toString(record.getSKU());
+                    String description = record.getDescription();
+                    String packSize = record.getPackSize();
+                    String receivedDate = record.getReceivedDate();
+                    String itemType = record.getItemType();
+                    setItemViews(sku, description, packSize, receivedDate, itemType);
+                }
+                break;
+            case SCAN_CURRENT_LOCATION:
+                RealmResults<Location> currentLocations = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, contents).findAll();
+                if (currentLocations.size() > 0) {
+                    Location record = currentLocations.get(0);
+                    String location = record.getLocation();
+                    setCurrentLocationView(location);
+
+                }
+                break;
+            case SCAN_NEW_LOCATION:
+                RealmResults<Location> newLocations = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, contents).findAll();
+                if (newLocations.size() > 0) {
+                    Location record = newLocations.get(0);
+                    String location = record.getLocation();
+                    setNewLocationView(location);
+
+                }
+                break;
+        }
+        realm.commitTransaction();
+        realm.close();
+
     }
 
-    private void setItemViews(String sku, String description, String packSize, String receivedDate, String itemType){
+    private void setItemViews(String sku, String description, String packSize, String receivedDate, String itemType) {
         TextView inputItemSku = (TextView) findViewById(R.id.input_item_sku);
         TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
         TextView inputPackSize = (TextView) findViewById(R.id.input_pack_size);
@@ -95,6 +138,16 @@ public class ScanActivity extends AppCompatActivity {
         inputItemDescription.setText(description);
         inputPackSize.setText(packSize);
         inputReceivedDate.setText(receivedDate);
+    }
+
+    private void setCurrentLocationView(String location) {
+        TextView inputCurrentLocation = (TextView) findViewById(R.id.input_current_location);
+        inputCurrentLocation.setText(location);
+    }
+
+    private void setNewLocationView(String location) {
+        EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
+        inputNewLocation.setText(location);
     }
 
 }

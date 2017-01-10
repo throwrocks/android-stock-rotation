@@ -16,7 +16,7 @@
             style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="150651"
+            android:text="@string/no_item_selected"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -25,7 +25,7 @@
             style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHICKEN TENDERS / BBQ"
+            android:text="@string/n_a"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -46,7 +46,7 @@
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dummy_pack_size"
+                android:text="@string/n_a"
                 android:textStyle="italic" />
         </LinearLayout>
 
@@ -67,7 +67,7 @@
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2/20/2017" />
+                android:text="@string/n_a"/>
 
         </LinearLayout>
     </LinearLayout>

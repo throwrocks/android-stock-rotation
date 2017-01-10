@@ -3,15 +3,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Transfer Records"
-        android:textColor="@color/secondaryText"
-        android:textSize="18sp" />
+        android:orientation="horizontal"
+        android:weightSum="1.15">
+
+        <TextView
+            android:id="@+id/label_case_qty"
+            style="@style/LabelStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:text="Case Qty" />
+
+        <TextView
+            android:id="@+id/label_loose_qty"
+            style="@style/LabelStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:text="Loose Qty" />
+
+        <TextView
+            android:id="@+id/label_new_location"
+            style="@style/LabelStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:text="New Location" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,8 +53,7 @@
             android:id="@+id/input_case_qty"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:hint="Case Qty"
+            android:layout_weight="0.35"
             android:inputType="number" />
 
         <EditText
@@ -32,17 +61,15 @@
             android:id="@+id/input_loose_qty"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
-            android:hint="Loose Qty"
+            android:layout_weight="0.35"
             android:inputType="number" />
 
         <EditText
             android:id="@+id/input_new_location"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
+            android:layout_weight="0.30"
             android:enabled="true"
-            android:hint="New Location"
             android:inputType="text" />
 
         <!-- SCAN NEW LOCATION -->
