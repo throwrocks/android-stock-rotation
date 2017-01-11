@@ -18,9 +18,12 @@ import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
+import rocks.athrow.android_stock_rotation.data.Request;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
+
+import static android.R.attr.id;
 
 /**
  * ScanActivity
@@ -31,6 +34,7 @@ public class ScanActivity extends AppCompatActivity {
     private static final String SCAN_ITEM = "item";
     private static final String SCAN_CURRENT_LOCATION = "currentLocation";
     private static final String SCAN_NEW_LOCATION = "newLocation";
+    private String mTransactionId;
     private String mRotationType;
     private String mScanType;
     private String mItemId;
@@ -74,7 +78,20 @@ public class ScanActivity extends AppCompatActivity {
                 queue();
             }
         });
-
+        // Create a transaction record
+        mTransactionId = UUID.randomUUID().toString();
+        Date today = new Date();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Transaction transaction = new Transaction();
+        transaction.setId(mTransactionId);
+        transaction.setType1(mRotationType);
+        transaction.setDate(today);
+        realm.copyToRealmOrUpdate(transaction);
+        realm.commitTransaction();
+        realm.close();
         /*if (action.equals(RotationActivity.ACTION_SCAN)) {
             scan(SCAN_ITEM);
         }*/
@@ -95,7 +112,6 @@ public class ScanActivity extends AppCompatActivity {
         String looseQtyString = inputLooseQty.getText().toString();
         String currentLocation = inputLocationCurrent.getText().toString();
         String newLocation = inputNewLocation.getText().toString();
-        // TODO: Add validation
         if ( caseQtyString.isEmpty() && looseQtyString.isEmpty() ){
             return;
         }
@@ -110,27 +126,29 @@ public class ScanActivity extends AppCompatActivity {
         if ( !looseQtyString.isEmpty()){
             looseQty = Integer.parseInt(looseQtyString);
         }
-        Date today = new Date();
-        // TODO: Create a transaction record
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        Transaction transaction = new Transaction();
-        String id = UUID.randomUUID().toString();
-        transaction.setId(id);
-        transaction.setItemId(mItemId);
-        transaction.setDate(today);
-        transaction.setType1("");
-        transaction.setType2("");
-        transaction.setLocationStart(currentLocation);
-        transaction.setLocationEnd(newLocation);
-        transaction.setQtyCases(caseQty);
-        transaction.setQtyLoose(looseQty);
-        realm.copyToRealmOrUpdate(transaction);
-        realm.commitTransaction();
-        realm.close();
-        finish();
+        RealmResults<Transaction> transactions = realm.where(Transaction.class).equalTo(Transaction.ID, mTransactionId).findAll();
+        if ( transactions.size() > 0 ){
+            Transaction transaction = transactions.get(0);
+            transaction.setItemId(mItemId);
+            transaction.setType1("");
+            transaction.setType2("");
+            transaction.setLocationStart(currentLocation);
+            transaction.setLocationEnd(newLocation);
+            transaction.setQtyCases(caseQty);
+            transaction.setQtyLoose(looseQty);
+            realm.copyToRealmOrUpdate(transaction);
+            realm.commitTransaction();
+            realm.close();
+            finish();
+        }else{
+            realm.commitTransaction();
+            realm.close();
+        }
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
