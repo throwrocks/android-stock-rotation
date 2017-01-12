@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.RotationActivity">
-<item
-    android:id="@+id/rotation_add_item"
-    android:title="Add Item"
-    android:orderInCategory="100"
-    app:showAsAction="always"/>
+    <item
+        android:id="@+id/rotation_add_item"
+        android:orderInCategory="100"
+        android:title="Add Item"
+        app:showAsAction="always" />
 </menu>

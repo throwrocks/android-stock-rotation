@@ -34,7 +34,7 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
 public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     public static final String MODULE_TYPE = "type";
     private static final String MODULE_RECEIVING = "Receiving";
-    private static final String MODULE_MOVING = "Moving";
+    public static final String MODULE_MOVING = "Moving";
     private static final String MODULE_PICKING = "Picking";
     private static final String MODULE_SALVAGE = "Salvage";
     final OnTaskComplete onTaskCompleted = this;

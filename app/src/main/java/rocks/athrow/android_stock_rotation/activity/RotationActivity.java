@@ -29,6 +29,7 @@ public class RotationActivity extends AppCompatActivity {
     private String mRotationType;
     private RotationAdapter mRotationAdapter;
     private RealmResults<Transaction> mRealmResults;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +37,24 @@ public class RotationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
         ActionBar ab = getSupportActionBar();
-        if ( ab != null){
+        if (ab != null) {
             ab.setTitle(mRotationType);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(MainActivity.MODULE_TYPE, mRotationType);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mRotationType = savedInstanceState.getString(MainActivity.MODULE_TYPE);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private void updateRealmResults() {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -48,18 +64,17 @@ public class RotationActivity extends AppCompatActivity {
                         equalTo(Transaction.TYPE1, mRotationType).
                         equalTo(Transaction.IS_COMPLETE, false).findAll();
         realm.commitTransaction();
-        setupRecyclerView();
-
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected void onResume() {
+        super.onResume();
+        updateRealmResults();
+        setupRecyclerView();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_rotation, menu);
         return super.onCreateOptionsMenu(menu);
@@ -67,12 +82,12 @@ public class RotationActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.rotation_add_item:
                 Intent intent = new Intent(this, ScanActivity.class);
                 intent.putExtra(MainActivity.MODULE_TYPE, mRotationType);
                 intent.putExtra(ADD_ITEM_ACTION, ACTION_SCAN);
+                intent.putExtra(ScanActivity.MODE, ScanActivity.MODE_EDIT);
                 startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
@@ -80,13 +95,12 @@ public class RotationActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        mRotationAdapter = new RotationAdapter(getApplicationContext());
+        mRotationAdapter = new RotationAdapter(mRotationType, RotationActivity.this);
         RealmTransactionsListAdapter realmTransactionsListAdapter =
                 new RealmTransactionsListAdapter(getApplicationContext(), mRealmResults);
         mRotationAdapter.setRealmAdapter(realmTransactionsListAdapter);
         RecyclerView transactionsList = (RecyclerView) findViewById(R.id.rotation_list);
         transactionsList.setLayoutManager(new LinearLayoutManager(this));
-        assert transactionsList != null;
         transactionsList.setAdapter(mRotationAdapter);
     }
 
