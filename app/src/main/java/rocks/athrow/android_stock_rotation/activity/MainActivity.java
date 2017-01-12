@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import java.util.Date;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -26,6 +27,7 @@ import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
 import rocks.athrow.android_stock_rotation.interfaces.OnTaskComplete;
 import rocks.athrow.android_stock_rotation.service.UpdateDBService;
+import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 
@@ -195,7 +197,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Utilities.showToast(context, "show", 3);
+            PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+            preferencesHelper.save("last_sync", new Date().toString() );
         }
     }
 }

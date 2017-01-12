@@ -5,14 +5,15 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="You don't have any items in the queue."
+        android:text="You don't have any items in the queue." />
+
+    <android.support.v7.widget.RecyclerView
+        android:padding="16dp"
+        android:id="@+id/rotation_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rotationList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

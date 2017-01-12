@@ -11,27 +11,24 @@ import io.realm.annotations.PrimaryKey;
 
 public class Transaction extends RealmObject {
     public static final String ID = "id";
+    public static final String TYPE1 = "type1";
+    public static final String IS_COMPLETE = "isCompleted";
     @PrimaryKey
     private String id;
     private Date date;
     private String itemId;
+    private int sku;
+    private String itemDescription;
     private String type1; // Receiving, Move, Salvage, Picking
     private String type2; // In or out
     private String locationStart;
     private int qtyCases;
     private int qtyLoose;
     private Date dateCompleted;
+    private Boolean isCompleted;
     private String locationEnd;
     private int employeeId;
     private String employeeName;
-
-    public String getLocationStart() {
-        return locationStart;
-    }
-
-    public void setLocationStart(String locationStart) {
-        this.locationStart = locationStart;
-    }
 
     public String getId() {
         return id;
@@ -57,6 +54,34 @@ public class Transaction extends RealmObject {
         this.itemId = itemId;
     }
 
+    public int getSku() {
+        return sku;
+    }
+
+    public String getSkuString() {
+        if (sku == 0) {
+            return "N/A";
+        } else {
+            return String.valueOf(sku);
+        }
+    }
+
+    public void setSku(int sku) {
+        this.sku = sku;
+    }
+
+    public String getItemDescription() {
+        if (itemDescription == null) {
+            return "N/A";
+        } else {
+            return itemDescription;
+        }
+    }
+
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
+    }
+
     public String getType1() {
         return type1;
     }
@@ -73,8 +98,24 @@ public class Transaction extends RealmObject {
         this.type2 = type2;
     }
 
+    public String getLocationStart() {
+        if (locationStart == null) {
+            return "N/A";
+        } else {
+            return locationStart;
+        }
+    }
+
+    public void setLocationStart(String locationStart) {
+        this.locationStart = locationStart;
+    }
+
     public int getQtyCases() {
         return qtyCases;
+    }
+
+    public String getQtyCasesString(){
+            return String.valueOf(qtyCases);
     }
 
     public void setQtyCases(int qtyCases) {
@@ -83,6 +124,10 @@ public class Transaction extends RealmObject {
 
     public int getQtyLoose() {
         return qtyLoose;
+    }
+
+    public String getQtyLooseString(){
+            return String.valueOf(qtyLoose);
     }
 
     public void setQtyLoose(int qtyLoose) {
@@ -97,8 +142,20 @@ public class Transaction extends RealmObject {
         this.dateCompleted = dateCompleted;
     }
 
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
+
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
+
     public String getLocationEnd() {
-        return locationEnd;
+        if (locationEnd == null) {
+            return "N/A";
+        } else {
+            return locationEnd;
+        }
     }
 
     public void setLocationEnd(String locationEnd) {

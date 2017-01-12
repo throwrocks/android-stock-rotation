@@ -18,12 +18,10 @@ import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
-import rocks.athrow.android_stock_rotation.data.Request;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
-import static android.R.attr.id;
 
 /**
  * ScanActivity
@@ -88,6 +86,7 @@ public class ScanActivity extends AppCompatActivity {
         Transaction transaction = new Transaction();
         transaction.setId(mTransactionId);
         transaction.setType1(mRotationType);
+        transaction.setIsCompleted(false);
         transaction.setDate(today);
         realm.copyToRealmOrUpdate(transaction);
         realm.commitTransaction();
@@ -104,20 +103,32 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void queue(){
+        TextView inputSku = (TextView) findViewById(R.id.input_item_sku);
+        TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
         TextView inputLocationCurrent = (TextView) findViewById(R.id.input_current_location);
         EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
         EditText inputCaseQty = (EditText) findViewById(R.id.input_case_qty);
         EditText inputLooseQty = (EditText) findViewById(R.id.input_loose_qty);
+        // Get input
+        String skuString = inputSku.getText().toString();
+        String itemDescription = inputItemDescription.getText().toString();
         String caseQtyString = inputCaseQty.getText().toString();
         String looseQtyString = inputLooseQty.getText().toString();
         String currentLocation = inputLocationCurrent.getText().toString();
         String newLocation = inputNewLocation.getText().toString();
+        // Validate
+        if ( skuString.isEmpty()){
+            return;
+        }
+        // TODO: Validate according to action (queue vs move)
         if ( caseQtyString.isEmpty() && looseQtyString.isEmpty() ){
             return;
         }
         if ( currentLocation.isEmpty()){
             return;
         }
+        // Set data variables
+        int Sku = Integer.parseInt(skuString);
         int caseQty = 0;
         if ( !caseQtyString.isEmpty()){
             caseQty = Integer.parseInt(caseQtyString);
@@ -134,7 +145,8 @@ public class ScanActivity extends AppCompatActivity {
         if ( transactions.size() > 0 ){
             Transaction transaction = transactions.get(0);
             transaction.setItemId(mItemId);
-            transaction.setType1("");
+            transaction.setSku(Sku);
+            transaction.setItemDescription(itemDescription);
             transaction.setType2("");
             transaction.setLocationStart(currentLocation);
             transaction.setLocationEnd(newLocation);
