@@ -20,14 +20,13 @@
             android:layout_height="wrap_content"
             android:text="@string/hint_current_location" />
 
-        <TextView
+        <EditText
             android:layout_marginStart="8dp"
             android:id="@+id/input_current_location"
             style="@style/PrimaryTextStyle"
             android:textSize="24sp"
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
-            android:text="@string/n_a"
             android:textStyle="italic" />
     </LinearLayout>
 

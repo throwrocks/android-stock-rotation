@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.util.UUID;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -84,11 +86,16 @@ public class RotationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rotation_add_item:
-                Intent intent = new Intent(this, ScanActivity.class);
-                intent.putExtra(MainActivity.MODULE_TYPE, mRotationType);
-                intent.putExtra(ADD_ITEM_ACTION, ACTION_SCAN);
-                intent.putExtra(ScanActivity.MODE, ScanActivity.MODE_EDIT);
-                startActivity(intent);
+                switch (mRotationType){
+                    case MainActivity.MODULE_MOVING:
+                        String transactionId = UUID.randomUUID().toString();
+                        Intent intent = new Intent(this, TransactionMoveActivity.class);
+                        intent.putExtra("transaction_id", transactionId);
+                        intent.putExtra("type", mRotationType);
+                        intent.putExtra("mode", "edit");
+                        startActivity(intent);
+                }
+
             default:
                 return super.onOptionsItemSelected(item);
         }

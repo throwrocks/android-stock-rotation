@@ -19,6 +19,8 @@ public class Transaction extends RealmObject {
     private String itemId;
     private int sku;
     private String itemDescription;
+    private String packSize;
+    private String receivedDate;
     private String type1; // Receiving, Move, Salvage, Picking
     private String type2; // In or out
     private String locationStart;
@@ -72,7 +74,7 @@ public class Transaction extends RealmObject {
 
     public String getItemDescription() {
         if (itemDescription == null) {
-            return "N/A";
+            return "";
         } else {
             return itemDescription;
         }
@@ -100,7 +102,7 @@ public class Transaction extends RealmObject {
 
     public String getLocationStart() {
         if (locationStart == null) {
-            return "N/A";
+            return "";
         } else {
             return locationStart;
         }
@@ -156,6 +158,22 @@ public class Transaction extends RealmObject {
         } else {
             return locationEnd;
         }
+    }
+
+    public String getPackSize() {
+        return packSize;
+    }
+
+    public void setPackSize(String packSize) {
+        this.packSize = packSize;
+    }
+
+    public String getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(String receivedDate) {
+        this.receivedDate = receivedDate;
     }
 
     public void setLocationEnd(String locationEnd) {

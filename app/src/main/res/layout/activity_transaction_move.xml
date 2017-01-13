@@ -41,42 +41,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
-            android:gravity="bottom"
+            android:gravity="end"
             android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/button_queue"
-                style="@style/Base.Widget.AppCompat.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/list_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Queue" />
-
-            </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/button_move"
                 style="@style/Base.Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingEnd="8dp"
                 android:paddingStart="8dp">

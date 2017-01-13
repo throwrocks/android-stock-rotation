@@ -51,6 +51,7 @@
 
         <EditText
             android:id="@+id/input_case_qty"
+            style="@style/PrimaryTextStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
@@ -58,6 +59,7 @@
 
         <EditText
             android:id="@+id/input_loose_qty"
+            style="@style/PrimaryTextStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
@@ -65,6 +67,7 @@
 
         <EditText
             android:id="@+id/input_new_location"
+            style="@style/PrimaryTextStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.30"

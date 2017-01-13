@@ -26,9 +26,14 @@
             android:name=".activity.SettingsActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".activity.ScanActivity"
+            android:name=".activity.TransactionMoveActivity"
             android:parentActivityName=".activity.RotationActivity" />
-
+        <activity
+            android:name=".activity.TransactionInActivity"
+            android:parentActivityName=".activity.RotationActivity" />
+        <activity
+            android:name=".activity.TransactionOutActivity"
+            android:parentActivityName=".activity.RotationActivity" />
         <service
             android:name=".service.UpdateDBService"
             android:enabled="true"

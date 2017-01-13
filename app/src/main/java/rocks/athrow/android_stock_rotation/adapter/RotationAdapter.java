@@ -10,13 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.activity.MainActivity;
-import rocks.athrow.android_stock_rotation.activity.ScanActivity;
+import rocks.athrow.android_stock_rotation.activity.TransactionInActivity;
+import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
+import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Transaction;
-
-import static rocks.athrow.android_stock_rotation.activity.RotationActivity.ACTION_SCAN;
-import static rocks.athrow.android_stock_rotation.activity.RotationActivity.ADD_ITEM_ACTION;
 
 /**
  * RotationAdapter
@@ -40,6 +39,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final TextView viewCaseQty;
         final TextView viewLooseQty;
         final Button viewOpenButton;
+
         ViewHolder(View view) {
             super(view);
             viewSku = (TextView) view.findViewById(R.id.transaction_sku);
@@ -51,6 +51,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             viewOpenButton = (Button) view.findViewById(R.id.transaction_open_button);
         }
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View transactionItem = LayoutInflater.from(parent.getContext())
@@ -58,6 +59,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         return new ViewHolder(transactionItem);
 
     }
+
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         ViewHolder vh = (ViewHolder) viewHolder;
@@ -75,22 +77,36 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
         vh.viewLooseQty.setText(looseQty);
-        if ( mRotationType.equals(MainActivity.MODULE_MOVING)){
+        if (mRotationType.equals(MainActivity.MODULE_MOVING)) {
             vh.viewLocation2.setVisibility(View.VISIBLE);
             vh.viewLocation2.setText(locationEnd);
-        }else{
+        } else {
             vh.viewLocation2.setVisibility(View.GONE);
         }
         vh.viewOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ScanActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MainActivity.MODULE_TYPE, mRotationType);
-                intent.putExtra(ScanActivity.TRANSACTION_ID, id);
-                intent.putExtra(ScanActivity.ITEM_ID, itemId);
-                intent.putExtra(ADD_ITEM_ACTION, ACTION_SCAN);
-                intent.putExtra(ScanActivity.MODE, ScanActivity.MODE_VIEW);
+                Intent intent;
+                switch (mRotationType) {
+                    case MainActivity.MODULE_MOVING:
+                        intent = new Intent(mContext, TransactionMoveActivity.class);
+                        break;
+                    case MainActivity.MODULE_RECEIVING:
+                        intent = new Intent(mContext, TransactionInActivity.class);
+                        break;
+                    case MainActivity.MODULE_SALVAGE:
+                        intent = new Intent(mContext, TransactionOutActivity.class);
+                        break;
+                    case MainActivity.MODULE_PICKING:
+                        intent = new Intent(mContext, TransactionOutActivity.class);
+                        break;
+                    default:
+                        intent = new Intent(mContext, TransactionInActivity.class);
+                }
+                intent.putExtra("rotation_type", mRotationType);
+                intent.putExtra("transaction_id", id);
+                intent.putExtra("item_id", itemId);
+                intent.putExtra("mode","view");
                 mContext.startActivity(intent);
             }
         });
