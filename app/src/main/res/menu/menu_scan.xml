@@ -16,5 +16,5 @@
         android:id="@+id/scan_delete"
         android:title="Delete"
         android:orderInCategory="101"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 </menu>
