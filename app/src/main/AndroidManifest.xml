@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/AppTheme"
             android:name=".activity.RotationActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity" />
@@ -26,12 +27,15 @@
             android:name=".activity.SettingsActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
+            android:theme="@style/AppTheme"
             android:name=".activity.TransactionMoveActivity"
             android:parentActivityName=".activity.RotationActivity" />
         <activity
+            android:theme="@style/AppTheme"
             android:name=".activity.TransactionInActivity"
             android:parentActivityName=".activity.RotationActivity" />
         <activity
+            android:theme="@style/AppTheme"
             android:name=".activity.TransactionOutActivity"
             android:parentActivityName=".activity.RotationActivity" />
         <service

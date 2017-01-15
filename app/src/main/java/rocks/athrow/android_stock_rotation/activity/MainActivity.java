@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Context context = getApplicationContext();
+        DataUtilities.deleteInvalidTransactions(context);
+        DataUtilities.deleteRequests(context);
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
-        Context context = getApplicationContext();
         int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
         int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
         int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
@@ -114,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     }
 
     private void sync(){
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Context context = getApplicationContext();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -156,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                     String requestURI = apiResponse.getRequestURI();
                     updateDBIntent.putExtra(UpdateDBService.TYPE, responseMeta);
                     updateDBIntent.putExtra(UpdateDBService.REQUEST_ID, requestId);
-
                     RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
                     Realm.setDefaultConfiguration(realmConfig);
                     Realm realm = Realm.getDefaultInstance();

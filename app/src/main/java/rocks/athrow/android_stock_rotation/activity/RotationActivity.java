@@ -1,5 +1,6 @@
 package rocks.athrow.android_stock_rotation.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,8 +15,6 @@ import android.widget.TextView;
 
 import java.util.UUID;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.RotationAdapter;
@@ -60,7 +59,8 @@ public class RotationActivity extends AppCompatActivity {
     }
 
     private void updateRealmResults() {
-        mRealmResults = DataUtilities.getPendingTransactions(getApplicationContext(), mRotationType);
+        Context context = getApplicationContext();
+        mRealmResults = DataUtilities.getPendingTransactions(context, mRotationType);
     }
 
     @Override

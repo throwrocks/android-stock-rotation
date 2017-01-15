@@ -58,6 +58,7 @@ public final class Utilities {
             LinearLayout scanItem,
             LinearLayout scanCurrentLocation,
             LinearLayout scanNewLocation,
+            LinearLayout commitButton,
             EditText currentLocation,
             EditText caseQty,
             EditText looseQty,
@@ -70,6 +71,9 @@ public final class Utilities {
         }
         if (scanNewLocation != null) {
             scanNewLocation.setVisibility(GONE);
+        }
+        if (commitButton != null) {
+            commitButton.setVisibility(VISIBLE);
         }
         if (caseQty != null) {
             caseQty.setEnabled(false);
@@ -100,6 +104,7 @@ public final class Utilities {
             LinearLayout scanItem,
             LinearLayout scanCurrentLocation,
             LinearLayout scanNewLocation,
+            LinearLayout commitButton,
             EditText currentLocation,
             EditText caseQty,
             EditText looseQty,
@@ -113,6 +118,9 @@ public final class Utilities {
         if (scanNewLocation != null) {
             scanNewLocation.setVisibility(VISIBLE);
         }
+        if (commitButton != null) {
+            commitButton.setVisibility(GONE);
+        }
         if (caseQty != null) {
             caseQty.setEnabled(true);
         }
@@ -120,7 +128,7 @@ public final class Utilities {
             looseQty.setEnabled(true);
         }
         if (looseQty != null) {
-            looseQty.setEnabled(false);
+            looseQty.setEnabled(true);
         }
         if (newLocation != null) {
             newLocation.setEnabled(true);

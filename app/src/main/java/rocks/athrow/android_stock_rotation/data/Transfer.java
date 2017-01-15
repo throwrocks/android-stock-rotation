@@ -1,5 +1,7 @@
 package rocks.athrow.android_stock_rotation.data;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -10,12 +12,16 @@ import io.realm.annotations.PrimaryKey;
 public class Transfer extends RealmObject {
     @PrimaryKey
     private String id;
+    private Date date;
+    private String type;
     private String itemId;
-    int sku;
+    private int sku;
     private String itemDescription;
-    private  String location;
+    private String packSize;
+    private String receivedDate;
+    private String location;
     private int caseQty;
-    private  int looseQty;
+    private int looseQty;
 
     public String getId() {
         return id;
@@ -23,6 +29,22 @@ public class Transfer extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getItemId() {
@@ -47,6 +69,22 @@ public class Transfer extends RealmObject {
 
     public void setItemDescription(String itemDescription) {
         this.itemDescription = itemDescription;
+    }
+
+    public String getPackSize() {
+        return packSize;
+    }
+
+    public void setPackSize(String packSize) {
+        this.packSize = packSize;
+    }
+
+    public String getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(String receivedDate) {
+        this.receivedDate = receivedDate;
     }
 
     public String getLocation() {

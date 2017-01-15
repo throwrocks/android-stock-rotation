@@ -88,7 +88,12 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewLooseQty.setText(looseQty);
         if (mRotationType.equals(MainActivity.MODULE_MOVING)) {
             vh.viewLocation2.setVisibility(View.VISIBLE);
-            vh.viewLocation2.setText(locationEnd);
+            if ( locationEnd.isEmpty() ){
+                vh.viewLocation2.setText("Not set");
+            }else{
+                vh.viewLocation2.setText(locationEnd);
+            }
+
         } else {
             vh.viewLocation2.setVisibility(View.GONE);
         }

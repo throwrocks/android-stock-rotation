@@ -13,6 +13,7 @@ public class Transaction extends RealmObject {
     public static final String ID = "id";
     public static final String TYPE1 = "type1";
     public static final String IS_COMPLETE = "isCompleted";
+    public static final String IS_VALID = "isValidRecord";
     @PrimaryKey
     private String id;
     private Date date;
@@ -31,6 +32,7 @@ public class Transaction extends RealmObject {
     private String locationEnd;
     private int employeeId;
     private String employeeName;
+    private boolean isValidRecord;
 
     public String getId() {
         return id;
@@ -62,7 +64,7 @@ public class Transaction extends RealmObject {
 
     public String getSkuString() {
         if (sku == 0) {
-            return "N/A";
+            return "No item selected";
         } else {
             return String.valueOf(sku);
         }
@@ -74,7 +76,7 @@ public class Transaction extends RealmObject {
 
     public String getItemDescription() {
         if (itemDescription == null) {
-            return "";
+            return "N/A";
         } else {
             return itemDescription;
         }
@@ -116,8 +118,8 @@ public class Transaction extends RealmObject {
         return qtyCases;
     }
 
-    public String getQtyCasesString(){
-            return String.valueOf(qtyCases);
+    public String getQtyCasesString() {
+        return String.valueOf(qtyCases);
     }
 
     public void setQtyCases(int qtyCases) {
@@ -128,8 +130,8 @@ public class Transaction extends RealmObject {
         return qtyLoose;
     }
 
-    public String getQtyLooseString(){
-            return String.valueOf(qtyLoose);
+    public String getQtyLooseString() {
+        return String.valueOf(qtyLoose);
     }
 
     public void setQtyLoose(int qtyLoose) {
@@ -194,5 +196,35 @@ public class Transaction extends RealmObject {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    public Boolean getCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(Boolean completed) {
+        isCompleted = completed;
+    }
+
+    public boolean isValidRecord() {
+        if (getId() == null || getId().isEmpty()) {
+            return false;
+        }
+        if (getItemId() == null || getItemId().isEmpty()) {
+            return false;
+        }
+        if (getType1().equals("Moving") &&
+                (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 && getQtyLoose() == 0)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean getIsValidRecord(){
+        return isValidRecord;
+    }
+
+    public void setIsValidRecord() {
+        isValidRecord = isValidRecord();
     }
 }

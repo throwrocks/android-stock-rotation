@@ -45,7 +45,35 @@ public final class DataUtilities {
                 }
             }
         });
-        return new APIResponse();
+        return apiResponse;
+    }
+
+    public static void deleteInvalidTransactions(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        final RealmResults<Transaction> results =
+                realm.where(Transaction.class).equalTo(Transaction.IS_VALID,false).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                results.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public static void deleteRequests(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        final RealmResults<Request> results =
+                realm.where(Request.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                results.deleteAllFromRealm();
+            }
+        });
     }
 
     /**
@@ -74,59 +102,62 @@ public final class DataUtilities {
             String currentLocation,
             String newLocation) {
         APIResponse apiResponse = new APIResponse();
-        if (skuString.isEmpty() || skuString.equals("No item selected")) {
-            apiResponse.setResponseCode(0);
-            apiResponse.setResponseText("No item is selected.");
-            return apiResponse;
-        }
-        if (caseQtyString.isEmpty() && looseQtyString.isEmpty()) {
-            apiResponse.setResponseCode(0);
-            apiResponse.setResponseText("Quantities are empty.");
-            return apiResponse;
-        }
-        if (transactionType == "move" && transactionAction == "commit") {
-            if (currentLocation.isEmpty() || currentLocation.equals("N/A")) {
-                apiResponse.setResponseCode(0);
-                apiResponse.setResponseText("The current location is empty");
-                return apiResponse;
-            }
-        }
-        if (transactionType == "move" && transactionAction == "commit") {
-            if (newLocation.isEmpty() || currentLocation.equals("N/A")) {
-                newLocation = "";
-            }
-        }
-
-        int Sku = Integer.parseInt(skuString);
-        int caseQty = 0;
-        if (!caseQtyString.isEmpty()) {
-            caseQty = Integer.parseInt(caseQtyString);
-        }
-        int looseQty = 0;
-        if (!looseQtyString.isEmpty()) {
-            looseQty = Integer.parseInt(looseQtyString);
-        }
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        transaction.setItemId(itemId);
-        transaction.setSku(Sku);
-        transaction.setPackSize(packSize);
-        transaction.setReceivedDate(receivedDate);
-        transaction.setItemDescription(itemDescription);
-        transaction.setType1(transactionType);
-        transaction.setType2("");
-        transaction.setLocationStart(currentLocation);
-        transaction.setLocationEnd(newLocation);
-        transaction.setQtyCases(caseQty);
-        transaction.setQtyLoose(looseQty);
-        transaction.setIsCompleted(false);
-        if ( transaction.getDate() == null){
+        // transactionId: If not transaction id was provided, we can't save a record
+        if (transactionId == null || transactionId.isEmpty()) {
+            apiResponse.setResponseCode(0);
+            apiResponse.setResponseText("Error: No transaction id was provided.");
+            return apiResponse;
+        } else {
+            transaction.setId(transactionId);
+        }
+        // date: Set the date if it doesn't exist
+        if (transaction.getDate() == null) {
             transaction.setDate(new Date());
         }
+        // transactionType: Set the transaction type
+        transaction.setType1(transactionType);
+        transaction.setType2("");
+        // itemId: If an ItemId was provided, set the item and its information
+        if (itemId != null && !itemId.isEmpty()) {
+            // If an item id is provided, we must have a sku, but we need to validate it
+            // because it is passed as string
+            if (skuString != null && !skuString.isEmpty() && !skuString.equals("No item selected")) {
+                transaction.setItemId(itemId);
+                int Sku = Integer.parseInt(skuString);
+                transaction.setSku(Sku);
+                transaction.setPackSize(packSize);
+                transaction.setReceivedDate(receivedDate);
+                transaction.setItemDescription(itemDescription);
+            }
+        }
+        // caseQty / looseQty: If quantities were provided, save them
+        int caseQty;
+        if (caseQtyString != null && !caseQtyString.isEmpty()) {
+            caseQty = Integer.parseInt(caseQtyString);
+            transaction.setQtyCases(caseQty);
+        }
+        int looseQty;
+        if (looseQtyString != null && !looseQtyString.isEmpty()) {
+            looseQty = Integer.parseInt(looseQtyString);
+            transaction.setQtyLoose(looseQty);
+        }
+        // currentLocation / newLocation: Set the locations
+        transaction.setLocationStart(currentLocation);
+        transaction.setLocationEnd(newLocation);
+        // If we are committing the record, set the completed information
+        if (transactionAction.equals("commit")) {
+            Date completedDate = new Date();
+            transaction.setIsCompleted(true);
+            transaction.setDateCompleted(completedDate);
+        } else {
+            transaction.setIsCompleted(false);
+        }
+        transaction.setIsValidRecord();
         realm.copyToRealmOrUpdate(transaction);
         realm.commitTransaction();
         realm.close();
@@ -135,18 +166,23 @@ public final class DataUtilities {
         return apiResponse;
     }
 
-    public static RealmResults<Transaction> getTransaction(Context context, String transactionId) {
+    public static Transaction getTransaction(Context context, String transactionId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Transaction> realmResults = realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
         realm.beginTransaction();
+        RealmResults<Transaction> realmResults = realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
         realm.commitTransaction();
-        return realmResults;
+        if (realmResults.size() > 0) {
+            return realmResults.get(0);
+        } else {
+            return null;
+        }
     }
 
     /**
      * getItem
+     *
      * @param itemId itemId
      * @return
      */
@@ -170,11 +206,11 @@ public final class DataUtilities {
         return realmResults;
     }
 
-    public static int getCountPendingTransactions(Context context, String type){
+    public static int getCountPendingTransactions(Context context, String type) {
         return getPendingTransactions(context, type).size();
     }
 
-    public static RealmResults<Transaction> getPendingTransactions(Context context, String type){
+    public static RealmResults<Transaction> getPendingTransactions(Context context, String type) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();

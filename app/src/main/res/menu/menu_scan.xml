@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/scan_save"
-        android:title="Save"
+        android:title="Done"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"/>
     <item
