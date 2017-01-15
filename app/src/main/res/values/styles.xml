@@ -16,4 +16,9 @@
         <item name="android:textColor">@color/secondaryText</item>
     </style>
 
+    <style name="mainButton" parent="@style/Base.Widget.AppCompat.Button">
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+    </style>
+
 </resources>

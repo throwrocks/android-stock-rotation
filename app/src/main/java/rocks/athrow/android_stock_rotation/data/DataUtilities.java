@@ -170,5 +170,21 @@ public final class DataUtilities {
         return realmResults;
     }
 
+    public static int getCountPendingTransactions(Context context, String type){
+        return getPendingTransactions(context, type).size();
+    }
+
+    public static RealmResults<Transaction> getPendingTransactions(Context context, String type){
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transaction> realmResults =
+                realm.where(Transaction.class).
+                        equalTo(Transaction.TYPE1, type).
+                        equalTo(Transaction.IS_COMPLETE, false).findAll();
+        realm.commitTransaction();
+        return realmResults;
+    }
 
 }

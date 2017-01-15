@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
@@ -22,6 +23,7 @@ import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.api.FetchTask;
+import rocks.athrow.android_stock_rotation.data.DataUtilities;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
@@ -48,11 +50,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
+        TextView countReceveingView = (TextView) findViewById(R.id.count_receiving);
+        TextView countMovingView = (TextView) findViewById(R.id.count_moving);
+        TextView countPickingView = (TextView) findViewById(R.id.count_picking);
+        TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
         LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
+        Context context = getApplicationContext();
+        int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
+        int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
+        int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
+        int countSalvage = DataUtilities.getCountPendingTransactions(context, MODULE_SALVAGE);
+        countReceveingView.setText(String.valueOf(countReceiving));
+        countMovingView.setText(String.valueOf(countMoving));
+        countPickingView.setText(String.valueOf(countPicking));
+        countSalvageView.setText(String.valueOf(countSalvage));
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

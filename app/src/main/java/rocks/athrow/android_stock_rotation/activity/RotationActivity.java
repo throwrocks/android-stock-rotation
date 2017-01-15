@@ -19,6 +19,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.RotationAdapter;
+import rocks.athrow.android_stock_rotation.data.DataUtilities;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
 
@@ -59,15 +60,7 @@ public class RotationActivity extends AppCompatActivity {
     }
 
     private void updateRealmResults() {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        mRealmResults =
-                realm.where(Transaction.class).
-                        equalTo(Transaction.TYPE1, mRotationType).
-                        equalTo(Transaction.IS_COMPLETE, false).findAll();
-        realm.commitTransaction();
+        mRealmResults = DataUtilities.getPendingTransactions(getApplicationContext(), mRotationType);
     }
 
     @Override
