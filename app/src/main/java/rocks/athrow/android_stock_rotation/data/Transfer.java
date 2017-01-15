@@ -12,8 +12,10 @@ import io.realm.annotations.PrimaryKey;
 public class Transfer extends RealmObject {
     @PrimaryKey
     private String id;
+    private String transactionId;
+    private String transactionType;
     private Date date;
-    private String type;
+    private String type; // In or out
     private String itemId;
     private int sku;
     private String itemDescription;
@@ -25,6 +27,22 @@ public class Transfer extends RealmObject {
 
     public String getId() {
         return id;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public void setId(String id) {

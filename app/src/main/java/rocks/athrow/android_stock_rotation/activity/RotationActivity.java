@@ -90,7 +90,6 @@ public class RotationActivity extends AppCompatActivity {
                         intent.putExtra("mode", "edit");
                         startActivity(intent);
                 }
-
             default:
                 return super.onOptionsItemSelected(item);
         }

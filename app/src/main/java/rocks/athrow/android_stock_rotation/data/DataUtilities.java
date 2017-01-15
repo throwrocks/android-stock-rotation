@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.data;
 import android.content.Context;
 
 import java.util.Date;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -10,6 +11,7 @@ import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
 /**
+ * DataUtilities
  * Created by joselopez on 1/13/17.
  */
 
@@ -20,6 +22,7 @@ public final class DataUtilities {
 
     /**
      * deleteTransaction
+     * A method to delete an individual transaction by id
      *
      * @param context       a context object
      * @param transactionId the transaction id to delete
@@ -53,7 +56,7 @@ public final class DataUtilities {
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         final RealmResults<Transaction> results =
-                realm.where(Transaction.class).equalTo(Transaction.IS_VALID,false).findAll();
+                realm.where(Transaction.class).equalTo(Transaction.IS_VALID, false).findAll();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -62,6 +65,13 @@ public final class DataUtilities {
         });
     }
 
+    /**
+     * deleteRequests
+     * Requests are used temporarily for the UpdateDBService to parse new API results and save
+     * them to the database
+     *
+     * @param context a Context object
+     */
     public static void deleteRequests(Context context) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -77,6 +87,10 @@ public final class DataUtilities {
     }
 
     /**
+     * saveTransaction
+     * A method to save a Transaction record
+     * The only required value is the transaction id
+     *
      * @param transactionType   move, in or out
      * @param transactionAction save or commit
      * @param transactionId     the transaction record id
@@ -166,6 +180,63 @@ public final class DataUtilities {
         return apiResponse;
     }
 
+
+    /**
+     * saveTransfer
+     * A method to save a Trasnfer record
+     * The only required value is the transaction id
+     *
+     * @return an APIResponse object
+     */
+    public static APIResponse saveTransfer(
+            Context context,
+            String transactionId,
+            String transactionType,
+            String type,
+            String itemId,
+            int sku,
+            String itemDescription,
+            String packSize,
+            String receivedDate,
+            String location,
+            int caseQty,
+            int looseQty
+           ) {
+        APIResponse apiResponse = new APIResponse();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Transfer transfer = new Transfer();
+        transfer.setId(UUID.randomUUID().toString());
+        transfer.setTransactionId(transactionId);
+        transfer.setTransactionType(transactionType);
+        transfer.setDate(new Date());
+        transfer.setType(type);
+        transfer.setItemId(itemId);
+        transfer.setSku(sku);
+        transfer.setItemDescription(itemDescription);
+        transfer.setPackSize(packSize);
+        transfer.setReceivedDate(receivedDate);
+        transfer.setLocation(location);
+        transfer.setCaseQty(caseQty);
+        transfer.setLooseQty(looseQty);
+        realm.copyToRealmOrUpdate(transfer);
+        realm.commitTransaction();
+        realm.close();
+        apiResponse.setResponseCode(200);
+        apiResponse.setResponseText("Record saved!");
+        return apiResponse;
+    }
+
+    /**
+     * getTransaction
+     * A method to get a transaction record by id
+     *
+     * @param context       a Context object
+     * @param transactionId the transaction id to be returned
+     * @return a Transaction object
+     */
     public static Transaction getTransaction(Context context, String transactionId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -182,9 +253,11 @@ public final class DataUtilities {
 
     /**
      * getItem
+     * A method to get an Item record by id
      *
-     * @param itemId itemId
-     * @return
+     * @param context a Context object
+     * @param itemId  the item's id
+     * @return an Item object
      */
     public static RealmResults<Item> getItem(Context context, String itemId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -196,6 +269,14 @@ public final class DataUtilities {
         return realmResults;
     }
 
+    /**
+     * getLocation
+     * A method to get a Location object. Used with the barcode scanner.
+     *
+     * @param context a Context object
+     * @param barcode the location's barcode
+     * @return a Location object
+     */
     public static RealmResults<Location> getLocation(Context context, String barcode) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -206,10 +287,26 @@ public final class DataUtilities {
         return realmResults;
     }
 
+    /**
+     * getCountPendingTransactions
+     * This is used to populate the counts on the buttons on MainActivity
+     *
+     * @param context a Context object
+     * @param type    the type of Transaction (receiving, moving, picking, salvage)
+     * @return the number of pending transactions
+     */
     public static int getCountPendingTransactions(Context context, String type) {
         return getPendingTransactions(context, type).size();
     }
 
+    /**
+     * getPendingTransactions
+     * This is used to populate the RecyclerView on the StockRotation Activity
+     *
+     * @param context a Context object
+     * @param type    the type of Transaction
+     * @return a RealResults object with the pending transactions
+     */
     public static RealmResults<Transaction> getPendingTransactions(Context context, String type) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);

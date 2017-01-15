@@ -231,8 +231,43 @@ public class TransactionMoveActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * commitTransaction
+     * A method to commit the move transaction
+     */
     private void commitTransaction() {
-
+        Context context = getApplicationContext();
+        Transaction transaction = DataUtilities.getTransaction(context, mTransactionId);
+        if (transaction != null && transaction.isValidRecord()) {
+            DataUtilities.saveTransfer(
+                    context,
+                    transaction.getId(),
+                    transaction.getType1(),
+                    "out",
+                    transaction.getItemId(),
+                    transaction.getSku(),
+                    transaction.getItemDescription(),
+                    transaction.getPackSize(),
+                    transaction.getReceivedDate(),
+                    transaction.getLocationEnd(),
+                    transaction.getQtyCases(),
+                    transaction.getQtyLoose()
+            );
+            DataUtilities.saveTransfer(
+                    context,
+                    transaction.getId(),
+                    transaction.getType1(),
+                    "in",
+                    transaction.getItemId(),
+                    transaction.getSku(),
+                    transaction.getItemDescription(),
+                    transaction.getPackSize(),
+                    transaction.getReceivedDate(),
+                    transaction.getLocationStart(),
+                    transaction.getQtyCases(),
+                    transaction.getQtyLoose()
+            );
+        }
     }
 
     /**
@@ -283,7 +318,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     /**
      * setCurrentLocationView
      *
-     * @param location
+     * @param location the location name
      */
     private void setCurrentLocationView(String location) {
         TextView inputCurrentLocation = (TextView) findViewById(R.id.input_current_location);
@@ -293,7 +328,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     /**
      * setNewLocationView
      *
-     * @param location
+     * @param location the location name
      */
     private void setNewLocationView(String location) {
         EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
@@ -432,7 +467,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString("barcode_contents",mBarcodeContents);
+        outState.putString("barcode_contents", mBarcodeContents);
         outState.putString(TRANSACTION_ID, mTransactionId);
         outState.putString(ITEM_ID, mItemId);
         outState.putString(MODE, mMode);
