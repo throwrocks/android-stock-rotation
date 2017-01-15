@@ -104,7 +104,7 @@ public class UpdateDBService extends IntentService {
         }
     }
 
-    public static JSONArray getJSONArray(String JSON) {
+    private static JSONArray getJSONArray(String JSON) {
         JSONArray jsonArray = null;
         try {
             JSONObject jsonObject = new JSONObject(JSON);

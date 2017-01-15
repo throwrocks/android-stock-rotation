@@ -27,6 +27,14 @@
             android:name=".activity.SettingsActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
+            android:label="Search Item"
+            android:name=".activity.SearchActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:label="Transfers"
+            android:name=".activity.TransfersActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
             android:theme="@style/AppTheme"
             android:name=".activity.TransactionMoveActivity"
             android:parentActivityName=".activity.RotationActivity" />

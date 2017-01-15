@@ -107,7 +107,7 @@ import android.util.Log;
  * @author Brad Drehmer
  * @author gcstang
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class IntentIntegrator {
 
     public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
@@ -255,6 +255,7 @@ public class IntentIntegrator {
      * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
      *   if a prompt was needed, or null otherwise.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final AlertDialog initiateScan() {
         return initiateScan(ALL_CODE_TYPES, -1);
     }

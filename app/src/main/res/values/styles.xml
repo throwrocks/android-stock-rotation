@@ -16,9 +16,10 @@
         <item name="android:textColor">@color/secondaryText</item>
     </style>
 
-    <style name="mainButton" parent="@style/Base.Widget.AppCompat.Button">
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
+    <style name="mainButton" parent="@style/Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:gravity">start</item>
+        <item name="android:paddingBottom">16dp</item>
     </style>
 
 </resources>

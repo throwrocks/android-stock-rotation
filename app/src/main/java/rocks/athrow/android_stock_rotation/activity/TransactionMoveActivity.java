@@ -4,10 +4,13 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,19 +46,21 @@ public class TransactionMoveActivity extends AppCompatActivity {
     private static final String SCAN_ITEM = "item";
     private static final String SCAN_CURRENT_LOCATION = "currentLocation";
     private static final String SCAN_NEW_LOCATION = "newLocation";
+    private static final String IN = "in";
+    private static final String OUT = "out";
     private String mBarcodeContents;
     private String mScanType;
     private String mMode;
     private String mTransactionId;
     private String mItemId;
-    LinearLayout mButtonScanItem;
-    LinearLayout mButtonScanCurrentLocation;
-    LinearLayout mButtonScanNewLocation;
-    EditText mCurrentLocationView;
-    EditText mCaseQtyView;
-    EditText mLooseQtyView;
-    EditText mNewLocationView;
-    LinearLayout mButtonCommit;
+    private LinearLayout mButtonScanItem;
+    private LinearLayout mButtonScanCurrentLocation;
+    private LinearLayout mButtonScanNewLocation;
+    private EditText mCurrentLocationView;
+    private EditText mCaseQtyView;
+    private EditText mLooseQtyView;
+    private EditText mNewLocationView;
+    private LinearLayout mButtonCommit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,10 @@ public class TransactionMoveActivity extends AppCompatActivity {
         mLooseQtyView = (EditText) findViewById(R.id.input_loose_qty);
         mNewLocationView = (EditText) findViewById(R.id.input_new_location);
         mButtonCommit = (LinearLayout) findViewById(R.id.button_move);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle(MainActivity.MODULE_MOVING);
+        }
         setViews();
     }
 
@@ -96,6 +105,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to set the layout on edit mode
      */
     private void setEditMode() {
+        setViewData();
         Utilities.setEditMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
                 mButtonCommit, mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView);
         mButtonScanItem.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +129,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 scan();
             }
         });
-        setViewData();
+
     }
 
     /**
@@ -127,6 +137,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to set the layout on view mode
      */
     private void setViewMode() {
+        setViewData();
         Utilities.setViewMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
                 mButtonCommit, mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView);
         mButtonCommit.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +146,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 moveButton();
             }
         });
-        setViewData();
+
     }
 
     /**
@@ -162,8 +173,10 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to initiate the barcode scanning
      */
     private void scan() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.initiateScan();
+        if ( mScanType != null ) {
+            IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.initiateScan();
+        }
     }
 
     /**
@@ -192,8 +205,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
         String newLocation = inputNewLocation.getText().toString();
         APIResponse apiResponse = DataUtilities.saveTransaction(
                 getApplicationContext(),
-                "Moving",
-                "save",
+                MainActivity.MODULE_MOVING,
                 mTransactionId,
                 mItemId,
                 skuString,
@@ -224,7 +236,6 @@ public class TransactionMoveActivity extends AppCompatActivity {
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
             }
         });
         AlertDialog dialog = builder.create();
@@ -243,7 +254,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     context,
                     transaction.getId(),
                     transaction.getType1(),
-                    "out",
+                    OUT,
                     transaction.getItemId(),
                     transaction.getSku(),
                     transaction.getItemDescription(),
@@ -257,7 +268,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     context,
                     transaction.getId(),
                     transaction.getType1(),
-                    "in",
+                    IN,
                     transaction.getItemId(),
                     transaction.getSku(),
                     transaction.getItemDescription(),
@@ -267,6 +278,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getQtyCases(),
                     transaction.getQtyLoose()
             );
+            DataUtilities.commitTransaction(context, mTransactionId);
         }
     }
 
@@ -338,24 +350,30 @@ public class TransactionMoveActivity extends AppCompatActivity {
     /**
      * onActivityResult
      *
-     * @param requestCode
-     * @param resultCode
-     * @param intent
+     * @param requestCode the request code
+     * @param resultCode the result code
+     * @param intent the intent from the barcode scan
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (mScanType == null) {
+            Log.e("mScanType", "null");
             return;
         }
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult == null) {
+            Log.e("scanResult", "null");
             return;
         }
         String contents = scanResult.getContents();
         if (contents == null) {
+            Log.e("contents", "null");
             return;
         }
         mBarcodeContents = contents;
+        Log.e("Barcode", contents);
         Context context = getApplicationContext();
+        Resources res = getResources();
+        int toastLenght = Toast.LENGTH_SHORT;
         switch (mScanType) {
             case SCAN_ITEM:
                 RealmResults<Item> items = DataUtilities.getItem(context, contents);
@@ -369,7 +387,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     setItemViews(sku, description, packSize, receivedDate);
                     save();
                 } else {
-                    Utilities.showToast(context, "Item not found.", Toast.LENGTH_SHORT);
+                    Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
                 }
                 break;
             case SCAN_CURRENT_LOCATION:
@@ -380,7 +398,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     setCurrentLocationView(location);
                     save();
                 } else {
-                    Utilities.showToast(context, "Location not found.", Toast.LENGTH_SHORT);
+                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
                 }
                 break;
             case SCAN_NEW_LOCATION:
@@ -391,7 +409,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     setNewLocationView(location);
                     save();
                 } else {
-                    Utilities.showToast(context, "Location not found.", Toast.LENGTH_SHORT);
+                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
                 }
                 break;
         }
@@ -468,6 +486,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("barcode_contents", mBarcodeContents);
+        outState.putString("scan_type",mScanType);
         outState.putString(TRANSACTION_ID, mTransactionId);
         outState.putString(ITEM_ID, mItemId);
         outState.putString(MODE, mMode);
@@ -476,6 +495,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mScanType = savedInstanceState.getString("scan_type");
         mBarcodeContents = savedInstanceState.getString("barcode_contents");
         mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
         mItemId = savedInstanceState.getString(ITEM_ID);

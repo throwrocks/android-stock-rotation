@@ -8,6 +8,7 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
 /**
@@ -86,25 +87,42 @@ public final class DataUtilities {
         });
     }
 
+    public static APIResponse commitTransaction(Context context, String transactionId) {
+        APIResponse apiResponse = new APIResponse();
+        Transaction transaction = getTransaction(context, transactionId);
+        if (transaction != null) {
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            Realm.setDefaultConfiguration(realmConfig);
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            transaction.setIsCompleted(true);
+            transaction.setDateCompleted(new Date());
+            realm.copyToRealmOrUpdate(transaction);
+            realm.commitTransaction();
+            realm.close();
+            apiResponse.setResponseCode(200);
+
+        }
+        return apiResponse;
+    }
+
     /**
      * saveTransaction
      * A method to save a Transaction record
      * The only required value is the transaction id
      *
-     * @param transactionType   move, in or out
-     * @param transactionAction save or commit
-     * @param transactionId     the transaction record id
-     * @param skuString         the sku as a string
-     * @param caseQtyString     the case qty as string
-     * @param looseQtyString    the loose qty as string
-     * @param currentLocation   the current location
-     * @param newLocation       the new location
+     * @param transactionType move, in or out
+     * @param transactionId   the transaction record id
+     * @param skuString       the sku as a string
+     * @param caseQtyString   the case qty as string
+     * @param looseQtyString  the loose qty as string
+     * @param currentLocation the current location
+     * @param newLocation     the new location
      * @return an APIResponse object
      */
     public static APIResponse saveTransaction(
             Context context,
             String transactionType,
-            String transactionAction,
             String transactionId,
             String itemId,
             String skuString,
@@ -164,11 +182,7 @@ public final class DataUtilities {
         transaction.setLocationStart(currentLocation);
         transaction.setLocationEnd(newLocation);
         // If we are committing the record, set the completed information
-        if (transactionAction.equals("commit")) {
-            Date completedDate = new Date();
-            transaction.setIsCompleted(true);
-            transaction.setDateCompleted(completedDate);
-        } else {
+        if (transaction.getIsCompleted() == null) {
             transaction.setIsCompleted(false);
         }
         transaction.setIsValidRecord();
@@ -201,7 +215,7 @@ public final class DataUtilities {
             String location,
             int caseQty,
             int looseQty
-           ) {
+    ) {
         APIResponse apiResponse = new APIResponse();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -249,6 +263,24 @@ public final class DataUtilities {
         } else {
             return null;
         }
+    }
+
+    /**
+     * getTransactions
+     * A method to get a transaction record by id
+     *
+     * @param context a Context object
+     * @return a Transaction object
+     */
+    public static RealmResults<Transfer> getTransfers(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transfer> realmResults =
+                realm.where(Transfer.class).findAll().sort(Transfer.FIELD_DATE, Sort.DESCENDING);
+        realm.commitTransaction();
+        return realmResults;
     }
 
     /**

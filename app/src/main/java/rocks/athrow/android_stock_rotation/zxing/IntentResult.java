@@ -21,6 +21,7 @@ package rocks.athrow.android_stock_rotation.zxing;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("unused")
 public final class IntentResult {
 
     private final String contents;

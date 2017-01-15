@@ -28,8 +28,6 @@ import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAda
  */
 
 public class RotationActivity extends AppCompatActivity {
-    public static final String ADD_ITEM_ACTION = "action";
-    public static final String ACTION_SCAN = "scan";
     private String mRotationType;
     private RotationAdapter mRotationAdapter;
     private RealmResults<Transaction> mRealmResults;

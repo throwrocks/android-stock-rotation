@@ -2,12 +2,12 @@ package rocks.athrow.android_stock_rotation.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.activity.MainActivity;
@@ -24,6 +24,11 @@ import rocks.athrow.android_stock_rotation.data.Transaction;
  */
 
 public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
+    private final static String ROTATION_TYPE = "rotation_type";
+    private final static String TRANSACTION_ID = "transaction_id";
+    private final static String ITEM_ID = "item_id";
+    private final static String MODE = "mode";
+    private final static String VIEW = "view";
     private final String mRotationType;
     private final Context mContext;
 
@@ -62,7 +67,6 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         View transactionItem = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_transaction_card, parent, false);
         return new ViewHolder(transactionItem);
-
     }
 
     @Override
@@ -88,9 +92,11 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewLooseQty.setText(looseQty);
         if (mRotationType.equals(MainActivity.MODULE_MOVING)) {
             vh.viewLocation2.setVisibility(View.VISIBLE);
-            if ( locationEnd.isEmpty() ){
-                vh.viewLocation2.setText("Not set");
-            }else{
+            if (locationEnd.isEmpty()) {
+                vh.viewLocation2.setTextColor(mContext.getResources().getColor(R.color.warning));
+                vh.viewLocation2.setTypeface(null, Typeface.ITALIC);
+                vh.viewLocation2.setText(mContext.getResources().getString(R.string.not_set));
+            } else {
                 vh.viewLocation2.setText(locationEnd);
             }
 
@@ -117,10 +123,10 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
                     default:
                         intent = new Intent(mContext, TransactionInActivity.class);
                 }
-                intent.putExtra("rotation_type", mRotationType);
-                intent.putExtra("transaction_id", id);
-                intent.putExtra("item_id", itemId);
-                intent.putExtra("mode","view");
+                intent.putExtra(ROTATION_TYPE, mRotationType);
+                intent.putExtra(TRANSACTION_ID, id);
+                intent.putExtra(ITEM_ID, itemId);
+                intent.putExtra(MODE, VIEW);
                 mContext.startActivity(intent);
             }
         });

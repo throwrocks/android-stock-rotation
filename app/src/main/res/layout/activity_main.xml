@@ -19,13 +19,19 @@
             android:id="@+id/module_receiving"
             style="@style/mainButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/receive" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="Receive"
                 android:textColor="@color/primaryText"
@@ -50,9 +56,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/move" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="Move"
                 android:textColor="@color/primaryText"
@@ -76,9 +88,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pick" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="Pick"
                 android:textColor="@color/primaryText"
@@ -102,9 +120,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/salvage" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:text="Salvage"
                 android:textColor="@color/primaryText"
@@ -120,7 +144,37 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/module_transfers"
+            style="@style/mainButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/list" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="Transfers"
+                android:textColor="@color/primaryText"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/count_transfers"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="10"
+                android:textColor="@color/primaryText"
+                android:textSize="18sp" />
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/module_sync"
             style="@style/mainButton"
@@ -128,19 +182,35 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Sync" />
+                android:layout_height="wrap_content"
+                android:src="@drawable/sync" />
 
-            <TextView
-                android:id="@+id/text_sync"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:gravity="center"
-                android:text="Last updated: 1/10/2017 12:00 AM" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Sync"
+                    android:textColor="@color/primaryText"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/text_sync"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Last updated: 1/10/2017 12:00 AM"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

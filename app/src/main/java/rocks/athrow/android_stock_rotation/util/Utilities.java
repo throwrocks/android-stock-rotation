@@ -1,18 +1,12 @@
 package rocks.athrow.android_stock_rotation.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -72,8 +66,10 @@ public final class Utilities {
         if (scanNewLocation != null) {
             scanNewLocation.setVisibility(GONE);
         }
-        if (commitButton != null) {
+        if (commitButton != null && ( newLocation != null && !newLocation.getText().toString().isEmpty())) {
             commitButton.setVisibility(VISIBLE);
+        }else if ( commitButton != null ){
+            commitButton.setVisibility(GONE);
         }
         if (caseQty != null) {
             caseQty.setEnabled(false);
@@ -90,7 +86,7 @@ public final class Utilities {
     }
 
     /**
-     * setEditMopde
+     * setEditMode
      *
      * @param scanItem
      * @param scanCurrentLocation

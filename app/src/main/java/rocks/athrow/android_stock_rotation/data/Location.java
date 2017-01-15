@@ -3,8 +3,6 @@ package rocks.athrow.android_stock_rotation.data;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-import static rocks.athrow.android_stock_rotation.data.Item.FIELD_SERIAL_NUMBER;
-
 /**
  * Created by joselopez on 1/9/17.
  */

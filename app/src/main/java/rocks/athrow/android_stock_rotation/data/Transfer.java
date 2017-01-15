@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Transfer extends RealmObject {
+    public final static String FIELD_DATE = "date";
     @PrimaryKey
     private String id;
     private String transactionId;

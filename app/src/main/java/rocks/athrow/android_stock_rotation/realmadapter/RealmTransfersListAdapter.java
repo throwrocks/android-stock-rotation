@@ -3,7 +3,7 @@ package rocks.athrow.android_stock_rotation.realmadapter;
 import android.content.Context;
 
 import io.realm.RealmResults;
-import rocks.athrow.android_stock_rotation.data.Transaction;
+import rocks.athrow.android_stock_rotation.data.Transfer;
 
 /**
  * RealmTransactionsListAdapter
@@ -11,8 +11,8 @@ import rocks.athrow.android_stock_rotation.data.Transaction;
  * supporting the RealmObject type I want
  * http://gradlewhy.ghost.io/realm-results-with-recyclerview/
  */
-public class RealmTransactionsListAdapter extends RealmModelAdapter<Transaction> {
-    public RealmTransactionsListAdapter(Context context, RealmResults<Transaction> realmResults) {
+public class RealmTransfersListAdapter extends RealmModelAdapter<Transfer> {
+    public RealmTransfersListAdapter(Context context, RealmResults<Transfer> realmResults) {
         super(context, realmResults);
     }
 }

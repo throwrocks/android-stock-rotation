@@ -6,4 +6,8 @@
     <string name="no_item_selected">No item selected</string>
     <string name="n_a">N/A</string>
     <string name="hint_current_location">Current Location: </string>
+    <string name="not_set">Not set</string>
+    <!-- Scan Activity error messages -->
+    <string name="error_location_not_found">Location not found.</string>
+    <string name="error_item_not_found">Item not found.</string>
 </resources>

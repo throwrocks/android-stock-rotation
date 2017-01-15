@@ -7,6 +7,9 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,11 +38,11 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
 
 public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     public static final String MODULE_TYPE = "type";
-    public static final String MODULE_RECEIVING = "Receiving";
-    public static final String MODULE_MOVING = "Moving";
-    public static final String MODULE_PICKING = "Picking";
+    public static final String MODULE_RECEIVING = "Receive";
+    public static final String MODULE_MOVING = "Move";
+    public static final String MODULE_PICKING = "Pick";
     public static final String MODULE_SALVAGE = "Salvage";
-    final OnTaskComplete onTaskCompleted = this;
+    private final OnTaskComplete onTaskCompleted = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
+        LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
         int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
         int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
@@ -94,6 +98,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                 startActivity(MODULE_SALVAGE);
             }
         });
+        moduleTransfers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TransfersActivity.class);
+                startActivity(intent);
+            }
+        });
         moduleSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,6 +113,22 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.main_search:
+                        Intent intent = new Intent(this, SearchActivity.class);
+                        startActivity(intent);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     /**
      * startActivity
@@ -109,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
      * @param type the type of RotationActivity
      *             Receiving, Moving, Picking, or Salvage
      */
-    public void startActivity(String type) {
+    private void startActivity(String type) {
         Intent intent = new Intent(this, RotationActivity.class);
         intent.putExtra(MODULE_TYPE, type);
         startActivity(intent);
