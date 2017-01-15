@@ -1,5 +1,6 @@
 package rocks.athrow.android_stock_rotation.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
@@ -26,10 +25,8 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 /**
+ * TransactionMoveActivity
  * Created by joselopez on 1/13/17.
  */
 
@@ -88,37 +85,12 @@ public class TransactionMoveActivity extends AppCompatActivity {
     }
 
     /**
-     * setViewData
-     * A method to set the views with transaction date
-     */
-    private void setViewData() {
-        RealmResults<Transaction> transactions = DataUtilities.getTransaction(getApplicationContext(), mTransactionId);
-        if (transactions.size() > 0) {
-            Transaction transaction = transactions.get(0);
-            setNewLocationView(transaction.getLocationEnd());
-            setCurrentLocationView(transaction.getLocationStart());
-            setQtys(transaction.getQtyCasesString(), transaction.getQtyLooseString());
-            setItemViews(
-                    transaction.getSkuString(),
-                    transaction.getItemDescription(),
-                    transaction.getPackSize(),
-                    transaction.getReceivedDate()
-            );
-        }
-    }
-
-    /**
      * setEditMode
      * A method to set the layout on edit mode
      */
     private void setEditMode() {
-        mCurrentLocationView.setEnabled(true);
-        mCaseQtyView.setEnabled(true);
-        mLooseQtyView.setEnabled(true);
-        mNewLocationView.setEnabled(true);
-        mButtonScanItem.setVisibility(VISIBLE);
-        mButtonScanCurrentLocation.setVisibility(VISIBLE);
-        mButtonScanNewLocation.setVisibility(VISIBLE);
+        Utilities.setEditMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
+                mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView);
         mButtonScanItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,12 +120,35 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to set the layout on view mode
      */
     private void setViewMode() {
-        Utilities.setViewMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
-                mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView
-        );
+        Utilities.setViewMode(
+                mButtonScanItem,
+                mButtonScanCurrentLocation,
+                mButtonScanNewLocation,
+                mCurrentLocationView,
+                mCaseQtyView,
+                mLooseQtyView,
+                mNewLocationView);
         setViewData();
     }
-
+    /**
+     * setViewData
+     * A method to set the views with transaction date
+     */
+    private void setViewData() {
+        RealmResults<Transaction> transactions = DataUtilities.getTransaction(getApplicationContext(), mTransactionId);
+        if (transactions.size() > 0) {
+            Transaction transaction = transactions.get(0);
+            setNewLocationView(transaction.getLocationEnd());
+            setCurrentLocationView(transaction.getLocationStart());
+            setQtyViews(transaction.getQtyCasesString(), transaction.getQtyLooseString());
+            setItemViews(
+                    transaction.getSkuString(),
+                    transaction.getItemDescription(),
+                    transaction.getPackSize(),
+                    transaction.getReceivedDate()
+            );
+        }
+    }
     /**
      * scan
      * A method to initiate the barcode scanning
@@ -200,8 +195,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 caseQtyString,
                 looseQtyString,
                 currentLocation,
-                newLocation
-        );
+                newLocation);
         Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
         if (apiResponse.getResponseCode() == 200) {
             return 1;
@@ -238,10 +232,15 @@ public class TransactionMoveActivity extends AppCompatActivity {
         TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
         TextView inputPackSize = (TextView) findViewById(R.id.input_pack_size);
         TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
-        inputItemSku.setText(sku);
-        inputItemDescription.setText(description);
-        inputPackSize.setText(packSize);
-        inputReceivedDate.setText(receivedDate);
+        Utilities.setItemViews(
+                inputItemSku,
+                inputItemDescription,
+                inputPackSize,
+                inputReceivedDate,
+                sku,
+                description,
+                packSize,
+                receivedDate);
     }
 
     /**
@@ -251,11 +250,14 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * @param caseQty  the case qty
      * @param looseQty the loose qty
      */
-    private void setQtys(String caseQty, String looseQty) {
+    private void setQtyViews(String caseQty, String looseQty) {
         TextView inputCaseQty = (TextView) findViewById(R.id.input_case_qty);
         TextView inputLooseQty = (TextView) findViewById(R.id.input_loose_qty);
-        inputCaseQty.setText(caseQty);
-        inputLooseQty.setText(looseQty);
+        Utilities.setQtys(
+                inputCaseQty,
+                inputLooseQty,
+                caseQty,
+                looseQty);
     }
 
     /**
@@ -265,7 +267,9 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void setCurrentLocationView(String location) {
         TextView inputCurrentLocation = (TextView) findViewById(R.id.input_current_location);
-        inputCurrentLocation.setText(location);
+        Utilities.setCurrentLocationView(
+                inputCurrentLocation,
+                location);
     }
 
     /**
@@ -275,7 +279,9 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void setNewLocationView(String location) {
         EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
-        inputNewLocation.setText(location);
+        Utilities.setCurrentLocationView(
+                inputNewLocation,
+                location);
     }
 
     /**
@@ -297,13 +303,10 @@ public class TransactionMoveActivity extends AppCompatActivity {
         if (contents == null) {
             return;
         }
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        Context context = getApplicationContext();
         switch (mScanType) {
             case SCAN_ITEM:
-                RealmResults<Item> items = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, contents).findAll();
+                RealmResults<Item> items = DataUtilities.getItem(context, contents);
                 if (items.size() > 0) {
                     Item record = items.get(0);
                     mItemId = record.getId();
@@ -312,27 +315,31 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     String packSize = record.getPackSize();
                     String receivedDate = record.getReceivedDate();
                     setItemViews(sku, description, packSize, receivedDate);
+                }else{
+                    Utilities.showToast(context, "Item not found.", Toast.LENGTH_SHORT);
                 }
                 break;
             case SCAN_CURRENT_LOCATION:
-                RealmResults<Location> currentLocations = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, contents).findAll();
+                RealmResults<Location> currentLocations = DataUtilities.getLocation(context, contents);
                 if (currentLocations.size() > 0) {
                     Location record = currentLocations.get(0);
                     String location = record.getLocation();
                     setCurrentLocationView(location);
+                }else{
+                    Utilities.showToast(context, "Location not found.", Toast.LENGTH_SHORT);
                 }
                 break;
             case SCAN_NEW_LOCATION:
-                RealmResults<Location> newLocations = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, contents).findAll();
+                RealmResults<Location> newLocations = DataUtilities.getLocation(context, contents);
                 if (newLocations.size() > 0) {
                     Location record = newLocations.get(0);
                     String location = record.getLocation();
                     setNewLocationView(location);
+                }else{
+                    Utilities.showToast(context, "Location not found.", Toast.LENGTH_SHORT);
                 }
                 break;
         }
-        realm.commitTransaction();
-        realm.close();
     }
 
 

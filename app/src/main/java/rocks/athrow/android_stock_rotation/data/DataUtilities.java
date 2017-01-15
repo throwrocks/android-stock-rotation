@@ -72,8 +72,7 @@ public final class DataUtilities {
             String caseQtyString,
             String looseQtyString,
             String currentLocation,
-            String newLocation
-    ) {
+            String newLocation) {
         APIResponse apiResponse = new APIResponse();
         if (skuString.isEmpty() || skuString.equals("No item selected")) {
             apiResponse.setResponseCode(0);
@@ -151,13 +150,25 @@ public final class DataUtilities {
      * @param itemId itemId
      * @return
      */
-    public RealmResults<Item> getItem(Context context, String itemId) {
+    public static RealmResults<Item> getItem(Context context, String itemId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_ID, itemId).findAll();
+        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, itemId).findAll();
         realm.beginTransaction();
         realm.commitTransaction();
         return realmResults;
     }
+
+    public static RealmResults<Location> getLocation(Context context, String barcode) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, barcode).findAll();
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+
 }
