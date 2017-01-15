@@ -2,60 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/transaction_item"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/transaction_sku"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SKU"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/transaction_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ITEM DESCRIPTION" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/transaction_sku"
-            android:textStyle="bold"
-            android:layout_width="match_parent"
+            android:id="@+id/transaction_location1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="SKU" />
+            android:layout_weight="0.5"
+            android:text="LOC 1" />
 
         <TextView
-            android:id="@+id/transaction_description"
-            android:layout_width="match_parent"
+            android:id="@+id/transaction_case_qty"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="ITEM DESCRIPTION" />
+            android:layout_weight="0.5"
+            android:text="QTY 1" />
+
+        <TextView
+            android:id="@+id/transaction_loose_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="QTY 2" />
+
+        <TextView
+            android:id="@+id/transaction_location2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="LOC 2" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/transaction_location1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:text="LOC 1" />
-
-    <TextView
-        android:id="@+id/transaction_case_qty"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:text="QTY 1" />
-
-    <TextView
-        android:id="@+id/transaction_loose_qty"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:text="QTY 2" />
-
-    <TextView
-        android:id="@+id/transaction_location2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:text="LOC 2" />
-
-    <Button
-        android:id="@+id/transaction_open_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.50"
-        android:text=">" />
+    <View
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dividerColor" />
 </LinearLayout>

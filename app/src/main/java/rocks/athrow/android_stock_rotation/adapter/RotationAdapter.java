@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.activity.MainActivity;
@@ -34,28 +35,32 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
     private class ViewHolder extends RecyclerView.ViewHolder {
         final TextView viewSku;
         final TextView viewDescription;
+        final TextView viewPackSize;
+        final TextView viewReceivedDate;
         final TextView viewLocation1;
         final TextView viewLocation2;
         final TextView viewCaseQty;
         final TextView viewLooseQty;
-        final Button viewOpenButton;
+        final Button viewButtons;
 
         ViewHolder(View view) {
             super(view);
             viewSku = (TextView) view.findViewById(R.id.transaction_sku);
             viewDescription = (TextView) view.findViewById(R.id.transaction_description);
+            viewPackSize = (TextView) view.findViewById(R.id.transaction_pack_size);
+            viewReceivedDate = (TextView) view.findViewById(R.id.transaction_received_date);
             viewLocation1 = (TextView) view.findViewById(R.id.transaction_location1);
             viewLocation2 = (TextView) view.findViewById(R.id.transaction_location2);
             viewCaseQty = (TextView) view.findViewById(R.id.transaction_case_qty);
             viewLooseQty = (TextView) view.findViewById(R.id.transaction_loose_qty);
-            viewOpenButton = (Button) view.findViewById(R.id.transaction_open_button);
+            viewButtons = (Button) view.findViewById(R.id.transaction_view_button);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View transactionItem = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_transaction, parent, false);
+                .inflate(R.layout.item_transaction_card, parent, false);
         return new ViewHolder(transactionItem);
 
     }
@@ -68,12 +73,16 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final String itemId = transaction.getItemId();
         String sku = transaction.getSkuString();
         String description = transaction.getItemDescription();
+        String packSize = transaction.getPackSize();
+        String receivedDate = transaction.getReceivedDate();
         String locationStart = transaction.getLocationStart();
         String caseQty = transaction.getQtyCasesString();
         String looseQty = transaction.getQtyLooseString();
         String locationEnd = transaction.getLocationEnd();
         vh.viewSku.setText(sku);
         vh.viewDescription.setText(description);
+        vh.viewPackSize.setText(packSize);
+        vh.viewReceivedDate.setText(receivedDate);
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
         vh.viewLooseQty.setText(looseQty);
@@ -83,7 +92,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         } else {
             vh.viewLocation2.setVisibility(View.GONE);
         }
-        vh.viewOpenButton.setOnClickListener(new View.OnClickListener() {
+        vh.viewButtons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent;

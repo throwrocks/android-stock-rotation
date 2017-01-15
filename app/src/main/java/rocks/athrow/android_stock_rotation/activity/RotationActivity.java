@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.UUID;
 
@@ -86,7 +88,7 @@ public class RotationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rotation_add_item:
-                switch (mRotationType){
+                switch (mRotationType) {
                     case MainActivity.MODULE_MOVING:
                         String transactionId = UUID.randomUUID().toString();
                         Intent intent = new Intent(this, TransactionMoveActivity.class);
@@ -102,13 +104,18 @@ public class RotationActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        mRotationAdapter = new RotationAdapter(mRotationType, RotationActivity.this);
-        RealmTransactionsListAdapter realmTransactionsListAdapter =
-                new RealmTransactionsListAdapter(getApplicationContext(), mRealmResults);
-        mRotationAdapter.setRealmAdapter(realmTransactionsListAdapter);
-        RecyclerView transactionsList = (RecyclerView) findViewById(R.id.rotation_list);
-        transactionsList.setLayoutManager(new LinearLayoutManager(this));
-        transactionsList.setAdapter(mRotationAdapter);
+        TextView emptyText = (TextView) findViewById(R.id.empty_view);
+        if (mRealmResults == null || mRealmResults.size() == 0) {
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
+            mRotationAdapter = new RotationAdapter(mRotationType, RotationActivity.this);
+            RealmTransactionsListAdapter realmTransactionsListAdapter =
+                    new RealmTransactionsListAdapter(getApplicationContext(), mRealmResults);
+            mRotationAdapter.setRealmAdapter(realmTransactionsListAdapter);
+            RecyclerView transactionsList = (RecyclerView) findViewById(R.id.rotation_list);
+            transactionsList.setLayoutManager(new LinearLayoutManager(this));
+            transactionsList.setAdapter(mRotationAdapter);
+        }
     }
-
 }
