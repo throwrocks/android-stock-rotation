@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +16,8 @@ import rocks.athrow.android_stock_rotation.api.FetchTask;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
+import rocks.athrow.android_stock_rotation.data.Transfer;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 
 /**
  * UpdateDBService
@@ -25,11 +28,11 @@ public class UpdateDBService extends IntentService {
     private static final String SERVICE_NAME = "UpdateDBService";
     public static final String UPDATE_ITEMS_DB_SERVICE_BROADCAST = "UpdateItemsBroadcast";
     public static final String UPDATE_LOCATIONS_DB_SERVICE_BROADCAST = "UpdateLocationsBroadcast";
-    public static final String UPDATE_TRANSACTIONS_DB_SERVICE_BROADCAST = "UpdateTransactionsBroadcast";
+    public static final String UPDATE_TRANSFERS_DB_SERVICE_BROADCAST = "UpdateTransfersBroadcast";
     public static final String REQUEST_ID = "requestId";
     public static final String TYPE = "type";
     public static final String DATA = "JSON";
-
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     public UpdateDBService() {
         super(SERVICE_NAME);
     }
@@ -77,6 +80,7 @@ public class UpdateDBService extends IntentService {
                         e.printStackTrace();
                     }
                 }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(UPDATE_ITEMS_DB_SERVICE_BROADCAST));
                 break;
             case FetchTask.LOCATIONS:
                 int countLocations = jsonArray.length();
@@ -96,12 +100,40 @@ public class UpdateDBService extends IntentService {
                         e.printStackTrace();
                     }
                 }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(UPDATE_LOCATIONS_DB_SERVICE_BROADCAST));
                 break;
-            case FetchTask.TRANSACTIONS:
+            case FetchTask.TRANSFERS:
+                int countTransfers = jsonArray.length();
+                for (int i = 0; i < countTransfers; i++) {
+                    realm.beginTransaction();
+                    try {
+                        Transfer transfer = new Transfer();
+                        JSONObject record = jsonArray.getJSONObject(i);
+                        transfer.setId(record.getString(Transfer.FIELD_ID));
+                        transfer.setSerialNumber(record.getInt(Transfer.FIELD_SERIAL_NUMBER));
+                        transfer.setTransactionId(record.getString(Transfer.FIELD_TRANSACTION_ID));
+                        transfer.setTransactionType(record.getString(Transfer.FIELD_TRANSACTION_TYPE));
+                        transfer.setDate(Utilities.getStringAsDate(record.getString(Transfer.FIELD_DATE),DATE_TIME_DISPLAY ,null));
+                        transfer.setItemId(record.getString(Transfer.FIELD_ITEM_ID));
+                        transfer.setSku(record.getInt(Transfer.FIELD_SKU));
+                        transfer.setItemDescription(record.getString(Transfer.FIELD_ITEM_DESCRIPTION));
+                        transfer.setReceivedDate(record.getString(Transfer.FIELD_RECEIVED_DATE));
+                        transfer.setLocation(record.getString(Transfer.FIELD_LOCATION));
+                        transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
+                        transfer.setLooseQty(record.getInt(Transfer.FIELD_LOOSE_QTY));
+                        realm.copyToRealmOrUpdate(transfer);
+                        realm.commitTransaction();
+                    } catch (JSONException e) {
+                        realm.cancelTransaction();
+                        e.printStackTrace();
+                    }
+                }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(UPDATE_TRANSFERS_DB_SERVICE_BROADCAST));
                 break;
             default:
                 realm.close();
         }
+
     }
 
     private static JSONArray getJSONArray(String JSON) {

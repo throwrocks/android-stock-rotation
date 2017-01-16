@@ -54,6 +54,7 @@ public class Location extends RealmObject {
     }
 
     public int getCasesQty() {
+
         return casesQty;
     }
 

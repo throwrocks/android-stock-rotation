@@ -142,6 +142,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/module_locations"
             style="@style/mainButton"
@@ -163,6 +164,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/module_transfers"
             style="@style/mainButton"
@@ -194,6 +196,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/module_sync"
             style="@style/mainButton"
@@ -201,7 +204,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <ProgressBar
+                android:id="@+id/sync_progress"
+                style="@android:style/Widget.ProgressBar.Large"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="gone" />
+
             <ImageView
+                android:id="@+id/sync_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/sync" />

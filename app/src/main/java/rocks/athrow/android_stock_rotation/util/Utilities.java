@@ -8,6 +8,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -43,6 +49,28 @@ public final class Utilities {
     }
 
 
+    /**
+     * getStringAsDate
+     *
+     * @param dateString a string in date format
+     * @param format     the resulting date format
+     * @return a new date in the specified format
+     */
+    public static Date getStringAsDate(String dateString, String format, String timezone) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        if (timezone == null) {
+            formatter.setTimeZone(TimeZone.getDefault());
+        } else {
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+        Date date = new Date();
+        try {
+            date = formatter.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
     /**
      * setViewMode
      * A method to set the layout on view mode

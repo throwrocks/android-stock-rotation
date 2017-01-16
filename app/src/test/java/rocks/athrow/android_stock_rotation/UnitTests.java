@@ -25,6 +25,7 @@ public class UnitTests extends Robolectric {
     private Context mContext;
     private APIResponse mItems = null;
     private APIResponse mLocations = null;
+    private APIResponse mTransfers = null;
 
     private APIResponse getItems(int lastSerialNumber) {
         return API.getItems(lastSerialNumber);
@@ -32,7 +33,9 @@ public class UnitTests extends Robolectric {
     private APIResponse getLocations(int lastSerialNumber) {
         return API.getLocations(lastSerialNumber);
     }
-
+    private APIResponse getTransfers(int lastSerialNumber) {
+        return API.getTransfers(lastSerialNumber);
+    }
     @Before
     public void setUp() throws Exception {
         if (mContext == null) {
@@ -43,6 +46,9 @@ public class UnitTests extends Robolectric {
         }
         if (mLocations == null) {
             mLocations = getLocations(0);
+        }
+        if (mTransfers == null) {
+            mTransfers = getTransfers(0);
         }
     }
 
@@ -55,6 +61,11 @@ public class UnitTests extends Robolectric {
     @Test
     public void getLocations() throws Exception {
         int responseCode = mLocations.getResponseCode();
+        assertTrue(responseCode == 200);
+    }
+    @Test
+    public void getTransfers() throws Exception {
+        int responseCode = mTransfers.getResponseCode();
         assertTrue(responseCode == 200);
     }
 

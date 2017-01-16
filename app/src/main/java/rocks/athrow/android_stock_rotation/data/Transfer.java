@@ -6,13 +6,26 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
+ * Transfer
  * Created by joselopez on 1/12/17.
  */
 
 public class Transfer extends RealmObject {
+    public final static String FIELD_ID = "id";
+    public final static String FIELD_SERIAL_NUMBER = "serialNumber";
+    public final static String FIELD_TRANSACTION_ID = "transactionId";
+    public final static String FIELD_TRANSACTION_TYPE = "transactionType";
     public final static String FIELD_DATE = "date";
+    public final static String FIELD_ITEM_ID = "itemId";
+    public final static String FIELD_SKU = "sku";
+    public final static String FIELD_ITEM_DESCRIPTION = "itemDescription";
+    public final static String FIELD_RECEIVED_DATE = "receivedDate";
+    public final static String FIELD_LOCATION = "location";
+    public final static String FIELD_CASE_QTY = "caseQty";
+    public final static String FIELD_LOOSE_QTY = "looseQty";
     @PrimaryKey
     private String id;
+    private int serialNumber;
     private String transactionId;
     private String transactionType;
     private Date date;
@@ -30,6 +43,18 @@ public class Transfer extends RealmObject {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
     public String getTransactionId() {
         return transactionId;
     }
@@ -44,10 +69,6 @@ public class Transfer extends RealmObject {
 
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Date getDate() {

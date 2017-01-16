@@ -12,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import rocks.athrow.android_stock_rotation.data.DataUtilities;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
+import rocks.athrow.android_stock_rotation.data.Transfer;
 import rocks.athrow.android_stock_rotation.interfaces.OnTaskComplete;
 import rocks.athrow.android_stock_rotation.service.UpdateDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
     public static final String MODULE_PICKING = "Pick";
     public static final String MODULE_SALVAGE = "Salvage";
     private final OnTaskComplete onTaskCompleted = this;
+    private boolean mIsSyncing = false;
+    private ProgressBar mSyncProgressBar;
+    private ImageView mSyncIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +63,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
-        TextView countReceveingView = (TextView) findViewById(R.id.count_receiving);
-        TextView countMovingView = (TextView) findViewById(R.id.count_moving);
-        TextView countPickingView = (TextView) findViewById(R.id.count_picking);
-        TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
-        TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
+        mSyncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
+        mSyncIcon = (ImageView) findViewById(R.id.sync_icon);
         LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
@@ -69,16 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
-        int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
-        int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
-        int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
-        int countSalvage = DataUtilities.getCountPendingTransactions(context, MODULE_SALVAGE);
-        int countTransfers = DataUtilities.getCountPendingTransfers(context);
-        countReceveingView.setText(String.valueOf(countReceiving));
-        countMovingView.setText(String.valueOf(countMoving));
-        countPickingView.setText(String.valueOf(countPicking));
-        countSalvageView.setText(String.valueOf(countSalvage));
-        countTransfersView.setText(String.valueOf(countTransfers));
+
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +117,27 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                 sync();
             }
         });
+        setUpCounts();
+        updateSyncDate();
+    }
+
+    private void setUpCounts(){
+        Context context = getApplicationContext();
+        TextView countReceivingView = (TextView) findViewById(R.id.count_receiving);
+        TextView countMovingView = (TextView) findViewById(R.id.count_moving);
+        TextView countPickingView = (TextView) findViewById(R.id.count_picking);
+        TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
+        TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
+        int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
+        int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
+        int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
+        int countSalvage = DataUtilities.getCountPendingTransactions(context, MODULE_SALVAGE);
+        int countTransfers = DataUtilities.getCountPendingTransfers(context);
+        countReceivingView.setText(String.valueOf(countReceiving));
+        countMovingView.setText(String.valueOf(countMoving));
+        countPickingView.setText(String.valueOf(countPicking));
+        countSalvageView.setText(String.valueOf(countSalvage));
+        countTransfersView.setText(String.valueOf(countTransfers));
     }
 
     @Override
@@ -131,12 +146,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.main_search:
-                        Intent intent = new Intent(this, SearchActivity.class);
-                        startActivity(intent);
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -154,7 +170,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         startActivity(intent);
     }
 
-    private void sync(){
+    private void sync() {
+        if ( mIsSyncing ){
+            Utilities.showToast(getApplicationContext(),"Sync in progress.",Toast.LENGTH_SHORT);
+            return;
+        }
+        mIsSyncing = true;
+        mSyncProgressBar.setVisibility(View.VISIBLE);
+        mSyncIcon.setVisibility(View.GONE);
         Context context = getApplicationContext();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -162,23 +185,45 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         realm.beginTransaction();
         Number itemLastSerialNumber = realm.where(Item.class).findAll().max(Item.FIELD_SERIAL_NUMBER);
         String itemSerialNumber = null;
-        if ( itemLastSerialNumber != null ){
+        if (itemLastSerialNumber != null) {
             itemSerialNumber = itemLastSerialNumber.toString();
         }
         Number locationLastSerialNumber = realm.where(Location.class).findAll().max(Location.FIELD_SERIAL_NUMBER);
         String locationSerialNumber = null;
-        if ( locationLastSerialNumber != null ){
+        if (locationLastSerialNumber != null) {
             locationSerialNumber = locationLastSerialNumber.toString();
+        }
+        Number transfersLastSerialNumber = realm.where(Transfer.class).findAll().max(Transfer.FIELD_SERIAL_NUMBER);
+        String transfersSerialNumber = null;
+        if (transfersLastSerialNumber != null) {
+            transfersSerialNumber = transfersLastSerialNumber.toString();
         }
         realm.commitTransaction();
         realm.close();
         FetchTask fetchItems = new FetchTask(onTaskCompleted);
         FetchTask fetchLocations = new FetchTask(onTaskCompleted);
-        //FetchTask fetchTransactions = new FetchTask(onTaskCompleted);
+        FetchTask fetchTransfers = new FetchTask(onTaskCompleted);
         fetchItems.execute(FetchTask.ITEMS, itemSerialNumber);
         fetchLocations.execute(FetchTask.LOCATIONS, locationSerialNumber);
-        //fetchTransactions.execute(FetchTask.TRANSACTIONS);
+        fetchTransfers.execute(FetchTask.TRANSFERS, transfersSerialNumber);
 
+    }
+
+    private void updateSyncDate(){
+        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+        String date = preferencesHelper.loadString("last_sync", "Never");
+        TextView syncDate = (TextView) findViewById(R.id.text_sync);
+        syncDate.setText(date);
+    }
+
+    private void finishSync(){
+        mIsSyncing = false;
+        mSyncProgressBar.setVisibility(View.GONE);
+        mSyncIcon.setVisibility(View.VISIBLE);
+        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+        preferencesHelper.save("last_sync", new Date().toString());
+        updateSyncDate();
+        setUpCounts();
     }
 
     /**
@@ -207,10 +252,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                     request.setRequestURL(requestURI);
                     request.setAPIResponseCode(responseCode);
                     request.setAPIResponseText(responseText);
-
                     realm.commitTransaction();
                     realm.close();
-
                     String serviceBroadcast = null;
                     switch (responseMeta) {
                         case FetchTask.ITEMS:
@@ -219,8 +262,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         case FetchTask.LOCATIONS:
                             serviceBroadcast = UpdateDBService.UPDATE_LOCATIONS_DB_SERVICE_BROADCAST;
                             break;
-                        case FetchTask.TRANSACTIONS:
-                            serviceBroadcast = UpdateDBService.UPDATE_TRANSACTIONS_DB_SERVICE_BROADCAST;
+                        case FetchTask.TRANSFERS:
+                            serviceBroadcast = UpdateDBService.UPDATE_TRANSFERS_DB_SERVICE_BROADCAST;
                             break;
                     }
                     if (serviceBroadcast != null) {
@@ -230,9 +273,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
                         this.startService(updateDBIntent);
                         break;
                     }
-                default:
-                    Utilities.showToast(getApplicationContext(), "Nothing found.", Toast.LENGTH_SHORT);
-                    break;
+                    default:
+                        finishSync();
             }
         }
     }
@@ -253,8 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-            preferencesHelper.save("last_sync", new Date().toString() );
+            finishSync();
         }
     }
 }

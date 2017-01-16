@@ -20,6 +20,7 @@ public final class API {
     private static final String API_KEY = BuildConfig.API_KEY;
     private static final String API_GET_ITEMS = API_HOST + "/script/api_get_items/items.json?RFMkey=" + API_KEY;
     private static final String API_GET_LOCATIONS = API_HOST + "/script/api_get_locations/locations.json?RFMkey=" + API_KEY;
+    private static final String API_GET_TRANSFERS = API_HOST + "/script/api_get_transfers/transfers.json?RFMkey=" + API_KEY;
 
     private API() {
         throw new AssertionError("No API instances for you!");
@@ -43,6 +44,15 @@ public final class API {
      */
     public static APIResponse getLocations(int lastSerialNumber) {
         return httpConnect(API_GET_LOCATIONS + "&RFMscriptParam=" + lastSerialNumber);
+    }
+    /**
+     * getTransfers
+     * @param lastSerialNumber the last serial number in the database. Used so the query only
+     *                         returns new items.
+     * @return an APIResponse object with the results
+     */
+    public static APIResponse getTransfers(int lastSerialNumber) {
+        return httpConnect(API_GET_TRANSFERS + "&RFMscriptParam=" + lastSerialNumber);
     }
 
     /**

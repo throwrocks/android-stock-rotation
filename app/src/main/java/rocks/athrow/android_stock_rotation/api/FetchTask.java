@@ -13,6 +13,7 @@ public class FetchTask extends AsyncTask<String, Void, APIResponse> {
     public static final String ITEMS = "items";
     public static final String LOCATIONS = "locations";
     public static final String TRANSACTIONS = "transactions";
+    public static final String TRANSFERS = "transfers";
     private OnTaskComplete mListener = null;
 
     public FetchTask(OnTaskComplete listener) {
@@ -37,7 +38,10 @@ public class FetchTask extends AsyncTask<String, Void, APIResponse> {
                 apiResponse = API.getLocations(serialNumber);
                 apiResponse.setMeta(LOCATIONS);
                 break;
-            // TODO: Add Transactions API call
+            case TRANSFERS:
+                apiResponse = API.getTransfers(serialNumber);
+                apiResponse.setMeta(TRANSFERS);
+                break;
         }
         return apiResponse;
     }
