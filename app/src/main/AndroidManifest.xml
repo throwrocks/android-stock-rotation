@@ -39,6 +39,10 @@
             android:name=".activity.LocationsActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
+            android:label="Location Details"
+            android:name=".activity.LocationDetailActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
             android:theme="@style/AppTheme"
             android:name=".activity.TransactionMoveActivity"
             android:parentActivityName=".activity.RotationActivity" />

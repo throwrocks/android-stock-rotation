@@ -15,6 +15,7 @@ public class Transfer extends RealmObject {
     public final static String FIELD_SERIAL_NUMBER = "serialNumber";
     public final static String FIELD_TRANSACTION_ID = "transactionId";
     public final static String FIELD_TRANSACTION_TYPE = "transactionType";
+    public final static String FIELD_TYPE = "type";
     public final static String FIELD_DATE = "date";
     public final static String FIELD_ITEM_ID = "itemId";
     public final static String FIELD_SKU = "sku";
@@ -150,4 +151,5 @@ public class Transfer extends RealmObject {
     public void setLooseQty(int looseQty) {
         this.looseQty = looseQty;
     }
+
 }

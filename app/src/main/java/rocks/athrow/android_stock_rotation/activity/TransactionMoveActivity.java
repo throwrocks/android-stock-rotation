@@ -260,7 +260,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getItemDescription(),
                     transaction.getPackSize(),
                     transaction.getReceivedDate(),
-                    transaction.getLocationEnd(),
+                    transaction.getLocationStart(),
                     transaction.getQtyCases(),
                     transaction.getQtyLoose()
             );
@@ -274,7 +274,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getItemDescription(),
                     transaction.getPackSize(),
                     transaction.getReceivedDate(),
-                    transaction.getLocationStart(),
+                    transaction.getLocationEnd(),
                     transaction.getQtyCases(),
                     transaction.getQtyLoose()
             );

@@ -1,13 +1,19 @@
 package rocks.athrow.android_stock_rotation.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import rocks.athrow.android_stock_rotation.R;
+import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
+import rocks.athrow.android_stock_rotation.data.DataUtilities;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 
@@ -24,12 +30,15 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
+        CardView viewCard;
         TextView viewLocationName;
-
+        TextView viewLocationQty;
 
         ViewHolder(View view) {
             super(view);
+            viewCard = (CardView) view.findViewById(R.id.location_card);
             viewLocationName = (TextView) view.findViewById(R.id.location_name);
+            viewLocationQty = (TextView) view.findViewById(R.id.location_count);
         }
     }
 
@@ -45,8 +54,18 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         LocationsAdapter.ViewHolder vh = (LocationsAdapter.ViewHolder) viewHolder;
         Location location = getItem(position);
-        String locationName = location.getLocation();
+        final String locationName = location.getLocation();
+        String caseQty = DataUtilities.getCountCasesByLocation(mContext, locationName).toString();
         vh.viewLocationName.setText(locationName);
+        vh.viewLocationQty.setText(caseQty);
+        vh.viewCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, LocationDetailActivity.class);
+                intent.putExtra("location", locationName);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

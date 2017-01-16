@@ -2,6 +2,7 @@ package rocks.athrow.android_stock_rotation.data;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.internal.Context;
 
 /**
  * Location
@@ -51,22 +52,5 @@ public class Location extends RealmObject {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public int getCasesQty() {
-
-        return casesQty;
-    }
-
-    public void setCasesQty(int casesQty) {
-        this.casesQty = casesQty;
-    }
-
-    public int getLooseQty() {
-        return looseQty;
-    }
-
-    public void setLooseQty(int looseQty) {
-        this.looseQty = looseQty;
     }
 }

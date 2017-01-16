@@ -110,6 +110,7 @@ public class UpdateDBService extends IntentService {
                         Transfer transfer = new Transfer();
                         JSONObject record = jsonArray.getJSONObject(i);
                         transfer.setId(record.getString(Transfer.FIELD_ID));
+                        transfer.setType(record.getString(Transfer.FIELD_TYPE));
                         transfer.setSerialNumber(record.getInt(Transfer.FIELD_SERIAL_NUMBER));
                         transfer.setTransactionId(record.getString(Transfer.FIELD_TRANSACTION_ID));
                         transfer.setTransactionType(record.getString(Transfer.FIELD_TRANSACTION_TYPE));

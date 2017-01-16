@@ -443,4 +443,23 @@ public final class DataUtilities {
         return realmResults;
     }
 
+    public static Number getCountCasesByLocation(Context context, String location) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transfer> inResults =
+                realm.where(Transfer.class).
+                        equalTo(Transfer.FIELD_LOCATION, location).
+                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
+        RealmResults<Transfer> outResults =
+                realm.where(Transfer.class).
+                        equalTo(Transfer.FIELD_LOCATION, location).
+                        equalTo(Transfer.FIELD_TYPE, "out").findAll();
+        Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
+        Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
+        realm.commitTransaction();
+        return  inTransfers.longValue() - outTransfers.longValue();
+    }
+
 }
