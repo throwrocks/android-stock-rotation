@@ -39,7 +39,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         TextView viewType2;
         TextView viewLocation;
         TextView viewCaseQty;
-        TextView viewLooseQty;
+        //TextView viewLooseQty;
 
         ViewHolder(View view) {
             super(view);
@@ -52,7 +52,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
             viewType2 = (TextView) view.findViewById(R.id.transfer_type2);
             viewLocation = (TextView) view.findViewById(R.id.transfer_location);
             viewCaseQty = (TextView) view.findViewById(R.id.transfer_case_qty);
-            viewLooseQty = (TextView) view.findViewById(R.id.transfer_loose_qty);
+            //viewLooseQty = (TextView) view.findViewById(R.id.transfer_loose_qty);
         }
     }
 
@@ -77,11 +77,11 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String type2 = transfer.getType();
         String location = transfer.getLocation();
         int caseQty = transfer.getCaseQty();
-        int looseQty = transfer.getLooseQty();
+        //int looseQty = transfer.getLooseQty();
         String dateString = date.toString();
         String skuString = String.valueOf(sku);
         String caseQtyString = String.valueOf(caseQty);
-        String looseQtyString = String.valueOf(looseQty);
+        //String looseQtyString = String.valueOf(looseQty);
         vh.viewDate.setText(dateString);
         vh.viewSku.setText(skuString);
         vh.viewItemDescription.setText(itemDescription);
@@ -91,7 +91,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         vh.viewType2.setText(type2);
         vh.viewLocation.setText(location);
         vh.viewCaseQty.setText(caseQtyString);
-        vh.viewLooseQty.setText(looseQtyString);
+        //vh.viewLooseQty.setText(looseQtyString);
     }
 
     @Override

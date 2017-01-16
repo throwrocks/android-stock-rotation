@@ -9,9 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="8dp"
         android:paddingEnd="8dp"
-        android:paddingStart="8dp">
+        android:paddingStart="8dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/transaction_sku"
@@ -110,7 +110,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-
+                <!--
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,13 +130,14 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+                 -->
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="end"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -185,13 +186,13 @@
 
 
         <Button
-            android:layout_marginTop="8dp"
-            android:gravity="center_horizontal"
             android:id="@+id/transaction_view_button"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
             android:text="View" />
 
     </LinearLayout>

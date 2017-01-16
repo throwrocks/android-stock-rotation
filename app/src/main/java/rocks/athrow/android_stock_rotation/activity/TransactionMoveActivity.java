@@ -58,7 +58,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     private LinearLayout mButtonScanNewLocation;
     private EditText mCurrentLocationView;
     private EditText mCaseQtyView;
-    private EditText mLooseQtyView;
+    //private EditText mLooseQtyView;
     private EditText mNewLocationView;
     private LinearLayout mButtonCommit;
 
@@ -78,7 +78,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
         mButtonScanNewLocation = (LinearLayout) findViewById(R.id.scan_new_location);
         mCurrentLocationView = (EditText) findViewById(R.id.input_current_location);
         mCaseQtyView = (EditText) findViewById(R.id.input_case_qty);
-        mLooseQtyView = (EditText) findViewById(R.id.input_loose_qty);
+        //mLooseQtyView = (EditText) findViewById(R.id.input_loose_qty);
         mNewLocationView = (EditText) findViewById(R.id.input_new_location);
         mButtonCommit = (LinearLayout) findViewById(R.id.button_move);
         ActionBar ab = getSupportActionBar();
@@ -107,7 +107,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     private void setEditMode() {
         setViewData();
         Utilities.setEditMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
-                mButtonCommit, mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView);
+                mButtonCommit, mCurrentLocationView, mCaseQtyView, /*mLooseQtyView,*/ mNewLocationView);
         mButtonScanItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,7 +139,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     private void setViewMode() {
         setViewData();
         Utilities.setViewMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
-                mButtonCommit, mCurrentLocationView, mCaseQtyView, mLooseQtyView, mNewLocationView);
+                mButtonCommit, mCurrentLocationView, mCaseQtyView, /*mLooseQtyView,*/ mNewLocationView);
         mButtonCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,14 +193,14 @@ public class TransactionMoveActivity extends AppCompatActivity {
         TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
         EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
         EditText inputCaseQty = (EditText) findViewById(R.id.input_case_qty);
-        EditText inputLooseQty = (EditText) findViewById(R.id.input_loose_qty);
+        //EditText inputLooseQty = (EditText) findViewById(R.id.input_loose_qty);
         // Get input
         String skuString = inputSku.getText().toString();
         String itemDescription = inputItemDescription.getText().toString();
         String packSize = inputPackSize.getText().toString();
         String receivedDate = inputReceivedDate.getText().toString();
         String caseQtyString = inputCaseQty.getText().toString();
-        String looseQtyString = inputLooseQty.getText().toString();
+        //String looseQtyString = inputLooseQty.getText().toString();
         String currentLocation = inputLocationCurrent.getText().toString();
         String newLocation = inputNewLocation.getText().toString();
         APIResponse apiResponse = DataUtilities.saveTransaction(
@@ -213,7 +213,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 packSize,
                 receivedDate,
                 caseQtyString,
-                looseQtyString,
+                //looseQtyString,
                 currentLocation,
                 newLocation);
         if (apiResponse.getResponseCode() == 200) {
@@ -261,8 +261,8 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getPackSize(),
                     transaction.getReceivedDate(),
                     transaction.getLocationStart(),
-                    transaction.getQtyCases(),
-                    transaction.getQtyLoose()
+                    transaction.getQtyCases()
+                    //transaction.getQtyLoose()
             );
             DataUtilities.saveTransfer(
                     context,
@@ -275,8 +275,8 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getPackSize(),
                     transaction.getReceivedDate(),
                     transaction.getLocationEnd(),
-                    transaction.getQtyCases(),
-                    transaction.getQtyLoose()
+                    transaction.getQtyCases()
+                    //transaction.getQtyLoose()
             );
             DataUtilities.commitTransaction(context, mTransactionId);
         }
@@ -323,8 +323,8 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void setQtyViews(String caseQty, String looseQty) {
         TextView inputCaseQty = (TextView) findViewById(R.id.input_case_qty);
-        TextView inputLooseQty = (TextView) findViewById(R.id.input_loose_qty);
-        Utilities.setQtys(inputCaseQty, inputLooseQty, caseQty, looseQty);
+        //TextView inputLooseQty = (TextView) findViewById(R.id.input_loose_qty);
+        Utilities.setQtys(inputCaseQty, /*inputLooseQty*/ caseQty /*looseQty*/);
     }
 
     /**
@@ -376,7 +376,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
         int toastLenght = Toast.LENGTH_SHORT;
         switch (mScanType) {
             case SCAN_ITEM:
-                RealmResults<Item> items = DataUtilities.getItem(context, contents);
+                RealmResults<Item> items = DataUtilities.getItemByTagNumber(context, contents);
                 if (items.size() > 0) {
                     Item record = items.get(0);
                     mItemId = record.getId();

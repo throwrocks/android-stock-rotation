@@ -45,7 +45,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final TextView viewLocation1;
         final TextView viewLocation2;
         final TextView viewCaseQty;
-        final TextView viewLooseQty;
+        //final TextView viewLooseQty;
         final Button viewButtons;
 
         ViewHolder(View view) {
@@ -57,7 +57,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             viewLocation1 = (TextView) view.findViewById(R.id.transaction_location1);
             viewLocation2 = (TextView) view.findViewById(R.id.transaction_location2);
             viewCaseQty = (TextView) view.findViewById(R.id.transaction_case_qty);
-            viewLooseQty = (TextView) view.findViewById(R.id.transaction_loose_qty);
+            //viewLooseQty = (TextView) view.findViewById(R.id.transaction_loose_qty);
             viewButtons = (Button) view.findViewById(R.id.transaction_view_button);
         }
     }
@@ -81,7 +81,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         String receivedDate = transaction.getReceivedDate();
         String locationStart = transaction.getLocationStart();
         String caseQty = transaction.getQtyCasesString();
-        String looseQty = transaction.getQtyLooseString();
+        //String looseQty = transaction.getQtyLooseString();
         String locationEnd = transaction.getLocationEnd();
         vh.viewSku.setText(sku);
         vh.viewDescription.setText(description);
@@ -89,7 +89,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewReceivedDate.setText(receivedDate);
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
-        vh.viewLooseQty.setText(looseQty);
+        //vh.viewLooseQty.setText(looseQty);
         if (mRotationType.equals(MainActivity.MODULE_MOVING)) {
             vh.viewLocation2.setVisibility(View.VISIBLE);
             if (locationEnd.isEmpty()) {

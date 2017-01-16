@@ -2,6 +2,7 @@ package rocks.athrow.android_stock_rotation.data;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -130,7 +131,7 @@ public final class DataUtilities {
             String packSize,
             String receivedDate,
             String caseQtyString,
-            String looseQtyString,
+            //String looseQtyString,
             String currentLocation,
             String newLocation) {
         APIResponse apiResponse = new APIResponse();
@@ -174,10 +175,10 @@ public final class DataUtilities {
             transaction.setQtyCases(caseQty);
         }
         int looseQty;
-        if (looseQtyString != null && !looseQtyString.isEmpty()) {
+        /*if (looseQtyString != null && !looseQtyString.isEmpty()) {
             looseQty = Integer.parseInt(looseQtyString);
             transaction.setQtyLoose(looseQty);
-        }
+        }*/
         // currentLocation / newLocation: Set the locations
         transaction.setLocationStart(currentLocation);
         transaction.setLocationEnd(newLocation);
@@ -213,8 +214,8 @@ public final class DataUtilities {
             String packSize,
             String receivedDate,
             String location,
-            int caseQty,
-            int looseQty
+            int caseQty
+            //int looseQty
     ) {
         APIResponse apiResponse = new APIResponse();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -234,7 +235,7 @@ public final class DataUtilities {
         transfer.setReceivedDate(receivedDate);
         transfer.setLocation(location);
         transfer.setCaseQty(caseQty);
-        transfer.setLooseQty(looseQty);
+        //transfer.setLooseQty(looseQty);
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
@@ -283,19 +284,30 @@ public final class DataUtilities {
         return realmResults;
     }
 
+
     /**
      * getItem
      * A method to get an Item record by id
      *
      * @param context a Context object
-     * @param itemId  the item's id
+     * @param tagNumber  the item's tag number
      * @return an Item object
      */
-    public static RealmResults<Item> getItem(Context context, String itemId) {
+    public static RealmResults<Item> getItemByTagNumber(Context context, String tagNumber) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, itemId).findAll();
+        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll();
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+    public static RealmResults<Item> getItemById(Context context, String itemid) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_ID, itemid).findAll();
         realm.beginTransaction();
         realm.commitTransaction();
         return realmResults;
@@ -459,7 +471,35 @@ public final class DataUtilities {
         Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
         Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
         realm.commitTransaction();
-        return  inTransfers.longValue() - outTransfers.longValue();
+        return inTransfers.longValue() - outTransfers.longValue();
+    }
+
+    public static ArrayList<Item> getLocationItems(Context context, String location) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transfer> realmResults =
+                realm.where(Transfer.class).
+                        equalTo(Transfer.FIELD_LOCATION, location).
+                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
+        realmResults.distinct(Transfer.FIELD_ITEM_ID);
+        realm.commitTransaction();
+        ArrayList<Item> items = new ArrayList<>();
+        int size = realmResults.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                Transfer transfer = realmResults.get(i);
+                if ( transfer != null ){
+                    RealmResults<Item> realmQuery = getItemById(context, realmResults.get(i).getItemId());
+                    if ( realmQuery.size() > 0 ){
+                        Item item = realmQuery.get(0);
+                        items.add(item);
+                    }
+                }
+            }
+        }
+        return items;
     }
 
 }

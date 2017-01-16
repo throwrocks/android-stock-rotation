@@ -83,7 +83,7 @@ public final class Utilities {
             LinearLayout commitButton,
             EditText currentLocation,
             EditText caseQty,
-            EditText looseQty,
+            //EditText looseQty,
             EditText newLocation) {
         if (scanItem != null) {
             scanItem.setVisibility(GONE);
@@ -105,9 +105,9 @@ public final class Utilities {
         if (currentLocation != null) {
             currentLocation.setEnabled(false);
         }
-        if (looseQty != null) {
+        /*if (looseQty != null) {
             looseQty.setEnabled(false);
-        }
+        }*/
         if (newLocation != null) {
             newLocation.setEnabled(false);
         }
@@ -131,7 +131,7 @@ public final class Utilities {
             LinearLayout commitButton,
             EditText currentLocation,
             EditText caseQty,
-            EditText looseQty,
+            //EditText looseQty,
             EditText newLocation) {
         if (scanItem != null) {
             scanItem.setVisibility(VISIBLE);
@@ -148,12 +148,12 @@ public final class Utilities {
         if (caseQty != null) {
             caseQty.setEnabled(true);
         }
-        if (currentLocation != null) {
+        /*if (currentLocation != null) {
             looseQty.setEnabled(true);
         }
         if (looseQty != null) {
             looseQty.setEnabled(true);
-        }
+        }*/
         if (newLocation != null) {
             newLocation.setEnabled(true);
         }
@@ -192,11 +192,11 @@ public final class Utilities {
      */
     public static void setQtys(
             TextView inputCaseQty,
-            TextView inputLooseQty,
-            String caseQty,
-            String looseQty) {
+            //TextView inputLooseQty,
+            String caseQty
+            /*String looseQty*/) {
         inputCaseQty.setText(caseQty);
-        inputLooseQty.setText(looseQty);
+        //inputLooseQty.setText(looseQty);
     }
 
     /**

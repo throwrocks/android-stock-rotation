@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.data;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -31,6 +32,7 @@ public class Transfer extends RealmObject {
     private String transactionType;
     private Date date;
     private String type; // In or out
+    @Index
     private String itemId;
     private int sku;
     private String itemDescription;

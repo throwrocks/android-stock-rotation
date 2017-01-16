@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
             android:text="Case Qty" />
-
+        <!--
         <TextView
             android:id="@+id/label_loose_qty"
             style="@style/LabelStyle"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
             android:text="Loose Qty" />
-
+        -->
         <TextView
             android:id="@+id/label_new_location"
             style="@style/LabelStyle"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
             android:inputType="number" />
-
+        <!--
         <EditText
             android:id="@+id/input_loose_qty"
             style="@style/PrimaryTextStyle"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
             android:inputType="number" />
-
+          -->
         <EditText
             android:id="@+id/input_new_location"
             style="@style/PrimaryTextStyle"
