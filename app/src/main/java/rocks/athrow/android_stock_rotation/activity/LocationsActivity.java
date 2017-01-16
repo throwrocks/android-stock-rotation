@@ -16,7 +16,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import io.realm.RealmResults;
@@ -39,10 +42,12 @@ public class LocationsActivity extends AppCompatActivity {
     private final static String COOLER = "Cooler";
     private final static String PAPER = "Paper";
     private final static String DRY = "Dry";
+    private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
     private LocationsAdapter mAdapter;
     private RealmResults<Location> mRealmResults;
     private EditText mSearchField;
+    private Spinner mSearchFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,12 +57,28 @@ public class LocationsActivity extends AppCompatActivity {
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);
         mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
         mSearchField = (EditText) findViewById(R.id.locations_search);
+        mSearchFilter = (Spinner) findViewById(R.id.locations_spinner);
+        ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSearchFilter.setAdapter(spinnerAdapter);
+        mSearchFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                filterLocations(item);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mSearchFilter.setSelection(getFilterPosition(mLocationsFilter));
         mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    //mSearchField.setCursorVisible(false);
                     String searchCriteria = mSearchField.getText().toString();
                     mRealmResults = DataUtilities.getLocations(getApplicationContext(), mLocationsFilter, searchCriteria);
                     setupRecyclerView();
@@ -75,6 +96,28 @@ public class LocationsActivity extends AppCompatActivity {
         setupRecyclerView();
     }
 
+    private int getFilterPosition(String filter) {
+        int position = 4;
+        switch (filter) {
+            case FREEZER:
+                position = 0;
+                break;
+            case COOLER:
+                position = 1;
+                break;
+            case DRY:
+                position = 2;
+                break;
+            case PAPER:
+                position = 3;
+                break;
+            case ALL:
+                position = 4;
+                break;
+        }
+        return position;
+    }
+
     private void updateRealmResults() {
         Context context = getApplicationContext();
         if (mLocationsFilter.equals(ALL)) {
@@ -83,63 +126,6 @@ public class LocationsActivity extends AppCompatActivity {
             mRealmResults = DataUtilities.getLocations(context, mLocationsFilter);
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_location, menu);
-        switch (mLocationsFilter) {
-            case FREEZER:
-                menu.getItem(0).setChecked(true);
-                break;
-            case COOLER:
-                menu.getItem(1).setChecked(true);
-                break;
-            case DRY:
-                menu.getItem(2).setChecked(true);
-                break;
-            case PAPER:
-                menu.getItem(3).setChecked(true);
-                break;
-            case ALL:
-                menu.getItem(4).setChecked(true);
-                break;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.location_menu_freezer:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                filterLocations(FREEZER);
-                return true;
-            case R.id.location_menu_cooler:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                filterLocations(COOLER);
-                return true;
-            case R.id.location_menu_dry:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                filterLocations(DRY);
-                return true;
-            case R.id.location_menu_paper:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                filterLocations(PAPER);
-                return true;
-            case R.id.location_menu_all:
-                if (item.isChecked()) item.setChecked(false);
-                else item.setChecked(true);
-                filterLocations(ALL);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void filterLocations(String type) {
@@ -153,19 +139,13 @@ public class LocationsActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        //TextView emptyText = (TextView) findViewById(R.id.empty_view);
-        if (mRealmResults == null || mRealmResults.size() == 0) {
-            //emptyText.setVisibility(View.VISIBLE);
-        } else {
-            //emptyText.setVisibility(View.GONE);
-            mAdapter = new LocationsAdapter(LocationsActivity.this);
-            RealmLocationsListAdapter realmAdapter =
-                    new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
-            mAdapter.setRealmAdapter(realmAdapter);
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.locations_list);
-            GridLayoutManager manager = new GridLayoutManager(this, 3);
-            recyclerView.setLayoutManager(manager);
-            recyclerView.setAdapter(mAdapter);
-        }
+        mAdapter = new LocationsAdapter(LocationsActivity.this);
+        RealmLocationsListAdapter realmAdapter =
+                new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
+        mAdapter.setRealmAdapter(realmAdapter);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.locations_list);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(mAdapter);
     }
 }

@@ -330,9 +330,18 @@ public final class DataUtilities {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Location> realmResults =
-                realm.where(Location.class).equalTo(Location.FIELD_TYPE, type).findAll();
         realm.beginTransaction();
+        RealmResults<Location> realmResults;
+        if (type.equals("All")) {
+            realmResults =
+                    realm.where(Location.class)
+                            .findAll();
+        } else {
+            realmResults =
+                    realm.where(Location.class)
+                            .equalTo(Location.FIELD_TYPE, type)
+                            .findAll();
+        }
         realm.commitTransaction();
         return realmResults;
     }
@@ -351,8 +360,9 @@ public final class DataUtilities {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
         RealmResults<Location> realmResults;
-        if (type.equals("ALL")) {
+        if (type.equals("All")) {
             realmResults =
                     realm.where(Location.class)
                             .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
@@ -364,7 +374,6 @@ public final class DataUtilities {
                             .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
                             .findAll();
         }
-        realm.beginTransaction();
         realm.commitTransaction();
         return realmResults;
     }
