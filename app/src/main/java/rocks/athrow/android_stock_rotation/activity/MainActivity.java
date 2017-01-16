@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -60,20 +61,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         TextView countMovingView = (TextView) findViewById(R.id.count_moving);
         TextView countPickingView = (TextView) findViewById(R.id.count_picking);
         TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
+        TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
         LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
+        LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
         int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
         int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
         int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
         int countSalvage = DataUtilities.getCountPendingTransactions(context, MODULE_SALVAGE);
+        int countTransfers = DataUtilities.getCountPendingTransfers(context);
         countReceveingView.setText(String.valueOf(countReceiving));
         countMovingView.setText(String.valueOf(countMoving));
         countPickingView.setText(String.valueOf(countPicking));
         countSalvageView.setText(String.valueOf(countSalvage));
+        countTransfersView.setText(String.valueOf(countTransfers));
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
             @Override
             public void onClick(View view) {
                 startActivity(MODULE_SALVAGE);
+            }
+        });
+        moduleLocations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LocationsActivity.class);
+                startActivity(intent);
             }
         });
         moduleTransfers.setOnClickListener(new View.OnClickListener() {

@@ -46,7 +46,7 @@
             android:orientation="horizontal">
             <LinearLayout
                 android:id="@+id/button_move"
-                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                style="@style/Base.Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -54,8 +54,8 @@
                 android:paddingStart="16dp">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:background="@drawable/move" />
 
                 <TextView

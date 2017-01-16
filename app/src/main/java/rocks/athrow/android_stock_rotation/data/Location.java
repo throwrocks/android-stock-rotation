@@ -4,6 +4,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
+ * Location
  * Created by joselopez on 1/9/17.
  */
 
@@ -17,6 +18,8 @@ public class Location extends RealmObject {
     private String location;
     private String barcode;
     private String type;
+    private int casesQty;
+    private int looseQty;
 
     public int getSerialNumber() {
         return serialNumber;
@@ -48,5 +51,21 @@ public class Location extends RealmObject {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getCasesQty() {
+        return casesQty;
+    }
+
+    public void setCasesQty(int casesQty) {
+        this.casesQty = casesQty;
+    }
+
+    public int getLooseQty() {
+        return looseQty;
+    }
+
+    public void setLooseQty(int looseQty) {
+        this.looseQty = looseQty;
     }
 }

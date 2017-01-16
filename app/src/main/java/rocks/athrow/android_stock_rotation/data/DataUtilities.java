@@ -302,6 +302,75 @@ public final class DataUtilities {
     }
 
     /**
+     * getLocations
+     * A method to get all Locations
+     *
+     * @param context a Context object
+     * @return a RealmResults object
+     */
+    public static RealmResults<Location> getLocations(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults = realm.where(Location.class).findAll();
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+    /**
+     * getLocations
+     * A method to get all locations by type
+     *
+     * @param context a Context object
+     * @param type    the locations type (freezer, cooler, paper, dry)
+     * @return a RealmResults object
+     */
+    public static RealmResults<Location> getLocations(Context context, String type) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults =
+                realm.where(Location.class).equalTo(Location.FIELD_TYPE, type).findAll();
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+    /**
+     * getLocations
+     * A method to get all locations by type
+     *
+     * @param context      a Context object
+     * @param type         the locations type (freezer, cooler, paper, dry)
+     * @param locationName the location's name
+     * @return a RealmResults object
+     */
+    public static RealmResults<Location> getLocations(Context context, String type, String locationName) {
+
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults;
+        if (type.equals("ALL")) {
+            realmResults =
+                    realm.where(Location.class)
+                            .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                            .findAll();
+        } else {
+            realmResults =
+                    realm.where(Location.class)
+                            .equalTo(Location.FIELD_TYPE, type)
+                            .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                            .findAll();
+        }
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+
+    /**
      * getLocation
      * A method to get a Location object. Used with the barcode scanner.
      *
@@ -313,11 +382,13 @@ public final class DataUtilities {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Location> realmResults = realm.where(Location.class).equalTo(Location.FIELD_BARCODE, barcode).findAll();
+        RealmResults<Location> realmResults =
+                realm.where(Location.class).equalTo(Location.FIELD_BARCODE, barcode).findAll();
         realm.beginTransaction();
         realm.commitTransaction();
         return realmResults;
     }
+
 
     /**
      * getCountPendingTransactions
@@ -329,6 +400,17 @@ public final class DataUtilities {
      */
     public static int getCountPendingTransactions(Context context, String type) {
         return getPendingTransactions(context, type).size();
+    }
+
+    /**
+     * getCountTransfers
+     * This is used to populate the transfer count on the button on MainActivity
+     *
+     * @param context a Context object
+     * @return the number of pending transfer
+     */
+    public static int getCountPendingTransfers(Context context) {
+        return getTransfers(context).size();
     }
 
     /**
