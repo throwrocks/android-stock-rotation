@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Stock Rotation</string>
+    <!--Modules-->
+    <string name="module_move">Move</string>
+    <string name="module_pick">Pick</string>
+    <string name="module_receive">Receive</string>
+    <string name="module_salvage">Salvage</string>
 
     <!-- Item Labels-->
     <string name="label_pack_size">Pack Size:</string>

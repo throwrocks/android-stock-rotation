@@ -2,6 +2,8 @@ package rocks.athrow.android_stock_rotation.data;
 
 import android.content.Context;
 
+import com.facebook.stetho.common.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -17,8 +19,8 @@ import rocks.athrow.android_stock_rotation.api.APIResponse;
  * Created by joselopez on 1/13/17.
  */
 
-public final class DataUtilities {
-    private DataUtilities() {
+public final class RealmQueries {
+    private RealmQueries() {
         throw new AssertionError("No Utilities instances for you!");
     }
 
@@ -116,7 +118,7 @@ public final class DataUtilities {
      * @param transactionId   the transaction record id
      * @param skuString       the sku as a string
      * @param caseQtyString   the case qty as string
-     * @param looseQtyString  the loose qty as string
+     *                        // @param looseQtyString  the loose qty as string
      * @param currentLocation the current location
      * @param newLocation     the new location
      * @return an APIResponse object
@@ -129,6 +131,7 @@ public final class DataUtilities {
             String skuString,
             String itemDescription,
             String packSize,
+            int receivingId,
             String receivedDate,
             String caseQtyString,
             //String looseQtyString,
@@ -164,6 +167,7 @@ public final class DataUtilities {
                 int Sku = Integer.parseInt(skuString);
                 transaction.setSku(Sku);
                 transaction.setPackSize(packSize);
+                transaction.setReceivingId(receivingId);
                 transaction.setReceivedDate(receivedDate);
                 transaction.setItemDescription(itemDescription);
             }
@@ -212,6 +216,7 @@ public final class DataUtilities {
             int sku,
             String itemDescription,
             String packSize,
+            int receivingId,
             String receivedDate,
             String location,
             int caseQty
@@ -232,6 +237,7 @@ public final class DataUtilities {
         transfer.setSku(sku);
         transfer.setItemDescription(itemDescription);
         transfer.setPackSize(packSize);
+        transfer.setReceivingId(receivingId);
         transfer.setReceivedDate(receivedDate);
         transfer.setLocation(location);
         transfer.setCaseQty(caseQty);
@@ -289,8 +295,8 @@ public final class DataUtilities {
      * getItem
      * A method to get an Item record by id
      *
-     * @param context a Context object
-     * @param tagNumber  the item's tag number
+     * @param context   a Context object
+     * @param tagNumber the item's tag number
      * @return an Item object
      */
     public static RealmResults<Item> getItemByTagNumber(Context context, String tagNumber) {
@@ -298,33 +304,6 @@ public final class DataUtilities {
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll();
-        realm.beginTransaction();
-        realm.commitTransaction();
-        return realmResults;
-    }
-
-    public static RealmResults<Item> getItemById(Context context, String itemid) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_ID, itemid).findAll();
-        realm.beginTransaction();
-        realm.commitTransaction();
-        return realmResults;
-    }
-
-    /**
-     * getLocations
-     * A method to get all Locations
-     *
-     * @param context a Context object
-     * @return a RealmResults object
-     */
-    public static RealmResults<Location> getLocations(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Location> realmResults = realm.where(Location.class).findAll();
         realm.beginTransaction();
         realm.commitTransaction();
         return realmResults;
@@ -360,7 +339,8 @@ public final class DataUtilities {
 
     /**
      * getLocations
-     * A method to get all locations by type
+     * A method to get locations by type and containing a location name
+     * This is used for the find method in the LocationsListActivity
      *
      * @param context      a Context object
      * @param type         the locations type (freezer, cooler, paper, dry)
@@ -368,23 +348,20 @@ public final class DataUtilities {
      * @return a RealmResults object
      */
     public static RealmResults<Location> getLocations(Context context, String type, String locationName) {
-
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<Location> realmResults;
         if (type.equals("All")) {
-            realmResults =
-                    realm.where(Location.class)
-                            .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
-                            .findAll();
+            realmResults = realm.where(Location.class)
+                    .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                    .findAll();
         } else {
-            realmResults =
-                    realm.where(Location.class)
-                            .equalTo(Location.FIELD_TYPE, type)
-                            .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
-                            .findAll();
+            realmResults = realm.where(Location.class)
+                    .equalTo(Location.FIELD_TYPE, type)
+                    .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                    .findAll();
         }
         realm.commitTransaction();
         return realmResults;
@@ -455,51 +432,136 @@ public final class DataUtilities {
         return realmResults;
     }
 
-    public static Number getCountCasesByLocation(Context context, String location) {
+    /**
+     * getCountCasesByLocation
+     *
+     * @param context  a Context object
+     * @param location the location
+     * @param itemId   an optional itemId
+     * @return the total number of cases
+     */
+    public static Number getCountCasesByLocation(Context context, String location, String itemId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        RealmResults<Transfer> inResults =
-                realm.where(Transfer.class).
-                        equalTo(Transfer.FIELD_LOCATION, location).
-                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
-        RealmResults<Transfer> outResults =
-                realm.where(Transfer.class).
-                        equalTo(Transfer.FIELD_LOCATION, location).
-                        equalTo(Transfer.FIELD_TYPE, "out").findAll();
+        RealmResults<Transfer> inResults;
+        RealmResults<Transfer> outResults;
+        if (itemId != null) {
+            inResults = realm.where(Transfer.class).
+                    equalTo(Transfer.FIELD_LOCATION, location).
+                    equalTo(Transfer.FIELD_TYPE, "in").
+                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
+
+            outResults = realm.where(Transfer.class).
+                    equalTo(Transfer.FIELD_LOCATION, location).
+                    equalTo(Transfer.FIELD_TYPE, "out").
+                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
+        } else {
+            inResults =
+                    realm.where(Transfer.class).
+                            equalTo(Transfer.FIELD_LOCATION, location).
+                            equalTo(Transfer.FIELD_TYPE, "in").findAll();
+            outResults =
+                    realm.where(Transfer.class).
+                            equalTo(Transfer.FIELD_LOCATION, location).
+                            equalTo(Transfer.FIELD_TYPE, "out").findAll();
+        }
         Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
         Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
         realm.commitTransaction();
         return inTransfers.longValue() - outTransfers.longValue();
     }
 
-    public static ArrayList<Item> getLocationItems(Context context, String location) {
+    /**
+     * findItemsWithLocations
+     *
+     * @param context
+     * @param searchCriteria
+     * @return
+     */
+    public static ArrayList<LocationItem> findItemsWithLocations(Context context, String location, String searchCriteria) {
+        if ((location == null || location.isEmpty()) && (searchCriteria == null || searchCriteria.isEmpty())) {
+            return null;
+        }
+        if (location != null && !location.isEmpty() && searchCriteria != null && !searchCriteria.isEmpty()) {
+            return null;
+        }
+        String searchType;
+        if (location != null) {
+            searchType = "location";
+        } else if (searchCriteria.matches("[0-9]+")) {
+            searchType = "sku";
+        } else {
+            searchCriteria = searchCriteria.toUpperCase();
+            searchType = "desc";
+        }
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        RealmResults<Transfer> realmResults =
-                realm.where(Transfer.class).
+        RealmResults<Transfer> transfers = null;
+        switch (searchType) {
+            case "location":
+                transfers = realm.where(Transfer.class).
                         equalTo(Transfer.FIELD_LOCATION, location).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
-        realmResults.distinct(Transfer.FIELD_ITEM_ID);
+                transfers.distinct(Transfer.FIELD_ITEM_ID);
+                transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
+                break;
+            case "sku":
+                int skuNumber = Integer.parseInt(searchCriteria);
+                transfers = realm.where(Transfer.class).
+                        equalTo(Transfer.FIELD_SKU, skuNumber).
+                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
+                break;
+            case "desc":
+                transfers = realm.where(Transfer.class).
+                        contains(Transfer.FIELD_ITEM_DESCRIPTION, searchCriteria).
+                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
+                break;
+            default:
+        }
         realm.commitTransaction();
-        ArrayList<Item> items = new ArrayList<>();
-        int size = realmResults.size();
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                Transfer transfer = realmResults.get(i);
-                if ( transfer != null ){
-                    RealmResults<Item> realmQuery = getItemById(context, realmResults.get(i).getItemId());
-                    if ( realmQuery.size() > 0 ){
-                        Item item = realmQuery.get(0);
-                        items.add(item);
-                    }
-                }
+        realm.close();
+        return getLocationItemsFromTransfers(context, transfers);
+    }
+
+    private static ArrayList<LocationItem> getLocationItemsFromTransfers(Context context, RealmResults<Transfer> transfers) {
+        if ( transfers == null ){
+            return  null;
+        }
+        int size = transfers.size();
+        if (size == 0) {
+            return null;
+        }
+        ArrayList<LocationItem> results = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            Transfer transfer = transfers.get(i);
+            String itemId = transfer.getItemId();
+            String itemLocation = transfer.getLocation();
+            String casesQty = String.valueOf(getCountCasesByLocation(context, itemLocation, itemId));
+            if (Integer.parseInt(casesQty) > 0) {
+                String itemSku = String.valueOf(transfer.getSku());
+                String description = transfer.getItemDescription();
+                String packSize = transfer.getPackSize();
+                int receivingId = transfer.getReceivingId();
+                String receivedDate = transfer.getReceivedDate();
+                LocationItem locationItem = new LocationItem();
+                locationItem.setItemId(itemId);
+                locationItem.setSKU(itemSku);
+                locationItem.setDescription(description);
+                locationItem.setPackSize(packSize);
+                locationItem.setReceivingId(receivingId);
+                locationItem.setReceivedDate(receivedDate);
+                locationItem.setLocation(itemLocation);
+                locationItem.setCaseQty(casesQty);
+                results.add(i, locationItem);
             }
         }
-        return items;
+        return results;
     }
 
 }

@@ -25,7 +25,7 @@ import android.widget.TextView;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.LocationsAdapter;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
@@ -44,6 +44,7 @@ public class LocationsActivity extends AppCompatActivity {
     private final static String DRY = "Dry";
     private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
+    private String mSearchCriteria;
     private LocationsAdapter mAdapter;
     private RealmResults<Location> mRealmResults;
     private EditText mSearchField;
@@ -52,15 +53,18 @@ public class LocationsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Context context = getApplicationContext();
         setContentView(R.layout.activity_locations);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);
         mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
+        mSearchCriteria = preferencesHelper.loadString("locations_search_criteria", "");
         mSearchField = (EditText) findViewById(R.id.locations_search);
         mSearchFilter = (Spinner) findViewById(R.id.locations_spinner);
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSearchFilter.setAdapter(spinnerAdapter);
+        mSearchFilter.setSelection(getFilterPosition(mLocationsFilter));
         mSearchFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -73,14 +77,15 @@ public class LocationsActivity extends AppCompatActivity {
 
             }
         });
-        mSearchFilter.setSelection(getFilterPosition(mLocationsFilter));
         mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String searchCriteria = mSearchField.getText().toString();
-                    mRealmResults = DataUtilities.getLocations(getApplicationContext(), mLocationsFilter, searchCriteria);
+                    mSearchCriteria = mSearchField.getText().toString();
+                    PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+                    preferencesHelper.save("locations_search_criteria", mSearchCriteria);
+                    mRealmResults = RealmQueries.getLocations(getApplicationContext(), mLocationsFilter, mSearchCriteria);
                     setupRecyclerView();
                     View view = getCurrentFocus();
                     if (view != null) {
@@ -92,8 +97,7 @@ public class LocationsActivity extends AppCompatActivity {
                 return handled;
             }
         });
-        updateRealmResults();
-        setupRecyclerView();
+        mSearchField.setText(mSearchCriteria);
     }
 
     private int getFilterPosition(String filter) {
@@ -120,21 +124,20 @@ public class LocationsActivity extends AppCompatActivity {
 
     private void updateRealmResults() {
         Context context = getApplicationContext();
-        if (mLocationsFilter.equals(ALL)) {
-            mRealmResults = DataUtilities.getLocations(context);
+        if ( mSearchCriteria != null && !mSearchCriteria.isEmpty() ){
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria);
         } else {
-            mRealmResults = DataUtilities.getLocations(context, mLocationsFilter);
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter);
         }
 
     }
 
     private void filterLocations(String type) {
-        mSearchField.setText("");
         Context context = getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("locations_filter", type);
         mLocationsFilter = type;
-        mRealmResults = DataUtilities.getLocations(context, type);
+        updateRealmResults();
         setupRecyclerView();
     }
 

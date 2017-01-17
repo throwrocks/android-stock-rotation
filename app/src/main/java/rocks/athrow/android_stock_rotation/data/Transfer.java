@@ -21,7 +21,9 @@ public class Transfer extends RealmObject {
     public final static String FIELD_ITEM_ID = "itemId";
     public final static String FIELD_SKU = "sku";
     public final static String FIELD_ITEM_DESCRIPTION = "itemDescription";
+    public final static String FIELD_RECEIVING_ID = "receivingId";
     public final static String FIELD_RECEIVED_DATE = "receivedDate";
+    public final static String FIELD_PACK_SIZE = "packSize";
     public final static String FIELD_LOCATION = "location";
     public final static String FIELD_CASE_QTY = "caseQty";
     public final static String FIELD_LOOSE_QTY = "looseQty";
@@ -37,7 +39,10 @@ public class Transfer extends RealmObject {
     private int sku;
     private String itemDescription;
     private String packSize;
+    @Index
+    private int receivingId;
     private String receivedDate;
+    @Index
     private String location;
     private int caseQty;
     private int looseQty;
@@ -120,6 +125,14 @@ public class Transfer extends RealmObject {
 
     public void setPackSize(String packSize) {
         this.packSize = packSize;
+    }
+
+    public int getReceivingId() {
+        return receivingId;
+    }
+
+    public void setReceivingId(int receivingId) {
+        this.receivingId = receivingId;
     }
 
     public String getReceivedDate() {

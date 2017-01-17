@@ -21,6 +21,7 @@ public class Transaction extends RealmObject {
     private int sku;
     private String itemDescription;
     private String packSize;
+    private int receivingId;
     private String receivedDate;
     private String type1; // Receiving, Move, Salvage, Picking
     private String type2; // In or out
@@ -168,6 +169,14 @@ public class Transaction extends RealmObject {
 
     public void setPackSize(String packSize) {
         this.packSize = packSize;
+    }
+
+    public int getReceivingId() {
+        return receivingId;
+    }
+
+    public void setReceivingId(int receivingId) {
+        this.receivingId = receivingId;
     }
 
     public String getReceivedDate() {

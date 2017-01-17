@@ -24,7 +24,7 @@ import android.widget.Toast;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Transaction;
@@ -53,6 +53,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     private String mMode;
     private String mTransactionId;
     private String mItemId;
+    private int mReceivingId;
     private LinearLayout mButtonScanItem;
     private LinearLayout mButtonScanCurrentLocation;
     private LinearLayout mButtonScanNewLocation;
@@ -154,7 +155,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to set the views with transaction date
      */
     private void setViewData() {
-        Transaction transaction = DataUtilities.getTransaction(getApplicationContext(), mTransactionId);
+        Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
         if (transaction != null) {
             setNewLocationView(transaction.getLocationEnd());
             setCurrentLocationView(transaction.getLocationStart());
@@ -203,7 +204,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
         //String looseQtyString = inputLooseQty.getText().toString();
         String currentLocation = inputLocationCurrent.getText().toString();
         String newLocation = inputNewLocation.getText().toString();
-        APIResponse apiResponse = DataUtilities.saveTransaction(
+        APIResponse apiResponse = RealmQueries.saveTransaction(
                 getApplicationContext(),
                 MainActivity.MODULE_MOVING,
                 mTransactionId,
@@ -211,6 +212,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 skuString,
                 itemDescription,
                 packSize,
+                mReceivingId,
                 receivedDate,
                 caseQtyString,
                 //looseQtyString,
@@ -248,9 +250,9 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void commitTransaction() {
         Context context = getApplicationContext();
-        Transaction transaction = DataUtilities.getTransaction(context, mTransactionId);
+        Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
         if (transaction != null && transaction.isValidRecord()) {
-            DataUtilities.saveTransfer(
+            RealmQueries.saveTransfer(
                     context,
                     transaction.getId(),
                     transaction.getType1(),
@@ -259,12 +261,13 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getSku(),
                     transaction.getItemDescription(),
                     transaction.getPackSize(),
+                    transaction.getReceivingId(),
                     transaction.getReceivedDate(),
                     transaction.getLocationStart(),
                     transaction.getQtyCases()
                     //transaction.getQtyLoose()
             );
-            DataUtilities.saveTransfer(
+            RealmQueries.saveTransfer(
                     context,
                     transaction.getId(),
                     transaction.getType1(),
@@ -273,12 +276,13 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     transaction.getSku(),
                     transaction.getItemDescription(),
                     transaction.getPackSize(),
+                    transaction.getReceivingId(),
                     transaction.getReceivedDate(),
                     transaction.getLocationEnd(),
                     transaction.getQtyCases()
                     //transaction.getQtyLoose()
             );
-            DataUtilities.commitTransaction(context, mTransactionId);
+            RealmQueries.commitTransaction(context, mTransactionId);
         }
     }
 
@@ -289,7 +293,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * @param transactionId the transaction id
      */
     private void deleteTransaction(String transactionId) {
-        APIResponse apiResponse = DataUtilities.deleteTransaction(getApplicationContext(), transactionId);
+        APIResponse apiResponse = RealmQueries.deleteTransaction(getApplicationContext(), transactionId);
         Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
         if (apiResponse.getResponseCode() == 200) {
             finish();
@@ -376,7 +380,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
         int toastLenght = Toast.LENGTH_SHORT;
         switch (mScanType) {
             case SCAN_ITEM:
-                RealmResults<Item> items = DataUtilities.getItemByTagNumber(context, contents);
+                RealmResults<Item> items = RealmQueries.getItemByTagNumber(context, contents);
                 if (items.size() > 0) {
                     Item record = items.get(0);
                     mItemId = record.getId();
@@ -384,6 +388,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     String description = record.getDescription();
                     String packSize = record.getPackSize();
                     String receivedDate = record.getReceivedDate();
+                    mReceivingId = record.getReceivingId();
                     setItemViews(sku, description, packSize, receivedDate);
                     save();
                 } else {
@@ -391,7 +396,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 }
                 break;
             case SCAN_CURRENT_LOCATION:
-                RealmResults<Location> currentLocations = DataUtilities.getLocation(context, contents);
+                RealmResults<Location> currentLocations = RealmQueries.getLocation(context, contents);
                 if (currentLocations.size() > 0) {
                     Location record = currentLocations.get(0);
                     String location = record.getLocation();
@@ -402,7 +407,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 }
                 break;
             case SCAN_NEW_LOCATION:
-                RealmResults<Location> newLocations = DataUtilities.getLocation(context, contents);
+                RealmResults<Location> newLocations = RealmQueries.getLocation(context, contents);
                 if (newLocations.size() > 0) {
                     Location record = newLocations.get(0);
                     String location = record.getLocation();
@@ -439,7 +444,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
             case R.id.scan_save:
                 int save = save();
                 if (save == 1) {
-                    Transaction transaction = DataUtilities.getTransaction(getApplicationContext(), mTransactionId);
+                    Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
                     if (transaction != null && transaction.isValidRecord()) {
                         setViewMode();
                         mMode = MODE_VIEW;
@@ -476,9 +481,9 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * It deletes the transaction record if it's invalid
      */
     private void back() {
-        Transaction transaction = DataUtilities.getTransaction(getApplicationContext(), mTransactionId);
+        Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
         if (transaction != null && !transaction.isValidRecord()) {
-            DataUtilities.deleteTransaction(getApplicationContext(), mTransactionId);
+            RealmQueries.deleteTransaction(getApplicationContext(), mTransactionId);
         }
         finish();
     }

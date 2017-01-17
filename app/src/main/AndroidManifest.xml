@@ -36,12 +36,13 @@
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:label="Locations"
+            android:launchMode="singleTop"
             android:name=".activity.LocationsActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:label="Location Details"
             android:name=".activity.LocationDetailActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.LocationsActivity" />
         <activity
             android:theme="@style/AppTheme"
             android:name=".activity.TransactionMoveActivity"

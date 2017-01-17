@@ -29,7 +29,7 @@ import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.api.FetchTask;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Request;
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Context context = getApplicationContext();
-        DataUtilities.deleteInvalidTransactions(context);
-        DataUtilities.deleteRequests(context);
+        RealmQueries.deleteInvalidTransactions(context);
+        RealmQueries.deleteRequests(context);
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -128,11 +128,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         TextView countPickingView = (TextView) findViewById(R.id.count_picking);
         TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
         TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
-        int countReceiving = DataUtilities.getCountPendingTransactions(context, MODULE_RECEIVING);
-        int countMoving = DataUtilities.getCountPendingTransactions(context, MODULE_MOVING);
-        int countPicking = DataUtilities.getCountPendingTransactions(context, MODULE_PICKING);
-        int countSalvage = DataUtilities.getCountPendingTransactions(context, MODULE_SALVAGE);
-        int countTransfers = DataUtilities.getCountPendingTransfers(context);
+        int countReceiving = RealmQueries.getCountPendingTransactions(context, MODULE_RECEIVING);
+        int countMoving = RealmQueries.getCountPendingTransactions(context, MODULE_MOVING);
+        int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_PICKING);
+        int countSalvage = RealmQueries.getCountPendingTransactions(context, MODULE_SALVAGE);
+        int countTransfers = RealmQueries.getCountPendingTransfers(context);
         countReceivingView.setText(String.valueOf(countReceiving));
         countMovingView.setText(String.valueOf(countMoving));
         countPickingView.setText(String.valueOf(countPicking));

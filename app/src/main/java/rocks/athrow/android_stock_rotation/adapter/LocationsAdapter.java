@@ -13,7 +13,7 @@ import org.w3c.dom.Text;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 
@@ -55,7 +55,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
         LocationsAdapter.ViewHolder vh = (LocationsAdapter.ViewHolder) viewHolder;
         Location location = getItem(position);
         final String locationName = location.getLocation();
-        String caseQty = DataUtilities.getCountCasesByLocation(mContext, locationName).toString();
+        String caseQty = RealmQueries.getCountCasesByLocation(mContext, locationName, null).toString();
         vh.viewLocationName.setText(locationName);
         vh.viewLocationQty.setText(caseQty);
         vh.viewCard.setOnClickListener(new View.OnClickListener() {

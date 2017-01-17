@@ -31,7 +31,7 @@ public class UpdateDBService extends IntentService {
     public static final String UPDATE_TRANSFERS_DB_SERVICE_BROADCAST = "UpdateTransfersBroadcast";
     public static final String REQUEST_ID = "requestId";
     public static final String TYPE = "type";
-    public static final String DATA = "JSON";
+    public static final String DATA = "data";
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     public UpdateDBService() {
         super(SERVICE_NAME);
@@ -56,6 +56,9 @@ public class UpdateDBService extends IntentService {
         }
         realm.commitTransaction();
         JSONArray jsonArray = getJSONArray(responseText);
+        if ( jsonArray == null ){
+            return;
+        }
         switch (type) {
             case FetchTask.ITEMS:
                 int countItems = jsonArray.length();
@@ -118,6 +121,8 @@ public class UpdateDBService extends IntentService {
                         transfer.setItemId(record.getString(Transfer.FIELD_ITEM_ID));
                         transfer.setSku(record.getInt(Transfer.FIELD_SKU));
                         transfer.setItemDescription(record.getString(Transfer.FIELD_ITEM_DESCRIPTION));
+                        transfer.setPackSize(record.getString(Transfer.FIELD_PACK_SIZE));
+                        transfer.setReceivingId(record.getInt(Transfer.FIELD_RECEIVING_ID));
                         transfer.setReceivedDate(record.getString(Transfer.FIELD_RECEIVED_DATE));
                         transfer.setLocation(record.getString(Transfer.FIELD_LOCATION));
                         transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
@@ -141,7 +146,7 @@ public class UpdateDBService extends IntentService {
         JSONArray jsonArray = null;
         try {
             JSONObject jsonObject = new JSONObject(JSON);
-            jsonArray = jsonObject.getJSONArray("data");
+            jsonArray = jsonObject.getJSONArray(DATA);
         } catch (JSONException e) {
             e.printStackTrace();
         }

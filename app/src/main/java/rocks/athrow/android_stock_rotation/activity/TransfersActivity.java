@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.TransfersAdapter;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transfer;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransfersListAdapter;
 
@@ -30,7 +30,7 @@ public class TransfersActivity extends AppCompatActivity {
     }
     private void updateRealmResults() {
         Context context = getApplicationContext();
-        mRealmResults = DataUtilities.getTransfers(context);
+        mRealmResults = RealmQueries.getTransfers(context);
     }
     private void setupRecyclerView() {
         //TextView emptyText = (TextView) findViewById(R.id.empty_view);

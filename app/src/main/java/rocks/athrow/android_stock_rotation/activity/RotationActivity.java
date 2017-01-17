@@ -18,7 +18,7 @@ import java.util.UUID;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.RotationAdapter;
-import rocks.athrow.android_stock_rotation.data.DataUtilities;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
 
@@ -58,7 +58,7 @@ public class RotationActivity extends AppCompatActivity {
 
     private void updateRealmResults() {
         Context context = getApplicationContext();
-        mRealmResults = DataUtilities.getPendingTransactions(context, mRotationType);
+        mRealmResults = RealmQueries.getPendingTransactions(context, mRotationType);
     }
 
     @Override

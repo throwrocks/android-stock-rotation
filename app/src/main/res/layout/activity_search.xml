@@ -4,8 +4,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
+        <TextView
+            style="@style/LabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Find Item: " />
+
+        <EditText
+            android:id="@+id/search_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/search_items_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp">
+
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>
