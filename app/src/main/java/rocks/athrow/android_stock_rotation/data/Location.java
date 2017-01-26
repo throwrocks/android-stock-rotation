@@ -53,4 +53,12 @@ public class Location extends RealmObject {
     public void setType(String type) {
         this.type = type;
     }
+
+    public int getCasesQty() {
+        return casesQty;
+    }
+
+    public void setCasesQty(int casesQty) {
+        this.casesQty = casesQty;
+    }
 }

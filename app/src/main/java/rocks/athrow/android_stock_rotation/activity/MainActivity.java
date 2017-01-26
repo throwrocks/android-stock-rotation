@@ -25,7 +25,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
-import rocks.athrow.android_stock_rotation.service.UpdateDBService;
+import rocks.athrow.android_stock_rotation.service.SyncDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
@@ -106,9 +106,14 @@ public class MainActivity extends AppCompatActivity {
                 sync();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
         setUpCounts();
         updateSyncDate();
         updateSyncView(isMyServiceRunning());
+        super.onResume();
     }
 
     private void setUpCounts() {
@@ -156,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("service", " ---------------------------------------------------");
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             Log.e("service ", service.service.getClassName());
-            if ("rocks.athrow.android_stock_rotation.service.UpdateDBService".equals(service.service.getClassName())) {
+            if ("rocks.athrow.android_stock_rotation.service.SyncDBService".equals(service.service.getClassName())) {
                 Log.e("service", " is running");
                 Log.e("service", " ---------------------------------------------------");
                 return true;
@@ -169,17 +174,17 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * sync
-     * Runs the UpdateDBService service
+     * Runs the SyncDBService service
      */
     private void sync() {
         if (isMyServiceRunning()) {
             Utilities.showToast(getApplicationContext(), "Sync in progress.", Toast.LENGTH_SHORT);
-            updateSyncView(false);
+            updateSyncView(true);
         } else {
-            String serviceBroadcast = UpdateDBService.SERVICE_NAME;
+            String serviceBroadcast = SyncDBService.SERVICE_NAME;
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(serviceBroadcast));
-            Intent updateDBIntent = new Intent(this, UpdateDBService.class);
+            Intent updateDBIntent = new Intent(this, SyncDBService.class);
             this.startService(updateDBIntent);
             updateSyncView(true);
         }

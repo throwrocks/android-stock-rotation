@@ -56,7 +56,7 @@
             android:name=".activity.TransactionOutActivity"
             android:parentActivityName=".activity.RotationActivity" />
         <service
-            android:name=".service.UpdateDBService"
+            android:name=".service.SyncDBService"
             android:enabled="true"
             android:exported="false" />
     </application>

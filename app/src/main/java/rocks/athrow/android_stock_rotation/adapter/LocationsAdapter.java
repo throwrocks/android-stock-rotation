@@ -55,7 +55,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
         LocationsAdapter.ViewHolder vh = (LocationsAdapter.ViewHolder) viewHolder;
         Location location = getItem(position);
         final String locationName = location.getLocation();
-        String caseQty = RealmQueries.getCountCasesByLocation(mContext, locationName, null).toString();
+        String caseQty = String.valueOf(location.getCasesQty());
         vh.viewLocationName.setText(locationName);
         vh.viewLocationQty.setText(caseQty);
         vh.viewCard.setOnClickListener(new View.OnClickListener() {

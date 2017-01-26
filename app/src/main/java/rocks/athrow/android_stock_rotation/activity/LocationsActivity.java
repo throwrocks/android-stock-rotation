@@ -2,12 +2,14 @@ package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +24,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.LocationsAdapter;
@@ -54,6 +60,7 @@ public class LocationsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Context context = getApplicationContext();
+        //updateLocationQtys();
         setContentView(R.layout.activity_locations);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);
@@ -124,7 +131,7 @@ public class LocationsActivity extends AppCompatActivity {
 
     private void updateRealmResults() {
         Context context = getApplicationContext();
-        if ( mSearchCriteria != null && !mSearchCriteria.isEmpty() ){
+        if (mSearchCriteria != null && !mSearchCriteria.isEmpty()) {
             mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria);
         } else {
             mRealmResults = RealmQueries.getLocations(context, mLocationsFilter);
@@ -151,4 +158,35 @@ public class LocationsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
     }
+
+    /** Update the location qty after downloading new transfers, also update when creating transfers
+    private void updateLocationQtys() {
+        Runnable r = new Runnable() {
+            String id = UUID.randomUUID().toString();
+
+            @Override
+            public void run() {
+                RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+                Realm.setDefaultConfiguration(realmConfig);
+                Realm realm = Realm.getDefaultInstance();
+                RealmResults<Location> locations = RealmQueries.getLocations(getApplicationContext(), "All");
+                if (locations != null && locations.size() > 0) {
+                    for (int i = 0; i < locations.size(); i++) {
+                        Location location = locations.get(i);
+                        String name = location.getLocation();
+                        int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(getApplicationContext(), name, null).toString());
+                        realm.beginTransaction();
+                        locations.get(i).setCasesQty(qty);
+                        realm.commitTransaction();
+                        Log.e(id, " " + name);
+                    }
+
+                }
+                realm.close();
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+
+    }**/
 }

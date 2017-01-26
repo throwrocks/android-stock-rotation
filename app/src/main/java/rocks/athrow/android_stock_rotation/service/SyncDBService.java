@@ -26,12 +26,12 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
  * Created by joselopez on 1/10/17.
  */
 
-public class UpdateDBService extends IntentService {
-    public static final String SERVICE_NAME = "UpdateDBService";
+public class SyncDBService extends IntentService {
+    public static final String SERVICE_NAME = "SyncDBService";
     public static final String DATA = "data";
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
 
-    public UpdateDBService() {
+    public SyncDBService() {
         super(SERVICE_NAME);
     }
 
@@ -46,29 +46,29 @@ public class UpdateDBService extends IntentService {
         if (itemLastSerialNumber != null) {
             itemSerialNumber = itemLastSerialNumber.intValue();
         }
-        Number locationLastSerialNumber = realm.where(Location.class).findAll().max(Location.FIELD_SERIAL_NUMBER);
-        int locationSerialNumber = 0;
-        if (locationLastSerialNumber != null) {
-            locationSerialNumber = locationLastSerialNumber.intValue();
-        }
         Number transfersLastSerialNumber = realm.where(Transfer.class).findAll().max(Transfer.FIELD_SERIAL_NUMBER);
         int transfersSerialNumber = 0;
         if (transfersLastSerialNumber != null) {
             transfersSerialNumber = transfersLastSerialNumber.intValue();
         }
+        Number locationLastSerialNumber = realm.where(Location.class).findAll().max(Location.FIELD_SERIAL_NUMBER);
+        int locationSerialNumber = 0;
+        if (locationLastSerialNumber != null) {
+            locationSerialNumber = locationLastSerialNumber.intValue();
+        }
         realm.commitTransaction();
         realm.close();
-        APIResponse locationsResponse = API.getLocations(locationSerialNumber);
-        APIResponse transfersResponse = API.getTransfers(transfersSerialNumber);
         APIResponse itemsResponse = API.getItems(itemSerialNumber);
-        if (locationsResponse.getResponseCode() == 200) {
-            updateDB("locations", locationsResponse.getResponseText());
+        APIResponse transfersResponse = API.getTransfers(transfersSerialNumber);
+        APIResponse locationsResponse = API.getLocations(locationSerialNumber);
+        if (itemsResponse.getResponseCode() == 200) {
+            updateDB("items", itemsResponse.getResponseText());
         }
         if (transfersResponse.getResponseCode() == 200) {
             updateDB("transfers", transfersResponse.getResponseText());
         }
-        if (itemsResponse.getResponseCode() == 200) {
-            updateDB("items", itemsResponse.getResponseText());
+        if (locationsResponse.getResponseCode() == 200) {
+            updateDB("locations", locationsResponse.getResponseText());
         }
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
         preferencesHelper.save("last_sync", new Date().toString());
@@ -107,7 +107,6 @@ public class UpdateDBService extends IntentService {
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
                         realm.copyToRealmOrUpdate(item);
                         realm.commitTransaction();
-                        realm.close();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
@@ -127,7 +126,6 @@ public class UpdateDBService extends IntentService {
                         location.setType(record.getString(Location.FIELD_TYPE));
                         realm.copyToRealmOrUpdate(location);
                         realm.commitTransaction();
-                        realm.close();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
@@ -160,7 +158,6 @@ public class UpdateDBService extends IntentService {
                         realm.commitTransaction();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
-                        realm.close();
                         e.printStackTrace();
                     }
                 }
