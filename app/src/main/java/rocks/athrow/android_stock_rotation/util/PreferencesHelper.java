@@ -30,6 +30,9 @@ public class PreferencesHelper {
         prefs.edit().putString(key, value).apply();
     }
 
+    public void save(String key, boolean value) {
+        prefs.edit().putBoolean(key, value).apply();
+    }
 
     /**
      * Load the specified value from the shared preferences
@@ -39,5 +42,8 @@ public class PreferencesHelper {
      */
     public String loadString(String key, @SuppressWarnings("SameParameterValue") String defValue) {
         return prefs.getString(key, defValue);
+    }
+    public boolean loadBoolean(String key) {
+        return prefs.getBoolean(key, false);
     }
 }

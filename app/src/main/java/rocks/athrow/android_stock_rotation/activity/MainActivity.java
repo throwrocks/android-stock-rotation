@@ -1,13 +1,15 @@
 package rocks.athrow.android_stock_rotation.activity;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,35 +23,22 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import java.util.Date;
-import java.util.UUID;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
-import rocks.athrow.android_stock_rotation.api.FetchTask;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
-import rocks.athrow.android_stock_rotation.data.Item;
-import rocks.athrow.android_stock_rotation.data.Location;
-import rocks.athrow.android_stock_rotation.data.Request;
-import rocks.athrow.android_stock_rotation.data.Transfer;
-import rocks.athrow.android_stock_rotation.interfaces.OnTaskComplete;
 import rocks.athrow.android_stock_rotation.service.UpdateDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 
-public class MainActivity extends AppCompatActivity implements OnTaskComplete {
+public class MainActivity extends AppCompatActivity  {
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
     public static final String MODULE_PICKING = "Pick";
     public static final String MODULE_SALVAGE = "Salvage";
-    private final OnTaskComplete onTaskCompleted = this;
-    private boolean mIsSyncing = false;
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
+    private final BroadcastReceiver mReceiver = new ResponseReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,25 +108,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         });
         setUpCounts();
         updateSyncDate();
+        updateSyncView(isMyServiceRunning());
     }
 
-    private void setUpCounts(){
-        Context context = getApplicationContext();
-        TextView countReceivingView = (TextView) findViewById(R.id.count_receiving);
-        TextView countMovingView = (TextView) findViewById(R.id.count_moving);
-        TextView countPickingView = (TextView) findViewById(R.id.count_picking);
-        TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
-        TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
-        int countReceiving = RealmQueries.getCountPendingTransactions(context, MODULE_RECEIVING);
-        int countMoving = RealmQueries.getCountPendingTransactions(context, MODULE_MOVING);
-        int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_PICKING);
-        int countSalvage = RealmQueries.getCountPendingTransactions(context, MODULE_SALVAGE);
-        int countTransfers = RealmQueries.getCountPendingTransfers(context);
-        countReceivingView.setText(String.valueOf(countReceiving));
-        countMovingView.setText(String.valueOf(countMoving));
-        countPickingView.setText(String.valueOf(countPicking));
-        countSalvageView.setText(String.valueOf(countSalvage));
-        countTransfersView.setText(String.valueOf(countTransfers));
+    private void setUpCounts() {
+        UpdateCounts updateCounts = new UpdateCounts(getApplicationContext());
+        updateCounts.execute();
     }
 
     @Override
@@ -170,118 +146,56 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
         startActivity(intent);
     }
 
-    private void sync() {
-        if ( mIsSyncing ){
-            Utilities.showToast(getApplicationContext(),"Sync in progress.",Toast.LENGTH_SHORT);
-            return;
-        }
-        mIsSyncing = true;
-        mSyncProgressBar.setVisibility(View.VISIBLE);
-        mSyncIcon.setVisibility(View.GONE);
-        Context context = getApplicationContext();
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        Number itemLastSerialNumber = realm.where(Item.class).findAll().max(Item.FIELD_SERIAL_NUMBER);
-        String itemSerialNumber = null;
-        if (itemLastSerialNumber != null) {
-            itemSerialNumber = itemLastSerialNumber.toString();
-        }
-        Number locationLastSerialNumber = realm.where(Location.class).findAll().max(Location.FIELD_SERIAL_NUMBER);
-        String locationSerialNumber = null;
-        if (locationLastSerialNumber != null) {
-            locationSerialNumber = locationLastSerialNumber.toString();
-        }
-        Number transfersLastSerialNumber = realm.where(Transfer.class).findAll().max(Transfer.FIELD_SERIAL_NUMBER);
-        String transfersSerialNumber = null;
-        if (transfersLastSerialNumber != null) {
-            transfersSerialNumber = transfersLastSerialNumber.toString();
-        }
-        realm.commitTransaction();
-        realm.close();
-        FetchTask fetchItems = new FetchTask(onTaskCompleted);
-        FetchTask fetchLocations = new FetchTask(onTaskCompleted);
-        FetchTask fetchTransfers = new FetchTask(onTaskCompleted);
-        fetchItems.execute(FetchTask.ITEMS, itemSerialNumber);
-        fetchLocations.execute(FetchTask.LOCATIONS, locationSerialNumber);
-        fetchTransfers.execute(FetchTask.TRANSFERS, transfersSerialNumber);
+    /**
+     * isMyServiceRunning
+     * @return true if UpdateDBService is running, and false if not
+     */
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        Log.e("service", " ---------------------------------------------------");
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            Log.e("service ", service.service.getClassName());
+            if ("rocks.athrow.android_stock_rotation.service.UpdateDBService".equals(service.service.getClassName())) {
+                Log.e("service", " is running");
+                Log.e("service", " ---------------------------------------------------");
+                return true;
 
+            }
+        }
+        Log.e("service", " ---------------------------------------------------");
+        return false;
     }
 
-    private void updateSyncDate(){
+    private void sync() {
+        if (isMyServiceRunning()) {
+            Utilities.showToast(getApplicationContext(), "Sync in progress.", Toast.LENGTH_SHORT);
+            updateSyncView(false);
+        }else {
+            String serviceBroadcast = UpdateDBService.SERVICE_NAME;
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(serviceBroadcast));
+            Intent updateDBIntent = new Intent(this, UpdateDBService.class);
+            this.startService(updateDBIntent);
+            updateSyncView(true);
+        }
+    }
+
+    private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
         String date = preferencesHelper.loadString("last_sync", "Never");
         TextView syncDate = (TextView) findViewById(R.id.text_sync);
         syncDate.setText(date);
     }
 
-    private void finishSync(){
-        mIsSyncing = false;
-        mSyncProgressBar.setVisibility(View.GONE);
-        mSyncIcon.setVisibility(View.VISIBLE);
-        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-        preferencesHelper.save("last_sync", new Date().toString());
-        updateSyncDate();
-        setUpCounts();
-    }
-
-    /**
-     * onTaskComplete
-     *
-     * @param apiResponse the API Response
-     */
-    private void onTaskComplete(APIResponse apiResponse) {
-        if (apiResponse != null) {
-            int responseCode = apiResponse.getResponseCode();
-            Intent updateDBIntent = new Intent(this, UpdateDBService.class);
-            switch (responseCode) {
-                case 200:
-                    String requestId = UUID.randomUUID().toString();
-                    String responseMeta = apiResponse.getMeta();
-                    String responseText = apiResponse.getResponseText();
-                    String requestURI = apiResponse.getRequestURI();
-                    updateDBIntent.putExtra(UpdateDBService.TYPE, responseMeta);
-                    updateDBIntent.putExtra(UpdateDBService.REQUEST_ID, requestId);
-                    RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
-                    Realm.setDefaultConfiguration(realmConfig);
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    Request request = realm.createObject(Request.class);
-                    request.setId(requestId);
-                    request.setRequestURL(requestURI);
-                    request.setAPIResponseCode(responseCode);
-                    request.setAPIResponseText(responseText);
-                    realm.commitTransaction();
-                    realm.close();
-                    String serviceBroadcast = null;
-                    switch (responseMeta) {
-                        case FetchTask.ITEMS:
-                            serviceBroadcast = UpdateDBService.UPDATE_ITEMS_DB_SERVICE_BROADCAST;
-                            break;
-                        case FetchTask.LOCATIONS:
-                            serviceBroadcast = UpdateDBService.UPDATE_LOCATIONS_DB_SERVICE_BROADCAST;
-                            break;
-                        case FetchTask.TRANSFERS:
-                            serviceBroadcast = UpdateDBService.UPDATE_TRANSFERS_DB_SERVICE_BROADCAST;
-                            break;
-                    }
-                    if (serviceBroadcast != null) {
-                        LocalBroadcastManager.getInstance(this).
-                                registerReceiver(new ResponseReceiver(),
-                                        new IntentFilter(serviceBroadcast));
-                        this.startService(updateDBIntent);
-                        break;
-                    }
-                    default:
-                        finishSync();
-            }
+    private void updateSyncView(boolean isRunning) {
+        if ( isRunning){
+            mSyncProgressBar.setVisibility(View.VISIBLE);
+            mSyncIcon.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void OnTaskComplete(APIResponse apiResponse) {
-        onTaskComplete(apiResponse);
+        else{
+            mSyncProgressBar.setVisibility(View.GONE);
+            mSyncIcon.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -295,7 +209,47 @@ public class MainActivity extends AppCompatActivity implements OnTaskComplete {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            finishSync();
+            updateSyncView(false);
+            updateSyncDate();
+            setUpCounts();
+        }
+    }
+
+    private class UpdateCounts extends AsyncTask<String, Void, int[]>{
+        Context context;
+        UpdateCounts(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected int[] doInBackground(String... params) {
+            int countReceiving = RealmQueries.getCountPendingTransactions(context, MODULE_RECEIVING);
+            int countMoving = RealmQueries.getCountPendingTransactions(context, MODULE_MOVING);
+            int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_PICKING);
+            int countSalvage = RealmQueries.getCountPendingTransactions(context, MODULE_SALVAGE);
+            int countTransfers = RealmQueries.getCountPendingTransfers(context);
+            int[] results = new int[5];
+            results[0] = countReceiving;
+            results[1] = countMoving;
+            results[2] = countPicking;
+            results[3] = countSalvage;
+            results[4] = countTransfers;
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(int[] counts) {
+            super.onPostExecute(counts);
+            TextView countReceivingView = (TextView) findViewById(R.id.count_receiving);
+            TextView countMovingView = (TextView) findViewById(R.id.count_moving);
+            TextView countPickingView = (TextView) findViewById(R.id.count_picking);
+            TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
+            TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
+            countReceivingView.setText(String.valueOf(counts[0]));
+            countMovingView.setText(String.valueOf(counts[1]));
+            countPickingView.setText(String.valueOf(counts[2]));
+            countSalvageView.setText(String.valueOf(counts[3]));
+            countTransfersView.setText(String.valueOf(counts[4]));
         }
     }
 }
