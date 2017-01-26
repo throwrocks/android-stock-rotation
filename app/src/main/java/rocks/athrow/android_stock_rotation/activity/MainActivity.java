@@ -30,7 +30,7 @@ import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity  {
 
     /**
      * isMyServiceRunning
+     *
      * @return true if UpdateDBService is running, and false if not
      */
     private boolean isMyServiceRunning() {
@@ -166,11 +167,15 @@ public class MainActivity extends AppCompatActivity  {
         return false;
     }
 
+    /**
+     * sync
+     * Runs the UpdateDBService service
+     */
     private void sync() {
         if (isMyServiceRunning()) {
             Utilities.showToast(getApplicationContext(), "Sync in progress.", Toast.LENGTH_SHORT);
             updateSyncView(false);
-        }else {
+        } else {
             String serviceBroadcast = UpdateDBService.SERVICE_NAME;
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(serviceBroadcast));
@@ -180,6 +185,10 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
+    /**
+     * updateSyncDate
+     * Sets the last synced date
+     */
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
         String date = preferencesHelper.loadString("last_sync", "Never");
@@ -187,12 +196,17 @@ public class MainActivity extends AppCompatActivity  {
         syncDate.setText(date);
     }
 
+    /**
+     * MupdatedSyncView
+     * Sets the sync progress bar animation
+     *
+     * @param isRunning is the UpdateDBService running
+     */
     private void updateSyncView(boolean isRunning) {
-        if ( isRunning){
+        if (isRunning) {
             mSyncProgressBar.setVisibility(View.VISIBLE);
             mSyncIcon.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             mSyncProgressBar.setVisibility(View.GONE);
             mSyncIcon.setVisibility(View.VISIBLE);
         }
@@ -215,8 +229,13 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private class UpdateCounts extends AsyncTask<String, Void, int[]>{
+    /**
+     * UpdateCounts
+     * AsyncTask to set the total counts, off the UI thread because of multiple database calls
+     */
+    private class UpdateCounts extends AsyncTask<String, Void, int[]> {
         Context context;
+
         UpdateCounts(Context context) {
             this.context = context;
         }
