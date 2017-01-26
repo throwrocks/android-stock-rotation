@@ -28,6 +28,8 @@ public class Item extends RealmObject {
     private int receivingId;
     private String receivedDate;
     private String itemType;
+    private int fmCaseQty;
+    private int edisonCaseQty;
 
     public String getId() {
         return id;
@@ -99,5 +101,21 @@ public class Item extends RealmObject {
 
     public void setItemType(String itemType) {
         this.itemType = itemType;
+    }
+
+    public int getFmCaseQty() {
+        return fmCaseQty;
+    }
+
+    public void setFmCaseQty(int fmCaseQty) {
+        this.fmCaseQty = fmCaseQty;
+    }
+
+    public int getEdisonCaseQty() {
+        return edisonCaseQty;
+    }
+
+    public void setEdisonCaseQty(int edisonCaseQty) {
+        this.edisonCaseQty = edisonCaseQty;
     }
 }

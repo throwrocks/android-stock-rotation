@@ -14,13 +14,14 @@ public class Location extends RealmObject {
     public final static String FIELD_LOCATION = "location";
     public final static String FIELD_BARCODE = "barcode";
     public final static String FIELD_TYPE = "type";
+    public final static String FIELD_EDISON_QTY = "edisonCaseQty";
     @PrimaryKey
     private int serialNumber;
     private String location;
     private String barcode;
     private String type;
-    private int casesQty;
-    private int looseQty;
+    private int fmCaseQty;
+    private int edisonCaseQty;
 
     public int getSerialNumber() {
         return serialNumber;
@@ -54,11 +55,19 @@ public class Location extends RealmObject {
         this.type = type;
     }
 
-    public int getCasesQty() {
-        return casesQty;
+    public int getFmCaseQty() {
+        return fmCaseQty;
     }
 
-    public void setCasesQty(int casesQty) {
-        this.casesQty = casesQty;
+    public void setFmCaseQty(int casesQty) {
+        this.fmCaseQty = casesQty;
+    }
+
+    public int getEdisonCaseQty() {
+        return edisonCaseQty;
+    }
+
+    public void setEdisonCaseQty(int edisonCaseQty) {
+        this.edisonCaseQty = edisonCaseQty;
     }
 }

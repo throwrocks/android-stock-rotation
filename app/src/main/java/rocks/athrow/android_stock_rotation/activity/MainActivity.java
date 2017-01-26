@@ -1,7 +1,10 @@
 package rocks.athrow.android_stock_rotation.activity;
 
 import android.app.ActivityManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,12 +28,14 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.service.SyncDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "MainActivity";
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
@@ -106,7 +111,23 @@ public class MainActivity extends AppCompatActivity {
                 sync();
             }
         });
+        scheduleJob();
     }
+
+    private void scheduleJob() {
+        ComponentName serviceName = new ComponentName(this, SyncDBJobService.class);
+        JobInfo.Builder jobInfo = new JobInfo.Builder(1, serviceName);
+        jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        jobInfo.setBackoffCriteria(30000, JobInfo.BACKOFF_POLICY_LINEAR);
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo.build());
+        if (result == 1) {
+            Log.e(LOG_TAG, "JobScheduler " + "Success");
+        } else {
+            Log.e(LOG_TAG, "JobScheduler " + "Failure");
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -158,17 +179,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        Log.e("service", " ---------------------------------------------------");
+        Log.d("service", " ------------------------CHEKCING BACKGROUND SERVICES---------------------------");
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            Log.e("service ", service.service.getClassName());
+            Log.d("service ", service.service.getClassName());
             if ("rocks.athrow.android_stock_rotation.service.SyncDBService".equals(service.service.getClassName())) {
-                Log.e("service", " is running");
-                Log.e("service", " ---------------------------------------------------");
+                Log.d("service", " is running");
+                Log.d("service", " ---------------------------------------------------");
                 return true;
 
             }
         }
-        Log.e("service", " ---------------------------------------------------");
+        Log.d("service", " ---------------------------------------------------");
         return false;
     }
 
