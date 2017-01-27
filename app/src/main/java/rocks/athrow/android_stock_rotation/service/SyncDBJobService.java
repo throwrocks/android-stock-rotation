@@ -2,15 +2,21 @@ package rocks.athrow.android_stock_rotation.service;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.UUID;
 
+import rocks.athrow.android_stock_rotation.activity.MainActivity;
 import rocks.athrow.android_stock_rotation.data.SyncDB;
+
+import static rocks.athrow.android_stock_rotation.service.SyncDBService.SERVICE_NAME;
 
 
 /**
+ * SyncDBJobService
  * Created by joselopez on 1/26/17.
  */
 
@@ -18,8 +24,8 @@ public class SyncDBJobService extends JobService {
     private static final String LOG_TAG = "SyncDBService";
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        Log.e(LOG_TAG, "------------------ onStartJob ---------------------" );
-        Log.e(LOG_TAG, "onStartJob " + true + " " + UUID.randomUUID());
+        Log.e(LOG_TAG, "------------------ onStartJob 1 ---------------------" );
+        Log.e(LOG_TAG, "onStartJob 1 " + true + " " + UUID.randomUUID());
         SynDBAsyncTask synDBAsyncTask = new SynDBAsyncTask();
         synDBAsyncTask.execute(jobParameters);
         return true;
@@ -33,36 +39,30 @@ public class SyncDBJobService extends JobService {
     }
 
     private class SynDBAsyncTask extends AsyncTask<JobParameters, Void, JobParameters[]> {
-
+        SynDBAsyncTask() {
+            Log.e(LOG_TAG, "Creating SyncDBAsyncTask");
+        }
 
         @Override
         protected JobParameters[] doInBackground(JobParameters... params) {
-            Log.e(LOG_TAG, "Running SyncDB.sync()");
-            SyncDB.sync(getApplicationContext());
+            Log.e(LOG_TAG, "Running SyncDB.downloadNewRecords()");
+            SyncDB.downloadNewRecords(getApplicationContext());
             return params;
         }
 
         @Override
         protected void onPostExecute(JobParameters[] result) {
             for (JobParameters params : result) {
-                if (!hasJobBeenStopped(params)) {
-                    Log.e(LOG_TAG, "Finishing job with id=" + params.getJobId());
+                    Log.e(LOG_TAG, "Finishing Job # " + params.getJobId());
                     Log.e(LOG_TAG, "------------------ onPostExecute ---------------------" );
                     jobFinished(params, true);
-                }
             }
         }
 
-        private boolean hasJobBeenStopped(JobParameters params) {
-            // TODO: Logic for checking stop.
-            return false;
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.e(LOG_TAG, "SynDBAsyncTask Cancelled");
         }
-
-        public boolean stopJob(JobParameters params) {
-            Log.e(LOG_TAG, "stopJob id=" + params.getJobId());
-            // TODO: Logic for stopping a job. return true if job should be rescheduled.
-            return false;
-        }
-
     }
 }

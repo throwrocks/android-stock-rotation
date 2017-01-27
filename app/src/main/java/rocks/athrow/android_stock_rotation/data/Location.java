@@ -21,7 +21,7 @@ public class Location extends RealmObject {
     private String barcode;
     private String type;
     private int fmCaseQty;
-    private int edisonCaseQty;
+    private boolean init;
 
     public int getSerialNumber() {
         return serialNumber;
@@ -63,11 +63,11 @@ public class Location extends RealmObject {
         this.fmCaseQty = casesQty;
     }
 
-    public int getEdisonCaseQty() {
-        return edisonCaseQty;
+    public boolean isInit() {
+        return init;
     }
 
-    public void setEdisonCaseQty(int edisonCaseQty) {
-        this.edisonCaseQty = edisonCaseQty;
+    public void setInit(boolean init) {
+        this.init = init;
     }
 }

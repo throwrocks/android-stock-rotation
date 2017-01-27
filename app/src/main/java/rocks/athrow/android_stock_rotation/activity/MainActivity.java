@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,12 +27,19 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.service.StoreDBCalcsService;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.service.SyncDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static android.os.Build.VERSION_CODES.N;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String MODULE_SALVAGE = "Salvage";
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
-    private final BroadcastReceiver mReceiver = new ResponseReceiver();
+    private Runnable mSyncStatusRunnable;
+    private Handler mSyncStatusHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         .build());
         mSyncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         mSyncIcon = (ImageView) findViewById(R.id.sync_icon);
+        mSyncStatusHandler = new Handler();
         LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
@@ -105,36 +115,49 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        moduleSync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sync();
-            }
-        });
-        scheduleJob();
+        scheduleSyncDB();
+        scheduleStoreCalcs();
     }
 
-    private void scheduleJob() {
+    private void scheduleSyncDB() {
         ComponentName serviceName = new ComponentName(this, SyncDBJobService.class);
         JobInfo.Builder jobInfo = new JobInfo.Builder(1, serviceName);
         jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        jobInfo.setBackoffCriteria(30000, JobInfo.BACKOFF_POLICY_LINEAR);
+        jobInfo.setBackoffCriteria(10000, JobInfo.BACKOFF_POLICY_LINEAR);
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo.build());
         if (result == 1) {
-            Log.e(LOG_TAG, "JobScheduler " + "Success");
+            Log.e(LOG_TAG, "scheduleSyncDB " + "Success");
         } else {
-            Log.e(LOG_TAG, "JobScheduler " + "Failure");
+            Log.e(LOG_TAG, "scheduleSyncDB " + "Failure");
         }
     }
 
+    private void scheduleStoreCalcs() {
+        ComponentName serviceName = new ComponentName(this, StoreDBCalcsService.class);
+        JobInfo.Builder jobInfo = new JobInfo.Builder(2, serviceName);
+        jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        jobInfo.setBackoffCriteria(60000, JobInfo.BACKOFF_POLICY_LINEAR);
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo.build());
+        if (result == 1) {
+            Log.e(LOG_TAG, "scheduleStoreCalcs " + "Success");
+        } else {
+            Log.e(LOG_TAG, "scheduleStoreCalcs " + "Failure");
+        }
+    }
 
     @Override
     protected void onResume() {
+        updateSyncStatus();
         setUpCounts();
-        updateSyncDate();
-        updateSyncView(isMyServiceRunning());
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSyncStatusHandler.removeCallbacks(mSyncStatusRunnable);
     }
 
     private void setUpCounts() {
@@ -160,6 +183,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateSyncStatus() {
+        mSyncStatusRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.e("updateSyncStatus ", "" + true);
+                updateSyncView(isMyServiceRunning());
+                updateSyncDate();
+                mSyncStatusHandler.postDelayed(this, 500);
+            }
+        };
+        mSyncStatusHandler.post(mSyncStatusRunnable);
+    }
+
     /**
      * startActivity
      *
@@ -179,36 +215,21 @@ public class MainActivity extends AppCompatActivity {
      */
     private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        Log.d("service", " ------------------------CHEKCING BACKGROUND SERVICES---------------------------");
+        //Log.d("service", " ------------------------CHEKCING BACKGROUND SERVICES---------------------------");
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            Log.d("service ", service.service.getClassName());
+            //Log.d("service ", service.service.getClassName());
             if ("rocks.athrow.android_stock_rotation.service.SyncDBService".equals(service.service.getClassName())) {
-                Log.d("service", " is running");
-                Log.d("service", " ---------------------------------------------------");
+                Log.e("service", " SyncDBService is running");
+                //Log.d("service", " ---------------------------------------------------");
                 return true;
-
+            } else if ("rocks.athrow.android_stock_rotation.service.SyncDBJobService".equals(service.service.getClassName())) {
+                Log.e("service", " SyncDBJobService is running");
+                //Log.d("service", " ---------------------------------------------------");
+                return true;
             }
         }
         Log.d("service", " ---------------------------------------------------");
         return false;
-    }
-
-    /**
-     * sync
-     * Runs the SyncDBService service
-     */
-    private void sync() {
-        if (isMyServiceRunning()) {
-            Utilities.showToast(getApplicationContext(), "Sync in progress.", Toast.LENGTH_SHORT);
-            updateSyncView(true);
-        } else {
-            String serviceBroadcast = SyncDBService.SERVICE_NAME;
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(serviceBroadcast));
-            Intent updateDBIntent = new Intent(this, SyncDBService.class);
-            this.startService(updateDBIntent);
-            updateSyncView(true);
-        }
     }
 
     /**
@@ -224,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * MupdatedSyncView
-     * Sets the sync progress bar animation
+     * Sets the downloadNewRecords progress bar animation
      *
      * @param isRunning is the UpdateDBService running
      */
@@ -235,23 +256,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mSyncProgressBar.setVisibility(View.GONE);
             mSyncIcon.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * ResponseReceiver
-     * A class to manage handling the UpdateDBService response
-     */
-    private class ResponseReceiver extends BroadcastReceiver {
-
-        private ResponseReceiver() {
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateSyncView(false);
-            updateSyncDate();
-            setUpCounts();
         }
     }
 

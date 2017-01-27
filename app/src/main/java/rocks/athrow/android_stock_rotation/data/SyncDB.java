@@ -8,19 +8,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
-import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
-
-import static android.R.attr.name;
-import static rocks.athrow.android_stock_rotation.R.drawable.locations;
 
 
 /**
@@ -33,7 +28,7 @@ public final class SyncDB {
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     private static final String LOG_TAG = "SyncDB";
 
-    public static boolean sync(Context context) {
+    public static boolean downloadNewRecords(Context context) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -58,9 +53,9 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-        APIResponse itemsResponse = API.getItems(0);
+        APIResponse itemsResponse = API.getItems(itemSerialNumber);
         APIResponse transfersResponse = API.getTransfers(transfersSerialNumber);
-        APIResponse locationsResponse = API.getLocations(0);
+        APIResponse locationsResponse = API.getLocations(locationSerialNumber);
         if (itemsResponse.getResponseCode() == 200) {
             updateDB(context, "items", itemsResponse.getResponseText());
         }
@@ -75,22 +70,28 @@ public final class SyncDB {
         return true;
     }
 
+    public static void storeCalcs(Context context){
+        updateDB(context, "update_location_qtys", null);
+    }
+
     private static void updateDB(Context context, String type, String responseText) {
-        JSONArray jsonArray = getJSONArray(responseText);
-        if (jsonArray == null) {
-            return;
-        }
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
+        Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         switch (type) {
             case "items":
-                int countItems = jsonArray.length();
+                JSONArray itemsArray = getJSONArray(responseText);
+                if (itemsArray == null) {
+                    return;
+                }
+                int countItems = itemsArray.length();
                 Log.e(LOG_TAG, "Items: " + countItems);
                 for (int i = 0; i < countItems; i++) {
                     try {
+                        Log.d(LOG_TAG, "Item update: " + i);
                         Item item = new Item();
-                        JSONObject record = jsonArray.getJSONObject(i);
+                        JSONObject record = itemsArray.getJSONObject(i);
                         realm.beginTransaction();
                         item.setId(record.getString(Item.FIELD_ID));
                         item.setSerialNumber(record.getInt(Item.FIELD_SERIAL_NUMBER));
@@ -109,14 +110,20 @@ public final class SyncDB {
                         e.printStackTrace();
                     }
                 }
+                realm.close();
                 break;
             case "locations":
-                int countLocations = jsonArray.length();
+                JSONArray locationsArray = getJSONArray(responseText);
+                if (locationsArray == null) {
+                    return;
+                }
+                int countLocations = locationsArray.length();
                 Log.e(LOG_TAG, "Locations: " + countLocations);
                 for (int i = 0; i < countLocations; i++) {
                     try {
+                        Log.d(LOG_TAG, "Location update: " + i);
                         Location location = new Location();
-                        JSONObject record = jsonArray.getJSONObject(i);
+                        JSONObject record = locationsArray.getJSONObject(i);
                         realm.beginTransaction();
                         location.setSerialNumber(record.getInt(Location.FIELD_SERIAL_NUMBER));
                         location.setBarcode(record.getString(Location.FIELD_BARCODE));
@@ -124,25 +131,25 @@ public final class SyncDB {
                         location.setType(record.getString(Location.FIELD_TYPE));
                         realm.copyToRealmOrUpdate(location);
                         realm.commitTransaction();
-                        // TODO: update the quantities
-                        //int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, location.getLocation(), null).toString());
-                        //realm.beginTransaction();
-                        //location.setFmCaseQty(qty);
-                        //realm.copyToRealmOrUpdate(location);
-                        //realm.commitTransaction();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
+                realm.close();
                 break;
             case "transfers":
-                int countTransfers = jsonArray.length();
+                JSONArray transfersArray = getJSONArray(responseText);
+                if (transfersArray == null) {
+                    return;
+                }
+                int countTransfers = transfersArray.length();
                 Log.e(LOG_TAG, "Transfers: " + countTransfers);
                 for (int i = 0; i < countTransfers; i++) {
                     try {
+                        Log.d(LOG_TAG, "Transfer update: " + i);
                         Transfer transfer = new Transfer();
-                        JSONObject record = jsonArray.getJSONObject(i);
+                        JSONObject record = transfersArray.getJSONObject(i);
                         realm.beginTransaction();
                         transfer.setId(record.getString(Transfer.FIELD_ID));
                         transfer.setType(record.getString(Transfer.FIELD_TYPE));
@@ -166,6 +173,24 @@ public final class SyncDB {
                         e.printStackTrace();
                     }
                 }
+                realm.close();
+                break;
+            case "update_location_qtys":
+                // TODO: Insead to getting all locations, get locations from all new transfers
+                RealmResults<Location> updateLocations = RealmQueries.getLocations(context, "All");
+                int countUpdateLocations = updateLocations.size();
+                Log.e(LOG_TAG, "Update Location Qtys: " + countUpdateLocations);
+                for (int i = 0; i < countUpdateLocations; i++) {
+                    Location location = updateLocations.get(i);
+                    String name = location.getLocation();
+                    int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, name, null).toString());
+                    realm.beginTransaction();
+                    location.setFmCaseQty(qty);
+                    realm.copyToRealmOrUpdate(location);
+                    realm.commitTransaction();
+                    Log.d(LOG_TAG, "Update Location " + i + ": " + name + " Qty: " + qty);
+                }
+                realm.close();
                 break;
             default:
                 realm.close();

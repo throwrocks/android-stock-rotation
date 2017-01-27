@@ -158,35 +158,4 @@ public class LocationsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
     }
-
-    /** Update the location qty after downloading new transfers, also update when creating transfers
-    private void updateLocationQtys() {
-        Runnable r = new Runnable() {
-            String id = UUID.randomUUID().toString();
-
-            @Override
-            public void run() {
-                RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
-                Realm.setDefaultConfiguration(realmConfig);
-                Realm realm = Realm.getDefaultInstance();
-                RealmResults<Location> locations = RealmQueries.getLocations(getApplicationContext(), "All");
-                if (locations != null && locations.size() > 0) {
-                    for (int i = 0; i < locations.size(); i++) {
-                        Location location = locations.get(i);
-                        String name = location.getLocation();
-                        int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(getApplicationContext(), name, null).toString());
-                        realm.beginTransaction();
-                        locations.get(i).setCasesQty(qty);
-                        realm.commitTransaction();
-                        Log.e(id, " " + name);
-                    }
-
-                }
-                realm.close();
-            }
-        };
-        Thread t = new Thread(r);
-        t.start();
-
-    }**/
 }

@@ -20,7 +20,7 @@ public class SyncDBService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent workIntent) {
-        SyncDB.sync(getApplicationContext());
+        SyncDB.downloadNewRecords(getApplicationContext());
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(SERVICE_NAME));
     }
 
