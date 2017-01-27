@@ -55,6 +55,10 @@
             android:theme="@style/AppTheme"
             android:name=".activity.TransactionOutActivity"
             android:parentActivityName=".activity.RotationActivity" />
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".activity.ValidateActivity"
+            android:parentActivityName=".activity.MainActivity" />
         <service
             android:name=".service.SyncDBService"
             android:enabled="true"

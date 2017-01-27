@@ -187,26 +187,8 @@ public final class SyncDB {
                 }
                 realm.close();
                 break;
-            case "update_location_qtys":
-                // TODO: Instead to getting all locations, get locations from all new transfers
-                RealmResults<Location> updateLocations = RealmQueries.getLocations(context, "All");
-                int countUpdateLocations = updateLocations.size();
-                Log.e(LOG_TAG, "Update Location Qtys: " + countUpdateLocations);
-                for (int i = 0; i < countUpdateLocations; i++) {
-                    Location location = updateLocations.get(i);
-                    String name = location.getLocation();
-                    int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, name, null).toString());
-                    realm.beginTransaction();
-                    location.setFmCaseQty(qty);
-                    realm.copyToRealmOrUpdate(location);
-                    realm.commitTransaction();
-                    Log.d(LOG_TAG, "Update Location " + i + ": " + name + " Qty: " + qty);
-                }
-                realm.close();
-                break;
-            default:
-                realm.close();
         }
+        realm.close();
     }
 
     private static JSONArray getJSONArray(String JSON) {
