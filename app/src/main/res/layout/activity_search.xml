@@ -5,11 +5,11 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:padding="16dp"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <TextView
             style="@style/LabelStyle"
@@ -26,19 +26,11 @@
             android:inputType="text"
             android:maxLines="1" />
     </LinearLayout>
-    <ScrollView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/location_details_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/search_items_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
-
-        </LinearLayout>
-
-    </ScrollView>
+        android:layout_height="wrap_content"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp" />
 </LinearLayout>

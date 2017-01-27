@@ -17,6 +17,8 @@ import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
+import static android.R.attr.name;
+
 
 /**
  * SyncDB
@@ -125,12 +127,20 @@ public final class SyncDB {
                         Location location = new Location();
                         JSONObject record = locationsArray.getJSONObject(i);
                         realm.beginTransaction();
+                        String locationName = record.getString(Location.FIELD_LOCATION);
                         location.setSerialNumber(record.getInt(Location.FIELD_SERIAL_NUMBER));
                         location.setBarcode(record.getString(Location.FIELD_BARCODE));
-                        location.setLocation(record.getString(Location.FIELD_LOCATION));
+                        location.setLocation(locationName);
                         location.setType(record.getString(Location.FIELD_TYPE));
                         realm.copyToRealmOrUpdate(location);
                         realm.commitTransaction();
+                        // Set the initial qtys
+                        int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, locationName, null).toString());
+                        realm.beginTransaction();
+                        location.setFmCaseQty(qty);
+                        realm.copyToRealmOrUpdate(location);
+                        realm.commitTransaction();
+                        Log.d(LOG_TAG, "Update Location " + i + ": " + name + " Qty: " + qty);
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
@@ -160,12 +170,14 @@ public final class SyncDB {
                         transfer.setItemId(record.getString(Transfer.FIELD_ITEM_ID));
                         transfer.setSku(record.getInt(Transfer.FIELD_SKU));
                         transfer.setItemDescription(record.getString(Transfer.FIELD_ITEM_DESCRIPTION));
+                        transfer.setTagNumber(record.getString(Transfer.FIELD_TAG_NUMBER));
                         transfer.setPackSize(record.getString(Transfer.FIELD_PACK_SIZE));
                         transfer.setReceivingId(record.getInt(Transfer.FIELD_RECEIVING_ID));
                         transfer.setReceivedDate(record.getString(Transfer.FIELD_RECEIVED_DATE));
                         transfer.setLocation(record.getString(Transfer.FIELD_LOCATION));
                         transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
-                        transfer.setLooseQty(record.getInt(Transfer.FIELD_LOOSE_QTY));
+                        transfer.setInit(true);
+                        transfer.setInitDate(new Date());
                         realm.copyToRealmOrUpdate(transfer);
                         realm.commitTransaction();
                     } catch (JSONException e) {
@@ -176,7 +188,7 @@ public final class SyncDB {
                 realm.close();
                 break;
             case "update_location_qtys":
-                // TODO: Insead to getting all locations, get locations from all new transfers
+                // TODO: Instead to getting all locations, get locations from all new transfers
                 RealmResults<Location> updateLocations = RealmQueries.getLocations(context, "All");
                 int countUpdateLocations = updateLocations.size();
                 Log.e(LOG_TAG, "Update Location Qtys: " + countUpdateLocations);
@@ -201,7 +213,12 @@ public final class SyncDB {
         JSONArray jsonArray = null;
         try {
             JSONObject jsonObject = new JSONObject(JSON);
-            jsonArray = jsonObject.getJSONArray(DATA);
+            if ( jsonObject.has(DATA)) {
+                jsonArray = jsonObject.getJSONArray(DATA);
+            }else{
+                Log.e(LOG_TAG, "Nothing found");
+                return null;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -2,15 +2,19 @@
     <string name="app_name">Stock Rotation</string>
     <!--Modules-->
     <string name="module_move">Move</string>
-    <string name="module_pick">Pick</string>
+    <string name="module_pick">Stage</string>
     <string name="module_receive">Receive</string>
     <string name="module_salvage">Salvage</string>
-
+    <string name="module_adjustment">Adjust</string>
+    <string name="module_locations">Locations</string>
+    <string name="module_transfers">Transfers</string>
+    <string name="module_sync">Sync</string>
     <!-- Item Labels-->
     <string name="label_pack_size">Pack Size:</string>
     <string name="label_received_date">Rec. Date:</string>
     <string name="label_case_qty">Case Qty:</string>
     <string name="label_loose_qty">Loose Qty:</string>
+    <string name="label_new_location">New Location:</string>
     <string name="no_item_selected">No item selected</string>
     <string name="n_a">N/A</string>
     <string name="hint_current_location">Current Location: </string>

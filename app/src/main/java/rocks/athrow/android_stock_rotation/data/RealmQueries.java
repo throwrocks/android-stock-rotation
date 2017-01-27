@@ -542,6 +542,7 @@ public final class RealmQueries {
             Transfer transfer = transfers.get(i);
             String itemId = transfer.getItemId();
             String itemLocation = transfer.getLocation();
+            String tagNumber = transfer.getTagNumber();
             String casesQty = String.valueOf(getCountCasesByLocation(context, itemLocation, itemId));
             if (Integer.parseInt(casesQty) > 0) {
                 String itemSku = String.valueOf(transfer.getSku());
@@ -553,6 +554,7 @@ public final class RealmQueries {
                 locationItem.setItemId(itemId);
                 locationItem.setSKU(itemSku);
                 locationItem.setDescription(description);
+                locationItem.setInventoryTag(tagNumber);
                 locationItem.setPackSize(packSize);
                 locationItem.setReceivingId(receivingId);
                 locationItem.setReceivedDate(receivedDate);

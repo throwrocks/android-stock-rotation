@@ -22,6 +22,7 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
  */
 
 public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm a";
     private final Context mContext;
 
     public TransfersAdapter(Context context) {
@@ -69,6 +70,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         TransfersAdapter.ViewHolder vh = (TransfersAdapter.ViewHolder) viewHolder;
         Transfer transfer = getItem(position);
         Date date = transfer.getDate();
+        String dateString = Utilities.getDateAsString(date, DATE_TIME_DISPLAY, null);
         int sku = transfer.getSku();
         String itemDescription = transfer.getItemDescription();
         String packSize = transfer.getPackSize();
@@ -78,7 +80,6 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String location = transfer.getLocation();
         int caseQty = transfer.getCaseQty();
         //int looseQty = transfer.getLooseQty();
-        String dateString = date.toString();
         String skuString = String.valueOf(sku);
         String caseQtyString = String.valueOf(caseQty);
         //String looseQtyString = String.valueOf(looseQty);

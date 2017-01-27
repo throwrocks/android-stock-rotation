@@ -22,8 +22,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/receive" />
 
             <TextView
@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Receive"
+                android:text="@string/module_receive"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
@@ -54,8 +54,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/move" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Move"
+                android:text="@string/module_move"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
@@ -85,8 +85,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/pick" />
 
             <TextView
@@ -94,7 +94,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Pick"
+                android:text="@string/module_pick"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
@@ -116,16 +116,16 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/salvage" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/adjust" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Salvage"
+                android:text="@string/module_adjustment"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
@@ -156,7 +156,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Locations"
+                android:text="@string/module_locations"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -178,7 +178,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Transfers"
+                android:text="@string/module_transfers"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
@@ -222,7 +222,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Sync"
+                    android:text="@string/module_sync"
                     android:textColor="@color/primaryText"
                     android:textSize="18sp" />
 

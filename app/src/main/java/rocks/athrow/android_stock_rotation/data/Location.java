@@ -1,8 +1,9 @@
 package rocks.athrow.android_stock_rotation.data;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.internal.Context;
 
 /**
  * Location
@@ -22,6 +23,7 @@ public class Location extends RealmObject {
     private String type;
     private int fmCaseQty;
     private boolean init;
+    private Date initDate;
 
     public int getSerialNumber() {
         return serialNumber;
@@ -59,8 +61,8 @@ public class Location extends RealmObject {
         return fmCaseQty;
     }
 
-    public void setFmCaseQty(int casesQty) {
-        this.fmCaseQty = casesQty;
+    public void setFmCaseQty(int fmCaseQty) {
+        this.fmCaseQty = fmCaseQty;
     }
 
     public boolean isInit() {
@@ -69,5 +71,13 @@ public class Location extends RealmObject {
 
     public void setInit(boolean init) {
         this.init = init;
+    }
+
+    public Date getInitDate() {
+        return initDate;
+    }
+
+    public void setInitDate(Date initDate) {
+        this.initDate = initDate;
     }
 }

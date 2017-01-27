@@ -4,94 +4,71 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1.15">
+        android:layout_weight=".5"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/label_case_qty"
             style="@style/LabelStyle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:text="Case Qty" />
-        <!--
-        <TextView
-            android:id="@+id/label_loose_qty"
-            style="@style/LabelStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:text="Loose Qty" />
-        -->
-        <TextView
-            android:id="@+id/label_new_location"
-            style="@style/LabelStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:text="New Location" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1.15">
+            android:text="@string/label_case_qty" />
 
         <EditText
             android:id="@+id/input_case_qty"
             style="@style/PrimaryTextStyle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.35"
             android:inputType="number" />
-        <!--
-        <EditText
-            android:id="@+id/input_loose_qty"
-            style="@style/PrimaryTextStyle"
-            android:layout_width="0dp"
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".5"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label_new_location"
+            style="@style/LabelStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.35"
-            android:inputType="number" />
-          -->
+            android:text="@string/label_new_location" />
+
         <EditText
             android:id="@+id/input_new_location"
             style="@style/PrimaryTextStyle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.30"
             android:enabled="true"
             android:inputType="text" />
+    </LinearLayout>
 
-        <!-- SCAN NEW LOCATION -->
-        <LinearLayout
-            android:id="@+id/scan_new_location"
-            style="@style/Base.Widget.AppCompat.Button"
-            android:layout_width="0dp"
+
+    <LinearLayout
+        android:id="@+id/scan_new_location"
+        style="@style/Base.Widget.AppCompat.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_weight="0.15"
+        android:orientation="horizontal"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.15"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp">
+            android:background="@drawable/barcode_scanner_24" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/barcode_scanner_24" />
-
-        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

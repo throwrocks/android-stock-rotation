@@ -3,14 +3,11 @@ package rocks.athrow.android_stock_rotation.activity;
 import android.app.ActivityManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,24 +19,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
-
-import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
-import rocks.athrow.android_stock_rotation.service.StoreDBCalcsService;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
-import rocks.athrow.android_stock_rotation.service.SyncDBService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
-import rocks.athrow.android_stock_rotation.util.Utilities;
-
-import static android.os.Build.VERSION_CODES.N;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
-    public static final String MODULE_PICKING = "Pick";
+    public static final String MODULE_PICKING = "Stage";
     public static final String MODULE_SALVAGE = "Salvage";
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
@@ -66,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm.compactRealm(realmConfig);
         mSyncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         mSyncIcon = (ImageView) findViewById(R.id.sync_icon);
         mSyncStatusHandler = new Handler();
@@ -75,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
-        LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
+        //LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
 
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         scheduleSyncDB();
-        scheduleStoreCalcs();
     }
 
     private void scheduleSyncDB() {
@@ -130,20 +121,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e(LOG_TAG, "scheduleSyncDB " + "Success");
         } else {
             Log.e(LOG_TAG, "scheduleSyncDB " + "Failure");
-        }
-    }
-
-    private void scheduleStoreCalcs() {
-        ComponentName serviceName = new ComponentName(this, StoreDBCalcsService.class);
-        JobInfo.Builder jobInfo = new JobInfo.Builder(2, serviceName);
-        jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        jobInfo.setBackoffCriteria(60000, JobInfo.BACKOFF_POLICY_LINEAR);
-        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        int result = scheduler.schedule(jobInfo.build());
-        if (result == 1) {
-            Log.e(LOG_TAG, "scheduleStoreCalcs " + "Success");
-        } else {
-            Log.e(LOG_TAG, "scheduleStoreCalcs " + "Failure");
         }
     }
 
@@ -187,9 +164,12 @@ public class MainActivity extends AppCompatActivity {
         mSyncStatusRunnable = new Runnable() {
             @Override
             public void run() {
-                Log.e("updateSyncStatus ", "" + true);
-                updateSyncView(isMyServiceRunning());
-                updateSyncDate();
+                //Log.e("updateSyncStatus ", "" + isMyServiceRunning());
+                if ( isMyServiceRunning()){
+                    updateSyncView(true);
+                }else{
+                    updateSyncView(false);
+                }
                 mSyncStatusHandler.postDelayed(this, 500);
             }
         };
@@ -218,17 +198,13 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("service", " ------------------------CHEKCING BACKGROUND SERVICES---------------------------");
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             //Log.d("service ", service.service.getClassName());
-            if ("rocks.athrow.android_stock_rotation.service.SyncDBService".equals(service.service.getClassName())) {
-                Log.e("service", " SyncDBService is running");
-                //Log.d("service", " ---------------------------------------------------");
-                return true;
-            } else if ("rocks.athrow.android_stock_rotation.service.SyncDBJobService".equals(service.service.getClassName())) {
+            if ("rocks.athrow.android_stock_rotation.service.SyncDBJobService".equals(service.service.getClassName())) {
                 Log.e("service", " SyncDBJobService is running");
                 //Log.d("service", " ---------------------------------------------------");
                 return true;
             }
         }
-        Log.d("service", " ---------------------------------------------------");
+        //Log.d("service", " ---------------------------------------------------");
         return false;
     }
 
@@ -256,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mSyncProgressBar.setVisibility(View.GONE);
             mSyncIcon.setVisibility(View.VISIBLE);
+            updateSyncDate();
         }
     }
 

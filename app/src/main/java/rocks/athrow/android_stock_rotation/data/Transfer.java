@@ -21,12 +21,12 @@ public class Transfer extends RealmObject {
     public final static String FIELD_ITEM_ID = "itemId";
     public final static String FIELD_SKU = "sku";
     public final static String FIELD_ITEM_DESCRIPTION = "itemDescription";
+    public final static String FIELD_TAG_NUMBER = "tagNumber";
     public final static String FIELD_RECEIVING_ID = "receivingId";
     public final static String FIELD_RECEIVED_DATE = "receivedDate";
     public final static String FIELD_PACK_SIZE = "packSize";
     public final static String FIELD_LOCATION = "location";
     public final static String FIELD_CASE_QTY = "caseQty";
-    public final static String FIELD_LOOSE_QTY = "looseQty";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -38,6 +38,7 @@ public class Transfer extends RealmObject {
     private String itemId;
     private int sku;
     private String itemDescription;
+    private String tagNumber;
     private String packSize;
     @Index
     private int receivingId;
@@ -45,7 +46,9 @@ public class Transfer extends RealmObject {
     @Index
     private String location;
     private int caseQty;
-    private int looseQty;
+    @Index
+    private boolean init;
+    private Date initDate;
 
     public String getId() {
         return id;
@@ -119,6 +122,14 @@ public class Transfer extends RealmObject {
         this.itemDescription = itemDescription;
     }
 
+    public String getTagNumber() {
+        return tagNumber;
+    }
+
+    public void setTagNumber(String tagNumber) {
+        this.tagNumber = tagNumber;
+    }
+
     public String getPackSize() {
         return packSize;
     }
@@ -159,12 +170,19 @@ public class Transfer extends RealmObject {
         this.caseQty = caseQty;
     }
 
-    public int getLooseQty() {
-        return looseQty;
+    public boolean getInit() {
+        return init;
     }
 
-    public void setLooseQty(int looseQty) {
-        this.looseQty = looseQty;
+    public void setInit(boolean init) {
+        this.init = init;
     }
 
+    public Date getInitDate() {
+        return initDate;
+    }
+
+    public void setInitDate(Date initDate) {
+        this.initDate = initDate;
+    }
 }

@@ -9,11 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
-import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 

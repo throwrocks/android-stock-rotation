@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,6 +73,25 @@ public final class Utilities {
         return date;
     }
     /**
+     * getDateAsString
+     * Convert a date into a string
+     *
+     * @param date   the date
+     * @param format the format in which to return the string
+     * @return the new formatted date string
+     */
+    @SuppressWarnings("SameParameterValue")
+    public static String getDateAsString(Date date, String format, String timezone) {
+        DateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        if (timezone == null) {
+            formatter.setTimeZone(TimeZone.getDefault());
+        } else {
+            formatter.setTimeZone(TimeZone.getTimeZone(timezone));
+        }
+        return formatter.format(date);
+    }
+
+    /**
      * setViewMode
      * A method to set the layout on view mode
      * Pass null for views that are not needed
@@ -121,7 +141,6 @@ public final class Utilities {
      * @param scanNewLocation
      * @param currentLocation
      * @param caseQty
-     * @param looseQty
      * @param newLocation
      */
     public static void setEditMode(
@@ -188,7 +207,6 @@ public final class Utilities {
      * A method to set the item qtys
      *
      * @param caseQty  the case qty
-     * @param looseQty the loose qty
      */
     public static void setQtys(
             TextView inputCaseQty,

@@ -14,20 +14,10 @@
         android:padding="16dp"
         android:textSize="24sp" />
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/location_details_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/location_details_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
-
-        </LinearLayout>
-
-    </ScrollView>
-
+        android:layout_height="wrap_content"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp" />
 </LinearLayout>

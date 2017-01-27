@@ -2,17 +2,13 @@ package rocks.athrow.android_stock_rotation.service;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.UUID;
 
-import rocks.athrow.android_stock_rotation.activity.MainActivity;
 import rocks.athrow.android_stock_rotation.data.SyncDB;
 
-import static rocks.athrow.android_stock_rotation.service.SyncDBService.SERVICE_NAME;
 
 
 /**

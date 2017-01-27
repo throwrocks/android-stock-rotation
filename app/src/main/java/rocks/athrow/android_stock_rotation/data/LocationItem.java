@@ -17,6 +17,7 @@ public class LocationItem {
     private String receivedDate;
     private String location;
     private String caseQty;
+    private String inventoryTag;
     private int receivingId;
 
     public String getItemId() {
@@ -74,6 +75,14 @@ public class LocationItem {
 
     public void setCaseQty(String caseQty) {
         this.caseQty = caseQty;
+    }
+
+    public String getInventoryTag() {
+        return inventoryTag;
+    }
+
+    public void setInventoryTag(String inventoryTag) {
+        this.inventoryTag = inventoryTag;
     }
 
     public int getReceivingId() {
