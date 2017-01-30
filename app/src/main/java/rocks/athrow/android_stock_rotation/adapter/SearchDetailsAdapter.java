@@ -29,6 +29,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
         TextView locationView;
         TextView packSizeView;
         TextView receivedDateView;
+        TextView expirationDateView;
         TextView casesView;
         ViewHolder(View view) {
             super(view);
@@ -38,6 +39,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
             locationView = (TextView) view.findViewById(R.id.search_items_location);
             packSizeView = (TextView) view.findViewById(R.id.search_items_pack_size);
             receivedDateView = (TextView) view.findViewById(R.id.search_items_received_date);
+            expirationDateView = (TextView) view.findViewById(R.id.search_items_expirtation_date);
             casesView = (TextView) view.findViewById(R.id.search_items_cases_qty);
         }
     }
@@ -59,6 +61,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
         String location = locationItem.getLocation();
         String packSize = locationItem.getPackSize();
         String receivedDate = locationItem.getReceivedDate();
+        String expirationDate = locationItem.getExpirtationDate();
         String countCases = locationItem.getCaseQty();
         viewHolder.skuView.setText(itemSku);
         viewHolder.itemDescriptionView.setText(itemDescription);
@@ -66,6 +69,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
         viewHolder.locationView.setText(location);
         viewHolder.packSizeView.setText(packSize);
         viewHolder.receivedDateView.setText(receivedDate);
+        viewHolder.expirationDateView.setText(expirationDate);
         viewHolder.casesView.setText(countCases);
     }
 

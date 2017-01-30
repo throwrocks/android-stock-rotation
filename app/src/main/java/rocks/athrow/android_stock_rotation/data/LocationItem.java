@@ -15,6 +15,7 @@ public class LocationItem {
     private String description;
     private String packSize;
     private String receivedDate;
+    private String expirtationDate;
     private String location;
     private String caseQty;
     private String inventoryTag;
@@ -59,6 +60,14 @@ public class LocationItem {
 
     public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
+    }
+
+    public String getExpirtationDate() {
+        return expirtationDate;
+    }
+
+    public void setExpirtationDate(String expirtationDate) {
+        this.expirtationDate = expirtationDate;
     }
 
     public String getLocation() {

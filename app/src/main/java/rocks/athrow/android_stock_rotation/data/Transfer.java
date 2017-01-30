@@ -24,6 +24,7 @@ public class Transfer extends RealmObject {
     public final static String FIELD_TAG_NUMBER = "tagNumber";
     public final static String FIELD_RECEIVING_ID = "receivingId";
     public final static String FIELD_RECEIVED_DATE = "receivedDate";
+    public final static String FIELD_EXPIRTATION_DATE = "expirationDate";
     public final static String FIELD_PACK_SIZE = "packSize";
     public final static String FIELD_LOCATION = "location";
     public final static String FIELD_CASE_QTY = "caseQty";
@@ -43,6 +44,7 @@ public class Transfer extends RealmObject {
     @Index
     private int receivingId;
     private String receivedDate;
+    private String expirationDate;
     @Index
     private String location;
     private int caseQty;
@@ -148,6 +150,15 @@ public class Transfer extends RealmObject {
 
     public String getReceivedDate() {
         return receivedDate;
+    }
+
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public void setReceivedDate(String receivedDate) {

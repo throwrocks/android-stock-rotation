@@ -103,6 +103,7 @@ public final class SyncDB {
                         item.setPackSize(record.getString(Item.FIELD_PACK_SIZE));
                         item.setReceivingId(record.getInt(Item.FIELD_RECEIVING_ID));
                         item.setReceivedDate(record.getString(Item.FIELD_RECEIVED_DATE));
+                        item.setExpirationDate(record.getString(Item.FIELD_EXPIRATION_DATE));
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
                         item.setEdisonCaseQty(record.getInt(Location.FIELD_EDISON_QTY));
                         realm.copyToRealmOrUpdate(item);

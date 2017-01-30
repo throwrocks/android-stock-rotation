@@ -3,6 +3,8 @@ package rocks.athrow.android_stock_rotation.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Date;
+
 /**
  * PreferencesHelper
  * Created by jose on 1/10/17.

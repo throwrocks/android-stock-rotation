@@ -17,6 +17,7 @@ public class Item extends RealmObject {
     public static final String FIELD_PACK_SIZE = "packSize";
     public static final String FIELD_RECEIVING_ID = "receivingId";
     public static final String FIELD_RECEIVED_DATE = "receivedDate";
+    public static final String FIELD_EXPIRATION_DATE ="expirationDate";
     public static final String FIELD_ITEM_TYPE = "itemType";
     @PrimaryKey
     private String id;
@@ -27,6 +28,7 @@ public class Item extends RealmObject {
     private String packSize;
     private int receivingId;
     private String receivedDate;
+    private String expirationDate;
     private String itemType;
     private int fmCaseQty;
     private int edisonCaseQty;
@@ -93,6 +95,14 @@ public class Item extends RealmObject {
 
     public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public String getItemType() {

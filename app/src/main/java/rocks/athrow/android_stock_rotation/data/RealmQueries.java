@@ -525,16 +525,23 @@ public final class RealmQueries {
             default:
         }
         realm.commitTransaction();
-        realm.close();
         return getLocationItemsFromTransfers(context, transfers);
     }
 
     private static ArrayList<LocationItem> getLocationItemsFromTransfers(Context context, RealmResults<Transfer> transfers) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
         if ( transfers == null ){
+            realm.commitTransaction();
+            realm.close();
             return  null;
         }
         int size = transfers.size();
         if (size == 0) {
+            realm.commitTransaction();
+            realm.close();
             return null;
         }
         ArrayList<LocationItem> results = new ArrayList<>();
@@ -542,14 +549,17 @@ public final class RealmQueries {
             Transfer transfer = transfers.get(i);
             String itemId = transfer.getItemId();
             String itemLocation = transfer.getLocation();
-            String tagNumber = transfer.getTagNumber();
+
+
             String casesQty = String.valueOf(getCountCasesByLocation(context, itemLocation, itemId));
             if (Integer.parseInt(casesQty) > 0) {
+                String tagNumber = transfer.getTagNumber();
                 String itemSku = String.valueOf(transfer.getSku());
                 String description = transfer.getItemDescription();
                 String packSize = transfer.getPackSize();
                 int receivingId = transfer.getReceivingId();
                 String receivedDate = transfer.getReceivedDate();
+                String expirationDate = transfer.getExpirationDate();
                 LocationItem locationItem = new LocationItem();
                 locationItem.setItemId(itemId);
                 locationItem.setSKU(itemSku);
@@ -558,11 +568,14 @@ public final class RealmQueries {
                 locationItem.setPackSize(packSize);
                 locationItem.setReceivingId(receivingId);
                 locationItem.setReceivedDate(receivedDate);
+                locationItem.setExpirtationDate(expirationDate);
                 locationItem.setLocation(itemLocation);
                 locationItem.setCaseQty(casesQty);
                 results.add(i, locationItem);
             }
         }
+        realm.commitTransaction();
+        realm.close();
         return results;
     }
 

@@ -23,15 +23,21 @@ import android.widget.TextView;
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import java.util.Date;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
+import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static rocks.athrow.android_stock_rotation.util.Utilities.getStringAsDate;
 
 
 public class MainActivity extends AppCompatActivity {
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     private static final String LOG_TAG = "MainActivity";
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
@@ -115,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        updateSyncDate();
         scheduleSyncDB();
     }
 
@@ -172,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
         mSyncStatusRunnable = new Runnable() {
             @Override
             public void run() {
-                //Log.e("updateSyncStatus ", "" + isMyServiceRunning());
                 if ( isMyServiceRunning()){
                     updateSyncView(true);
                 }else{
@@ -207,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             //Log.d("service ", service.service.getClassName());
             if ("rocks.athrow.android_stock_rotation.service.SyncDBJobService".equals(service.service.getClassName())) {
-                Log.e("service", " SyncDBJobService is running");
+                //Log.e("service", " SyncDBJobService is running");
                 //Log.d("service", " ---------------------------------------------------");
                 return true;
             }
@@ -222,9 +228,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-        String date = preferencesHelper.loadString("last_sync", "Never");
+        String lastSyncString = preferencesHelper.loadString("last_sync", "Never");
+        Date lastSyncDate = Utilities.getStringAsDate(lastSyncString, DATE_TIME_DISPLAY, null);
+        String lastSyncDateDisplay = Utilities.getDateAsString(lastSyncDate, DATE_TIME_DISPLAY, null);
         TextView syncDate = (TextView) findViewById(R.id.text_sync);
-        syncDate.setText(date);
+        syncDate.setText(lastSyncDateDisplay);
     }
 
     /**
@@ -237,10 +245,10 @@ public class MainActivity extends AppCompatActivity {
         if (isRunning) {
             mSyncProgressBar.setVisibility(View.VISIBLE);
             mSyncIcon.setVisibility(View.GONE);
+            updateSyncDate();
         } else {
             mSyncProgressBar.setVisibility(View.GONE);
             mSyncIcon.setVisibility(View.VISIBLE);
-            updateSyncDate();
         }
     }
 
