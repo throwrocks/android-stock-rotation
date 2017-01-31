@@ -3,11 +3,14 @@ package rocks.athrow.android_stock_rotation.api;
 import android.net.Uri;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import rocks.athrow.android_stock_rotation.BuildConfig;
 
@@ -16,6 +19,8 @@ import rocks.athrow.android_stock_rotation.BuildConfig;
  */
 
 public final class API {
+    private static final String GET = "GET";
+    private static final String POST = "POST";
     private static final String API_HOST = BuildConfig.API_HOST;
     private static final String API_KEY = BuildConfig.API_KEY;
     private static final String API_GET_ITEMS = API_HOST + "/script/api_get_items/items.json?RFMkey=" + API_KEY;
@@ -23,6 +28,7 @@ public final class API {
     private static final String API_GET_TRANSFERS = API_HOST + "/script/api_get_transfers/transfers.json?RFMkey=" + API_KEY;
     private static final String API_GET_ITEM_BY_SKU = API_HOST + "/script/api_get_item_by_sku/items.json?RFMkey=" + API_KEY;
     private static final String API_GET_ITEM_BY_TAG = API_HOST + "/script/api_get_item_by_tag/items.json?RFMkey=" + API_KEY;
+    private static final String API_UPLOAD_TRANSFER = API_HOST + "/layout/transfers.json?RFMkey=" + API_KEY + "&RFMurlencoded";
 
     private API() {
         throw new AssertionError("No API instances for you!");
@@ -35,7 +41,7 @@ public final class API {
      * @return an APIResponse object with the results
      */
     public static APIResponse getItems(int lastSerialNumber) {
-        return httpConnect(API_GET_ITEMS + "&RFMscriptParam=" + lastSerialNumber);
+        return httpConnect("GET", API_GET_ITEMS + "&RFMscriptParam=" + lastSerialNumber, null);
     }
 
     /**
@@ -45,7 +51,7 @@ public final class API {
      * @return an APIResponse object with the results
      */
     public static APIResponse getLocations(int lastSerialNumber) {
-        return httpConnect(API_GET_LOCATIONS + "&RFMscriptParam=" + lastSerialNumber);
+        return httpConnect("GET", API_GET_LOCATIONS + "&RFMscriptParam=" + lastSerialNumber, null );
     }
     /**
      * getTransfers
@@ -54,17 +60,20 @@ public final class API {
      * @return an APIResponse object with the results
      */
     public static APIResponse getTransfers(int lastSerialNumber) {
-        return httpConnect(API_GET_TRANSFERS + "&RFMscriptParam=" + lastSerialNumber);
+        return httpConnect("GET", API_GET_TRANSFERS + "&RFMscriptParam=" + lastSerialNumber, null);
     }
 
     public static APIResponse getItemBySKU(int sku){
-        return httpConnect(API_GET_ITEM_BY_SKU + "&RFMscriptParam=" + sku);
+        return httpConnect("GET", API_GET_ITEM_BY_SKU + "&RFMscriptParam=" + sku, null);
     }
 
     public static APIResponse getItemByTag(String tag){
-        return httpConnect(API_GET_ITEM_BY_TAG + "&RFMscriptParam=" + tag);
+        return httpConnect("GET", API_GET_ITEM_BY_TAG + "&RFMscriptParam=" + tag, null);
     }
 
+    public static APIResponse postTransfer(String data){
+        return httpConnect("POST", API_UPLOAD_TRANSFER, data);
+    }
 
     /**
      * httpConnect
@@ -72,7 +81,7 @@ public final class API {
      * @param queryURL the query URL
      * @return an APIResponse object
      */
-    private static APIResponse httpConnect(String queryURL) {
+    private static APIResponse httpConnect(String requestMethod, String queryURL, String postData) {
         APIResponse apiResponse = new APIResponse();
         apiResponse.setRequestURI(queryURL);
         HttpURLConnection urlConnection = null;
@@ -81,9 +90,25 @@ public final class API {
             Uri builtUri = Uri.parse(queryURL).buildUpon().build();
             URL url = new URL(builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-            apiResponse.setResponseCode(urlConnection.getResponseCode());
+            switch (requestMethod){
+                case "GET":
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+                    apiResponse.setResponseCode(urlConnection.getResponseCode());
+                    break;
+                case "POST":
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty( "charset", "utf-8");
+                    urlConnection.setRequestProperty( "Content-Type", "application/json");
+                    urlConnection.setRequestProperty( "Content-Length", Integer.toString(postData.length()) );
+                    urlConnection.setDoOutput(true);
+                    byte[] data = postData.getBytes(StandardCharsets.UTF_8);
+                    try( DataOutputStream wr = new DataOutputStream( urlConnection.getOutputStream())) {
+                        wr.write( data );
+                    }
+                    apiResponse.setResponseCode(urlConnection.getResponseCode());
+                    break;
+            }
             InputStream inputStream = urlConnection.getInputStream();
             StringBuilder buffer = new StringBuilder();
             if (inputStream == null) {

@@ -119,22 +119,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp" />
-            <!--
-            <TextView
-                android:id="@+id/label_loose_qty"
-                style="@style/LabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/label_loose_qty" />
-
-            <TextView
-                android:id="@+id/transfer_loose_qty"
-                style="@style/PrimaryTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" />
-                -->
         </LinearLayout>
 
     </LinearLayout>

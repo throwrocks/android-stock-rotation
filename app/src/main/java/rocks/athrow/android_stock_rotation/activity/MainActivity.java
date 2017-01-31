@@ -33,8 +33,6 @@ import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
-import static rocks.athrow.android_stock_rotation.util.Utilities.getStringAsDate;
-
 
 public class MainActivity extends AppCompatActivity {
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         ComponentName serviceName = new ComponentName(this, SyncDBJobService.class);
         JobInfo.Builder jobInfo = new JobInfo.Builder(1, serviceName);
         jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        jobInfo.setPeriodic(60000);
+        jobInfo.setPeriodic(10000);
         //jobInfo.setBackoffCriteria(10000, JobInfo.BACKOFF_POLICY_LINEAR);
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo.build());
@@ -230,8 +228,14 @@ public class MainActivity extends AppCompatActivity {
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
         String lastSyncString = preferencesHelper.loadString("last_sync", "Never");
-        Date lastSyncDate = Utilities.getStringAsDate(lastSyncString, DATE_TIME_DISPLAY, null);
-        String lastSyncDateDisplay = Utilities.getDateAsString(lastSyncDate, DATE_TIME_DISPLAY, null);
+        String lastSyncDateDisplay;
+        if ( !lastSyncString.equals("Never")){
+            Date lastSyncDate = Utilities.getStringAsDate(lastSyncString, DATE_TIME_DISPLAY, null);
+            lastSyncDateDisplay = Utilities.getDateAsString(lastSyncDate, DATE_TIME_DISPLAY, null);
+        }else{
+            lastSyncDateDisplay = lastSyncString;
+        }
+
         TextView syncDate = (TextView) findViewById(R.id.text_sync);
         syncDate.setText(lastSyncDateDisplay);
     }

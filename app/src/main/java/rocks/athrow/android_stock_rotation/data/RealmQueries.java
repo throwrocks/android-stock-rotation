@@ -128,11 +128,12 @@ public final class RealmQueries {
             String itemId,
             String skuString,
             String itemDescription,
+            String tagNumber,
             String packSize,
             int receivingId,
             String receivedDate,
+            String expirationDate,
             String caseQtyString,
-            //String looseQtyString,
             String currentLocation,
             String newLocation) {
         APIResponse apiResponse = new APIResponse();
@@ -164,27 +165,22 @@ public final class RealmQueries {
                 transaction.setItemId(itemId);
                 int Sku = Integer.parseInt(skuString);
                 transaction.setSku(Sku);
+                transaction.setItemDescription(itemDescription);
+                transaction.setTagNumber(tagNumber);
                 transaction.setPackSize(packSize);
                 transaction.setReceivingId(receivingId);
                 transaction.setReceivedDate(receivedDate);
-                transaction.setItemDescription(itemDescription);
+                transaction.setExpirationDate(expirationDate);
             }
         }
-        // caseQty / looseQty: If quantities were provided, save them
         int caseQty;
         if (caseQtyString != null && !caseQtyString.isEmpty()) {
             caseQty = Integer.parseInt(caseQtyString);
             transaction.setQtyCases(caseQty);
         }
-        int looseQty;
-        /*if (looseQtyString != null && !looseQtyString.isEmpty()) {
-            looseQty = Integer.parseInt(looseQtyString);
-            transaction.setQtyLoose(looseQty);
-        }*/
-        // currentLocation / newLocation: Set the locations
         transaction.setLocationStart(currentLocation);
         transaction.setLocationEnd(newLocation);
-        // If we are committing the record, set the completed information
+
         if (transaction.getIsCompleted() == null) {
             transaction.setIsCompleted(false);
         }

@@ -2,14 +2,14 @@ package rocks.athrow.android_stock_rotation.service;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.util.UUID;
 
 import rocks.athrow.android_stock_rotation.data.SyncDB;
-
-
 
 /**
  * SyncDBJobService
@@ -42,7 +42,9 @@ public class SyncDBJobService extends JobService {
         @Override
         protected JobParameters[] doInBackground(JobParameters... params) {
             Log.e(LOG_TAG, "Running SyncDB.downloadNewRecords()");
-            SyncDB.downloadNewRecords(getApplicationContext());
+            Context context = getApplicationContext();
+            SyncDB.postTransfers(context);
+            SyncDB.downloadNewRecords(context);
             return params;
         }
 

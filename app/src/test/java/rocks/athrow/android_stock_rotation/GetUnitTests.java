@@ -20,7 +20,7 @@ import static junit.framework.Assert.assertTrue;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
-public class UnitTests extends Robolectric {
+public class GetUnitTests extends Robolectric {
     @Mock
     private Context mContext;
     private APIResponse mItems = null;

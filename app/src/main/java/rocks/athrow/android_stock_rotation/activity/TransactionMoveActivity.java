@@ -37,31 +37,7 @@ import rocks.athrow.android_stock_rotation.zxing.IntentResult;
  * Created by joselopez on 1/13/17.
  */
 
-public class TransactionMoveActivity extends AppCompatActivity {
-    private static final String ITEM_ID = "item_id";
-    private static final String TRANSACTION_ID = "transaction_id";
-    private static final String MODE = "mode";
-    private static final String MODE_EDIT = "edit";
-    private static final String MODE_VIEW = "view";
-    private static final String SCAN_ITEM = "item";
-    private static final String SCAN_CURRENT_LOCATION = "currentLocation";
-    private static final String SCAN_NEW_LOCATION = "newLocation";
-    private static final String IN = "in";
-    private static final String OUT = "out";
-    private String mBarcodeContents;
-    private String mScanType;
-    private String mMode;
-    private String mTransactionId;
-    private String mItemId;
-    private int mReceivingId;
-    private LinearLayout mButtonScanItem;
-    private LinearLayout mButtonScanCurrentLocation;
-    private LinearLayout mButtonScanNewLocation;
-    private EditText mCurrentLocationView;
-    private EditText mCaseQtyView;
-    //private EditText mLooseQtyView;
-    private EditText mNewLocationView;
-    private LinearLayout mButtonCommit;
+public class TransactionMoveActivity extends TransactionBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +50,17 @@ public class TransactionMoveActivity extends AppCompatActivity {
             mMode = intent.getStringExtra(MODE);
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mInputItemSku = (TextView) findViewById(R.id.input_item_sku);
+        mInputItemDescription = (TextView) findViewById(R.id.input_item_description);
+        mInputTagNumber = (TextView) findViewById(R.id.input_tag_number);
+        mInputPackSize = (TextView) findViewById(R.id.input_pack_size);
+        mInputReceivedDate = (TextView) findViewById(R.id.input_received_date);
+        mInputExpirationDate = (TextView) findViewById(R.id.input_expiration_date);
         mButtonScanItem = (LinearLayout) findViewById(R.id.scan_item);
         mButtonScanCurrentLocation = (LinearLayout) findViewById(R.id.scan_current_location);
         mButtonScanNewLocation = (LinearLayout) findViewById(R.id.scan_new_location);
         mCurrentLocationView = (EditText) findViewById(R.id.input_current_location);
         mCaseQtyView = (EditText) findViewById(R.id.input_case_qty);
-        //mLooseQtyView = (EditText) findViewById(R.id.input_loose_qty);
         mNewLocationView = (EditText) findViewById(R.id.input_new_location);
         mButtonCommit = (LinearLayout) findViewById(R.id.button_move);
         ActionBar ab = getSupportActionBar();
@@ -107,8 +88,13 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void setEditMode() {
         setViewData();
-        Utilities.setEditMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
-                mButtonCommit, mCurrentLocationView, mCaseQtyView, /*mLooseQtyView,*/ mNewLocationView);
+        setEditMode(
+                mButtonScanItem,
+                mButtonScanCurrentLocation,
+                mButtonScanNewLocation,
+                mButtonCommit,
+                mCaseQtyView,
+                mNewLocationView);
         mButtonScanItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,8 +125,14 @@ public class TransactionMoveActivity extends AppCompatActivity {
      */
     private void setViewMode() {
         setViewData();
-        Utilities.setViewMode(mButtonScanItem, mButtonScanCurrentLocation, mButtonScanNewLocation,
-                mButtonCommit, mCurrentLocationView, mCaseQtyView, /*mLooseQtyView,*/ mNewLocationView);
+        setViewMode(
+                mButtonScanItem,
+                mButtonScanCurrentLocation,
+                mButtonScanNewLocation,
+                mButtonCommit,
+                mCurrentLocationView,
+                mCaseQtyView,
+                mNewLocationView);
         mButtonCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +153,12 @@ public class TransactionMoveActivity extends AppCompatActivity {
             setCurrentLocationView(transaction.getLocationStart());
             setQtyViews(transaction.getQtyCasesString(), transaction.getQtyLooseString());
             setItemViews(
+                    mInputItemSku,
+                    mInputItemDescription,
+                    mInputTagNumber,
+                    mInputPackSize,
+                    mInputReceivedDate,
+                    mInputExpirationDate,
                     transaction.getSkuString(),
                     transaction.getItemDescription(),
                     transaction.getTagNumber(),
@@ -176,7 +174,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * A method to initiate the barcode scanning
      */
     private void scan() {
-        if ( mScanType != null ) {
+        if (mScanType != null) {
             IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.initiateScan();
         }
@@ -189,21 +187,15 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * @return 1 for succes, 0 for error
      */
     private int save() {
-        TextView inputSku = (TextView) findViewById(R.id.input_item_sku);
-        TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
-        TextView inputLocationCurrent = (TextView) findViewById(R.id.input_current_location);
-        TextView inputPackSize = (TextView) findViewById(R.id.input_pack_size);
-        TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
-        EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
-        EditText inputCaseQty = (EditText) findViewById(R.id.input_case_qty);
-        // Get input
-        String skuString = inputSku.getText().toString();
-        String itemDescription = inputItemDescription.getText().toString();
-        String packSize = inputPackSize.getText().toString();
-        String receivedDate = inputReceivedDate.getText().toString();
-        String caseQtyString = inputCaseQty.getText().toString();
-        String currentLocation = inputLocationCurrent.getText().toString();
-        String newLocation = inputNewLocation.getText().toString();
+        String skuString = mInputItemSku.getText().toString();
+        String itemDescription = mInputItemDescription.getText().toString();
+        String tagNumber = mInputTagNumber.getText().toString();
+        String packSize = mInputPackSize.getText().toString();
+        String receivedDate = mInputReceivedDate.getText().toString();
+        String expirationDate = mInputExpirationDate.getText().toString();
+        String caseQtyString = mCaseQtyView.getText().toString();
+        String currentLocation = mCurrentLocationView.getText().toString();
+        String newLocation = mNewLocationView.getText().toString();
         APIResponse apiResponse = RealmQueries.saveTransaction(
                 getApplicationContext(),
                 MainActivity.MODULE_MOVING,
@@ -211,11 +203,12 @@ public class TransactionMoveActivity extends AppCompatActivity {
                 mItemId,
                 skuString,
                 itemDescription,
+                tagNumber,
                 packSize,
                 mReceivingId,
                 receivedDate,
+                expirationDate,
                 caseQtyString,
-                //looseQtyString,
                 currentLocation,
                 newLocation);
         if (apiResponse.getResponseCode() == 200) {
@@ -300,27 +293,6 @@ public class TransactionMoveActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * setItemViews
-     * @param sku
-     * @param description
-     * @param tagNumber
-     * @param packSize
-     * @param receivedDate
-     * @param expirationDate
-     */
-    private void setItemViews(String sku, String description, String tagNumber, String packSize,
-                              String receivedDate, String expirationDate) {
-        TextView inputItemSku = (TextView) findViewById(R.id.input_item_sku);
-        TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
-        TextView inputTagNumber = (TextView) findViewById(R.id.input_tag_number);
-        TextView inputPackSize = (TextView) findViewById(R.id.input_pack_size);
-        TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
-        TextView inputExpirationDate = (TextView) findViewById(R.id.input_expiration_date);
-        Utilities.setItemViews(inputItemSku, inputItemDescription, inputTagNumber, inputPackSize,
-                inputReceivedDate, inputExpirationDate,
-                sku, description, tagNumber, packSize, receivedDate, expirationDate);
-    }
 
     /**
      * setQtys
@@ -359,8 +331,8 @@ public class TransactionMoveActivity extends AppCompatActivity {
      * onActivityResult
      *
      * @param requestCode the request code
-     * @param resultCode the result code
-     * @param intent the intent from the barcode scan
+     * @param resultCode  the result code
+     * @param intent      the intent from the barcode scan
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (mScanType == null) {
@@ -395,7 +367,20 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     String receivedDate = record.getReceivedDate();
                     String expirationDate = record.getExpirationDate();
                     mReceivingId = record.getReceivingId();
-                    setItemViews(sku, description, tagNumber, packSize, receivedDate, expirationDate);
+                    setItemViews(
+                            mInputItemSku,
+                            mInputItemDescription,
+                            mInputTagNumber,
+                            mInputPackSize,
+                            mInputReceivedDate,
+                            mInputExpirationDate,
+                            sku,
+                            description,
+                            tagNumber,
+                            packSize,
+                            receivedDate,
+                            expirationDate
+                    );
                     save();
                 } else {
                     Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
@@ -497,7 +482,7 @@ public class TransactionMoveActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("barcode_contents", mBarcodeContents);
-        outState.putString("scan_type",mScanType);
+        outState.putString("scan_type", mScanType);
         outState.putString(TRANSACTION_ID, mTransactionId);
         outState.putString(ITEM_ID, mItemId);
         outState.putString(MODE, mMode);
@@ -514,4 +499,6 @@ public class TransactionMoveActivity extends AppCompatActivity {
         setViews();
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+
 }

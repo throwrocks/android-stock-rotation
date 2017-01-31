@@ -40,24 +40,26 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
     private class ViewHolder extends RecyclerView.ViewHolder {
         final TextView viewSku;
         final TextView viewDescription;
+        final TextView viewTagNumber;
         final TextView viewPackSize;
         final TextView viewReceivedDate;
+        final TextView viewExpirationDate;
         final TextView viewLocation1;
         final TextView viewLocation2;
         final TextView viewCaseQty;
-        //final TextView viewLooseQty;
         final Button viewButtons;
 
         ViewHolder(View view) {
             super(view);
             viewSku = (TextView) view.findViewById(R.id.transaction_sku);
             viewDescription = (TextView) view.findViewById(R.id.transaction_description);
+            viewTagNumber = (TextView) view.findViewById(R.id.transaction_tag_number);
             viewPackSize = (TextView) view.findViewById(R.id.transaction_pack_size);
             viewReceivedDate = (TextView) view.findViewById(R.id.transaction_received_date);
+            viewExpirationDate = (TextView) view.findViewById(R.id.transaction_expiration_date);
             viewLocation1 = (TextView) view.findViewById(R.id.transaction_location1);
             viewLocation2 = (TextView) view.findViewById(R.id.transaction_location2);
             viewCaseQty = (TextView) view.findViewById(R.id.transaction_case_qty);
-            //viewLooseQty = (TextView) view.findViewById(R.id.transaction_loose_qty);
             viewButtons = (Button) view.findViewById(R.id.transaction_view_button);
         }
     }
@@ -77,16 +79,20 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final String itemId = transaction.getItemId();
         String sku = transaction.getSkuString();
         String description = transaction.getItemDescription();
+        String tagNumber = transaction.getTagNumber();
         String packSize = transaction.getPackSize();
         String receivedDate = transaction.getReceivedDate();
+        String expirationDate = transaction.getExpirationDate();
         String locationStart = transaction.getLocationStart();
         String caseQty = transaction.getQtyCasesString();
         //String looseQty = transaction.getQtyLooseString();
         String locationEnd = transaction.getLocationEnd();
         vh.viewSku.setText(sku);
         vh.viewDescription.setText(description);
+        vh.viewTagNumber.setText(tagNumber);
         vh.viewPackSize.setText(packSize);
         vh.viewReceivedDate.setText(receivedDate);
+        vh.viewExpirationDate.setText(expirationDate);
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
         //vh.viewLooseQty.setText(looseQty);

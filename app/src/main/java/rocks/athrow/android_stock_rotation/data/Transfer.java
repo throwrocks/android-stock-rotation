@@ -5,6 +5,7 @@ import java.util.Date;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 
 /**
  * Transfer
@@ -12,6 +13,7 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Transfer extends RealmObject {
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     public final static String FIELD_ID = "id";
     public final static String FIELD_SERIAL_NUMBER = "serialNumber";
     public final static String FIELD_TRANSACTION_ID = "transactionId";
@@ -24,10 +26,12 @@ public class Transfer extends RealmObject {
     public final static String FIELD_TAG_NUMBER = "tagNumber";
     public final static String FIELD_RECEIVING_ID = "receivingId";
     public final static String FIELD_RECEIVED_DATE = "receivedDate";
-    public final static String FIELD_EXPIRTATION_DATE = "expirationDate";
+    public final static String FIELD_EXPIRATION_DATE = "expirationDate";
     public final static String FIELD_PACK_SIZE = "packSize";
     public final static String FIELD_LOCATION = "location";
     public final static String FIELD_CASE_QTY = "caseQty";
+    public final static String FIELD_INIT = "init";
+    public final static String FIELD_INIT_DATE = "initDate";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -195,5 +199,25 @@ public class Transfer extends RealmObject {
 
     public void setInitDate(Date initDate) {
         this.initDate = initDate;
+    }
+
+    public String getJSON() {
+        return "{\"data\":[{"
+                + "\"id\":\"" + id + "\""
+                + ", \"transactionId\":\"" + transactionId + "\""
+                + ", \"transactionType\":\"" + transactionType + "\""
+                + ", \"date\":\"" + Utilities.getDateAsString(date, DATE_TIME_DISPLAY, null) + "\""
+                + ", \"type\":\"" + type + "\""
+                + ", \"itemId\":\"" + itemId + "\""
+                + ", \"sku\":\"" + sku + "\""
+                + ", \"itemDescription\":\"" + itemDescription + "\""
+                + ", \"tagNumber\":\"" + tagNumber + "\""
+                + ", \"packSize\":\"" + packSize + "\""
+                + ", \"receivingId\":\"" + receivingId + "\""
+                + ", \"receivedDate\":\"" + receivedDate + "\""
+                + ", \"expirationDate\":\"" + expirationDate + "\""
+                + ", \"location\":\"" + location + "\""
+                + ", \"caseQty\":\"" + caseQty + "\""
+                + "}]}";
     }
 }
