@@ -20,9 +20,11 @@ public class Transaction extends RealmObject {
     private String itemId;
     private int sku;
     private String itemDescription;
+    private String tagNumber;
     private String packSize;
     private int receivingId;
     private String receivedDate;
+    private String expirationDate;
     private String type1; // Receiving, Move, Salvage, Picking
     private String type2; // In or out
     private String locationStart;
@@ -85,6 +87,14 @@ public class Transaction extends RealmObject {
 
     public void setItemDescription(String itemDescription) {
         this.itemDescription = itemDescription;
+    }
+
+    public String getTagNumber() {
+        return tagNumber;
+    }
+
+    public void setTagNumber(String tagNumber) {
+        this.tagNumber = tagNumber;
     }
 
     public String getType1() {
@@ -185,6 +195,14 @@ public class Transaction extends RealmObject {
 
     public void setReceivedDate(String receivedDate) {
         this.receivedDate = receivedDate;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public void setLocationEnd(String locationEnd) {

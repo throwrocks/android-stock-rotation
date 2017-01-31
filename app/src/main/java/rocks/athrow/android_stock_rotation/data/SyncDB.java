@@ -11,7 +11,6 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
@@ -175,6 +174,7 @@ public final class SyncDB {
                         transfer.setPackSize(record.getString(Transfer.FIELD_PACK_SIZE));
                         transfer.setReceivingId(record.getInt(Transfer.FIELD_RECEIVING_ID));
                         transfer.setReceivedDate(record.getString(Transfer.FIELD_RECEIVED_DATE));
+                        transfer.setExpirationDate(record.getString(Transfer.FIELD_EXPIRTATION_DATE));
                         transfer.setLocation(record.getString(Transfer.FIELD_LOCATION));
                         transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
                         transfer.setInit(true);

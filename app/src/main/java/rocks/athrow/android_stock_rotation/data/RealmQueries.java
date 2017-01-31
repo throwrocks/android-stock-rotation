@@ -2,8 +2,6 @@ package rocks.athrow.android_stock_rotation.data;
 
 import android.content.Context;
 
-import com.facebook.stetho.common.StringUtil;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -528,20 +526,18 @@ public final class RealmQueries {
         return getLocationItemsFromTransfers(context, transfers);
     }
 
+    /**
+     * getLocationItemsFromTransfers
+     * @param context
+     * @param transfers
+     * @return
+     */
     private static ArrayList<LocationItem> getLocationItemsFromTransfers(Context context, RealmResults<Transfer> transfers) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
         if ( transfers == null ){
-            realm.commitTransaction();
-            realm.close();
             return  null;
         }
         int size = transfers.size();
         if (size == 0) {
-            realm.commitTransaction();
-            realm.close();
             return null;
         }
         ArrayList<LocationItem> results = new ArrayList<>();
@@ -549,8 +545,6 @@ public final class RealmQueries {
             Transfer transfer = transfers.get(i);
             String itemId = transfer.getItemId();
             String itemLocation = transfer.getLocation();
-
-
             String casesQty = String.valueOf(getCountCasesByLocation(context, itemLocation, itemId));
             if (Integer.parseInt(casesQty) > 0) {
                 String tagNumber = transfer.getTagNumber();
@@ -568,14 +562,12 @@ public final class RealmQueries {
                 locationItem.setPackSize(packSize);
                 locationItem.setReceivingId(receivingId);
                 locationItem.setReceivedDate(receivedDate);
-                locationItem.setExpirtationDate(expirationDate);
+                locationItem.setExpirationDate(expirationDate);
                 locationItem.setLocation(itemLocation);
                 locationItem.setCaseQty(casesQty);
                 results.add(i, locationItem);
             }
         }
-        realm.commitTransaction();
-        realm.close();
         return results;
     }
 

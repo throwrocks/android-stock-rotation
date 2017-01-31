@@ -6,14 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * LocationDetailsAdapter
@@ -33,6 +29,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
         TextView tagNumberView;
         TextView packSizeView;
         TextView receivedDateView;
+        TextView expirationDateView;
         TextView casesView;
         ViewHolder(View view) {
             super(view);
@@ -41,6 +38,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
             tagNumberView = (TextView) view.findViewById(R.id.location_details_tag_number);
             packSizeView = (TextView) view.findViewById(R.id.location_details_pack_size);
             receivedDateView = (TextView) view.findViewById(R.id.location_details_received_date);
+            expirationDateView = (TextView) view.findViewById(R.id.location_details_expirtation_date);
             casesView = (TextView) view.findViewById(R.id.location_details_cases_qty);
         }
     }
@@ -48,7 +46,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View locationItem = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.content_location_details_item, parent, false);
+                .inflate(R.layout.item_location_item, parent, false);
         return new LocationDetailsAdapter.ViewHolder(locationItem);
 
     }
@@ -61,12 +59,14 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
         String tagNumber = locationItem.getInventoryTag();
         String packSize = locationItem.getPackSize();
         String receivedDate = locationItem.getReceivedDate();
+        String expirationDate = locationItem.getExpirationDate();
         String countCases = locationItem.getCaseQty();
         viewHolder.skuView.setText(itemSku);
         viewHolder.itemDescriptionView.setText(itemDescription);
         viewHolder.tagNumberView.setText(tagNumber);
         viewHolder.packSizeView.setText(packSize);
         viewHolder.receivedDateView.setText(receivedDate);
+        viewHolder.expirationDateView.setText(expirationDate);
         viewHolder.casesView.setText(countCases);
     }
 

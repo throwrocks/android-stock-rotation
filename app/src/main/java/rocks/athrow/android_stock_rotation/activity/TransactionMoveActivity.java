@@ -163,8 +163,10 @@ public class TransactionMoveActivity extends AppCompatActivity {
             setItemViews(
                     transaction.getSkuString(),
                     transaction.getItemDescription(),
+                    transaction.getTagNumber(),
                     transaction.getPackSize(),
-                    transaction.getReceivedDate()
+                    transaction.getReceivedDate(),
+                    transaction.getExpirationDate()
             );
         }
     }
@@ -194,14 +196,12 @@ public class TransactionMoveActivity extends AppCompatActivity {
         TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
         EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
         EditText inputCaseQty = (EditText) findViewById(R.id.input_case_qty);
-        //EditText inputLooseQty = (EditText) findViewById(R.id.input_loose_qty);
         // Get input
         String skuString = inputSku.getText().toString();
         String itemDescription = inputItemDescription.getText().toString();
         String packSize = inputPackSize.getText().toString();
         String receivedDate = inputReceivedDate.getText().toString();
         String caseQtyString = inputCaseQty.getText().toString();
-        //String looseQtyString = inputLooseQty.getText().toString();
         String currentLocation = inputLocationCurrent.getText().toString();
         String newLocation = inputNewLocation.getText().toString();
         APIResponse apiResponse = RealmQueries.saveTransaction(
@@ -302,20 +302,24 @@ public class TransactionMoveActivity extends AppCompatActivity {
 
     /**
      * setItemViews
-     * A method to set the item views
-     *
-     * @param sku          the item sku
-     * @param description  the item description
-     * @param packSize     the item packsize
-     * @param receivedDate the item received date
+     * @param sku
+     * @param description
+     * @param tagNumber
+     * @param packSize
+     * @param receivedDate
+     * @param expirationDate
      */
-    private void setItemViews(String sku, String description, String packSize, String receivedDate) {
+    private void setItemViews(String sku, String description, String tagNumber, String packSize,
+                              String receivedDate, String expirationDate) {
         TextView inputItemSku = (TextView) findViewById(R.id.input_item_sku);
         TextView inputItemDescription = (TextView) findViewById(R.id.input_item_description);
+        TextView inputTagNumber = (TextView) findViewById(R.id.input_tag_number);
         TextView inputPackSize = (TextView) findViewById(R.id.input_pack_size);
         TextView inputReceivedDate = (TextView) findViewById(R.id.input_received_date);
-        Utilities.setItemViews(inputItemSku, inputItemDescription, inputPackSize, inputReceivedDate,
-                sku, description, packSize, receivedDate);
+        TextView inputExpirationDate = (TextView) findViewById(R.id.input_expiration_date);
+        Utilities.setItemViews(inputItemSku, inputItemDescription, inputTagNumber, inputPackSize,
+                inputReceivedDate, inputExpirationDate,
+                sku, description, tagNumber, packSize, receivedDate, expirationDate);
     }
 
     /**
@@ -386,10 +390,12 @@ public class TransactionMoveActivity extends AppCompatActivity {
                     mItemId = record.getId();
                     String sku = Integer.toString(record.getSKU());
                     String description = record.getDescription();
+                    String tagNumber = record.getTagNumber();
                     String packSize = record.getPackSize();
                     String receivedDate = record.getReceivedDate();
+                    String expirationDate = record.getExpirationDate();
                     mReceivingId = record.getReceivingId();
-                    setItemViews(sku, description, packSize, receivedDate);
+                    setItemViews(sku, description, tagNumber, packSize, receivedDate, expirationDate);
                     save();
                 } else {
                     Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);

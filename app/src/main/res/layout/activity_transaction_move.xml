@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/content_item_block" />
+        <include layout="@layout/content_input_item" />
 
         <View
             android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/dividerColor" />
 
-        <include layout="@layout/content_current_location_block" />
+        <include layout="@layout/content_input_current_location" />
 
         <View
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/dividerColor" />
 
-        <include layout="@layout/content_count_item" />
+        <include layout="@layout/content_input_count_in" />
 
         <View
             android:layout_width="match_parent"

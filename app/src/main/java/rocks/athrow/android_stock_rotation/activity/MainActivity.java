@@ -129,7 +129,8 @@ public class MainActivity extends AppCompatActivity {
         ComponentName serviceName = new ComponentName(this, SyncDBJobService.class);
         JobInfo.Builder jobInfo = new JobInfo.Builder(1, serviceName);
         jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        jobInfo.setBackoffCriteria(10000, JobInfo.BACKOFF_POLICY_LINEAR);
+        jobInfo.setPeriodic(60000);
+        //jobInfo.setBackoffCriteria(10000, JobInfo.BACKOFF_POLICY_LINEAR);
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo.build());
         if (result == 1) {

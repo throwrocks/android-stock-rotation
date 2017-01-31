@@ -47,7 +47,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View locationItem = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.content_search_items_item, parent, false);
+                .inflate(R.layout.item_search_item, parent, false);
         return new ViewHolder(locationItem);
 
     }
@@ -61,7 +61,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
         String location = locationItem.getLocation();
         String packSize = locationItem.getPackSize();
         String receivedDate = locationItem.getReceivedDate();
-        String expirationDate = locationItem.getExpirtationDate();
+        String expirationDate = locationItem.getExpirationDate();
         String countCases = locationItem.getCaseQty();
         viewHolder.skuView.setText(itemSku);
         viewHolder.itemDescriptionView.setText(itemDescription);

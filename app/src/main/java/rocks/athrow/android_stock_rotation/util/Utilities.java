@@ -178,28 +178,26 @@ public final class Utilities {
         }
     }
 
-    /**
-     * setItemViews
-     * A method to set the item views
-     *
-     * @param sku          the item sku
-     * @param description  the item description
-     * @param packSize     the item packsize
-     * @param receivedDate the item received date
-     */
+
     public static void setItemViews(
             TextView inputItemSku,
             TextView inputItemDescription,
+            TextView inputTagNumber,
             TextView inputPackSize,
             TextView inputReceivedDate,
+            TextView inputExpirationDate,
             String sku,
             String description,
+            String tagNumber,
             String packSize,
-            String receivedDate) {
+            String receivedDate,
+            String expirationDate) {
         inputItemSku.setText(sku);
         inputItemDescription.setText(description);
+        inputTagNumber.setText(tagNumber);
         inputPackSize.setText(packSize);
         inputReceivedDate.setText(receivedDate);
+        inputExpirationDate.setText(expirationDate);
     }
 
     /**

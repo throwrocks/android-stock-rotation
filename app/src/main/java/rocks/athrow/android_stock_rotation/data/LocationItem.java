@@ -62,11 +62,11 @@ public class LocationItem {
         this.receivedDate = receivedDate;
     }
 
-    public String getExpirtationDate() {
+    public String getExpirationDate() {
         return expirtationDate;
     }
 
-    public void setExpirtationDate(String expirtationDate) {
+    public void setExpirationDate(String expirtationDate) {
         this.expirtationDate = expirtationDate;
     }
 
