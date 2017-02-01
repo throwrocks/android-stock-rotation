@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             //Log.d("service ", service.service.getClassName());
             if ("rocks.athrow.android_stock_rotation.service.SyncDBJobService".equals(service.service.getClassName())) {
-                //Log.e("service", " SyncDBJobService is running");
+                Log.e("service", " SyncDBJobService is running");
                 //Log.d("service", " ---------------------------------------------------");
                 return true;
             }

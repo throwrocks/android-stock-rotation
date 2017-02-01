@@ -92,7 +92,7 @@ public final class Utilities {
     }
 
     /**
-     * setViewMode
+     * baseSetViewMode
      * A method to set the layout on view mode
      * Pass null for views that are not needed
      */
@@ -134,7 +134,7 @@ public final class Utilities {
     }
 
     /**
-     * setEditMode
+     * baseSetEditMode
      *
      * @param scanItem
      * @param scanCurrentLocation

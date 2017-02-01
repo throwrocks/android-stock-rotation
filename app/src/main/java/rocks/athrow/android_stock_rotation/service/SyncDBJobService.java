@@ -41,7 +41,7 @@ public class SyncDBJobService extends JobService {
 
         @Override
         protected JobParameters[] doInBackground(JobParameters... params) {
-            Log.e(LOG_TAG, "Running SyncDB.downloadNewRecords()");
+            Log.e(LOG_TAG, "Running SyncDB.doInBackground()");
             Context context = getApplicationContext();
             SyncDB.postTransfers(context);
             SyncDB.downloadNewRecords(context);

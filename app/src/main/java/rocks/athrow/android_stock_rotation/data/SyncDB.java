@@ -82,8 +82,16 @@ public final class SyncDB {
         int size = transfers.size();
         if ( transfers.size() > 0){
             for (int i = 0; i < size; i++) {
+                Transfer transfer = transfers.get(0);
                 String json = transfers.get(i).getJSON();
-                API.postTransfer(json);
+                APIResponse apiResponse = API.postTransfer(json);
+                if ( apiResponse.getResponseCode() == 201){
+                    realm.beginTransaction();
+                    transfer.setInit(true);
+                    transfer.setInitDate(new Date());
+                    realm.copyToRealmOrUpdate(transfer);
+                    realm.commitTransaction();
+                }
             }
         }
     }

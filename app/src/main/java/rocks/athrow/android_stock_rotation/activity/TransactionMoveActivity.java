@@ -9,7 +9,6 @@ import android.os.Bundle;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,14 +66,14 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         if (ab != null) {
             ab.setTitle(MainActivity.MODULE_MOVING);
         }
-        setViews();
+        setCurrentMode();
     }
 
     /**
-     * setViews
+     * setCurrentMode
      * A method to set the views according to the mode (view vs edit)
      */
-    private void setViews() {
+    private void setCurrentMode() {
         if (mMode.equals(MODE_EDIT)) {
             setEditMode();
         } else {
@@ -83,37 +82,33 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
     }
 
     /**
-     * setEditMode
+     * baseSetEditMode
      * A method to set the layout on edit mode
+     * Edit mode allows changing the transaction fields
      */
     private void setEditMode() {
-        setViewData();
-        setEditMode(
-                mButtonScanItem,
-                mButtonScanCurrentLocation,
-                mButtonScanNewLocation,
-                mButtonCommit,
-                mCaseQtyView,
-                mNewLocationView);
+        setTransactionViews();
+        baseSetEditMode();
+        // Set the click listeners for the initiateScan buttons
         mButtonScanItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mScanType = SCAN_ITEM;
-                scan();
+                initiateScan();
             }
         });
         mButtonScanCurrentLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mScanType = SCAN_CURRENT_LOCATION;
-                scan();
+                initiateScan();
             }
         });
         mButtonScanNewLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mScanType = SCAN_NEW_LOCATION;
-                scan();
+                initiateScan();
             }
         });
 
@@ -122,17 +117,12 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
     /**
      * setViewMode
      * A method to set the layout on view mode
+     * View mode does not allow editing the transaction fields
      */
     private void setViewMode() {
-        setViewData();
-        setViewMode(
-                mButtonScanItem,
-                mButtonScanCurrentLocation,
-                mButtonScanNewLocation,
-                mButtonCommit,
-                mCurrentLocationView,
-                mCaseQtyView,
-                mNewLocationView);
+        setTransactionViews();
+        baseSetViewMode();
+        // Set the click listeners on the commit button (Move)
         mButtonCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,22 +133,17 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
     }
 
     /**
-     * setViewData
+     * setTransactionViews
      * A method to set the views with transaction date
+     * 1. Set the current location
+     * 2. Set the new location
+     * 3. Set the case qty
+     * 4. Set the item views (sku, item desc., etc)
      */
-    private void setViewData() {
+    private void setTransactionViews() {
         Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
         if (transaction != null) {
-            setNewLocationView(transaction.getLocationEnd());
-            setCurrentLocationView(transaction.getLocationStart());
-            setQtyViews(transaction.getQtyCasesString(), transaction.getQtyLooseString());
-            setItemViews(
-                    mInputItemSku,
-                    mInputItemDescription,
-                    mInputTagNumber,
-                    mInputPackSize,
-                    mInputReceivedDate,
-                    mInputExpirationDate,
+            baseSetItemViews(
                     transaction.getSkuString(),
                     transaction.getItemDescription(),
                     transaction.getTagNumber(),
@@ -166,27 +151,36 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate()
             );
+            baseSetCurrentLocationView(transaction.getLocationStart());
+            baseSetNewLocationView(transaction.getLocationEnd());
+            baseSetCaseQtyView(transaction.getQtyCasesString());
         }
     }
-
-    /**
-     * scan
-     * A method to initiate the barcode scanning
-     */
-    private void scan() {
-        if (mScanType != null) {
-            IntentIntegrator integrator = new IntentIntegrator(this);
-            integrator.initiateScan();
-        }
+    private void moveButton() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Complete the move of this item?")
+                .setTitle("Move Item");
+        builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                commitTransaction();
+                Utilities.showToast(getApplicationContext(), "Move Completed!", Toast.LENGTH_SHORT);
+                finish();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
-
     /**
-     * save
-     * A method to save the transaction record
+     * saveTransaction
+     * A method to saveTransaction the transaction record
      *
      * @return 1 for succes, 0 for error
      */
-    private int save() {
+    private int saveTransaction() {
         String skuString = mInputItemSku.getText().toString();
         String itemDescription = mInputItemDescription.getText().toString();
         String tagNumber = mInputTagNumber.getText().toString();
@@ -216,25 +210,6 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         } else {
             return 0;
         }
-    }
-
-    private void moveButton() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Complete the move of this item?")
-                .setTitle("Move Item");
-        builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                commitTransaction();
-                Utilities.showToast(getApplicationContext(), "Move Completed!", Toast.LENGTH_SHORT);
-                finish();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     /**
@@ -279,60 +254,14 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         }
     }
 
-    /**
-     * deleteTransaction
-     * A caller method to delete a transaction
-     *
-     * @param transactionId the transaction id
-     */
-    private void deleteTransaction(String transactionId) {
-        APIResponse apiResponse = RealmQueries.deleteTransaction(getApplicationContext(), transactionId);
-        Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
-        if (apiResponse.getResponseCode() == 200) {
-            finish();
-        }
-    }
 
-
-    /**
-     * setQtys
-     * A method to set the item qtys
-     *
-     * @param caseQty  the case qty
-     * @param looseQty the loose qty
-     */
-    private void setQtyViews(String caseQty, String looseQty) {
-        TextView inputCaseQty = (TextView) findViewById(R.id.input_case_qty);
-        //TextView inputLooseQty = (TextView) findViewById(R.id.input_loose_qty);
-        Utilities.setQtys(inputCaseQty, /*inputLooseQty*/ caseQty /*looseQty*/);
-    }
-
-    /**
-     * setCurrentLocationView
-     *
-     * @param location the location name
-     */
-    private void setCurrentLocationView(String location) {
-        TextView inputCurrentLocation = (TextView) findViewById(R.id.input_current_location);
-        Utilities.setCurrentLocationView(inputCurrentLocation, location);
-    }
-
-    /**
-     * setNewLocationView
-     *
-     * @param location the location name
-     */
-    private void setNewLocationView(String location) {
-        EditText inputNewLocation = (EditText) findViewById(R.id.input_new_location);
-        Utilities.setCurrentLocationView(inputNewLocation, location);
-    }
 
     /**
      * onActivityResult
      *
      * @param requestCode the request code
      * @param resultCode  the result code
-     * @param intent      the intent from the barcode scan
+     * @param intent      the intent from the barcode initiateScan
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (mScanType == null) {
@@ -367,13 +296,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     String receivedDate = record.getReceivedDate();
                     String expirationDate = record.getExpirationDate();
                     mReceivingId = record.getReceivingId();
-                    setItemViews(
-                            mInputItemSku,
-                            mInputItemDescription,
-                            mInputTagNumber,
-                            mInputPackSize,
-                            mInputReceivedDate,
-                            mInputExpirationDate,
+                    baseSetItemViews(
                             sku,
                             description,
                             tagNumber,
@@ -381,7 +304,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                             receivedDate,
                             expirationDate
                     );
-                    save();
+                    saveTransaction();
                 } else {
                     Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
                 }
@@ -391,8 +314,8 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                 if (currentLocations.size() > 0) {
                     Location record = currentLocations.get(0);
                     String location = record.getLocation();
-                    setCurrentLocationView(location);
-                    save();
+                    baseSetCurrentLocationView(location);
+                    saveTransaction();
                 } else {
                     Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
                 }
@@ -402,8 +325,8 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                 if (newLocations.size() > 0) {
                     Location record = newLocations.get(0);
                     String location = record.getLocation();
-                    setNewLocationView(location);
-                    save();
+                    baseSetNewLocationView(location);
+                    saveTransaction();
                 } else {
                     Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
                 }
@@ -426,14 +349,15 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // TODO: Move to BaseActivity?
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.scan_delete:
-                deleteTransaction(mTransactionId);
+                baseDeleteTransaction(mTransactionId);
                 return super.onOptionsItemSelected(item);
             case R.id.scan_save:
-                int save = save();
+                int save = saveTransaction();
                 if (save == 1) {
                     Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
                     if (transaction != null && transaction.isValidRecord()) {
@@ -453,32 +377,14 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                 invalidateOptionsMenu();
                 return super.onOptionsItemSelected(item);
             case android.R.id.home:
-                back();
+                baseBackPressed();
                 return (true);
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        back();
-        super.onBackPressed();
-    }
-
-    /**
-     * back
-     * A method to handle the up navigation and back button press
-     * It deletes the transaction record if it's invalid
-     */
-    private void back() {
-        Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
-        if (transaction != null && !transaction.isValidRecord()) {
-            RealmQueries.deleteTransaction(getApplicationContext(), mTransactionId);
-        }
-        finish();
-    }
-
+    // TODO: Move to BaseActivity?
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("barcode_contents", mBarcodeContents);
@@ -496,7 +402,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
         mItemId = savedInstanceState.getString(ITEM_ID);
         mMode = savedInstanceState.getString(MODE);
-        setViews();
+        setCurrentMode();
         super.onRestoreInstanceState(savedInstanceState);
     }
 

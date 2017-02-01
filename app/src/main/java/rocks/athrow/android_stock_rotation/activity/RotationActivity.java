@@ -81,12 +81,21 @@ public class RotationActivity extends AppCompatActivity {
             case R.id.rotation_add_item:
                 switch (mRotationType) {
                     case MainActivity.MODULE_MOVING:
-                        String transactionId = UUID.randomUUID().toString();
-                        Intent intent = new Intent(this, TransactionMoveActivity.class);
-                        intent.putExtra("transaction_id", transactionId);
-                        intent.putExtra("type", mRotationType);
-                        intent.putExtra("mode", "edit");
-                        startActivity(intent);
+                        String moveTransactionId = UUID.randomUUID().toString();
+                        Intent moveIntent = new Intent(this, TransactionMoveActivity.class);
+                        moveIntent.putExtra("transaction_id", moveTransactionId);
+                        moveIntent.putExtra("type", mRotationType);
+                        moveIntent.putExtra("mode", "edit");
+                        startActivity(moveIntent);
+                        break;
+                    case MainActivity.MODULE_PICKING:
+                        String pickTransactionId = UUID.randomUUID().toString();
+                        Intent pickIntent = new Intent(this, TransactionOutActivity.class);
+                        pickIntent.putExtra("transaction_id", pickTransactionId);
+                        pickIntent.putExtra("type", mRotationType);
+                        pickIntent.putExtra("mode", "edit");
+                        startActivity(pickIntent);
+                        break;
                 }
             default:
                 return super.onOptionsItemSelected(item);
