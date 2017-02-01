@@ -17,18 +17,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.adapter.LocationDetailsAdapter;
 import rocks.athrow.android_stock_rotation.adapter.SearchDetailsAdapter;
-import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
-
-import static rocks.athrow.android_stock_rotation.R.drawable.search;
-import static rocks.athrow.android_stock_rotation.activity.MainActivity.MODULE_MOVING;
-import static rocks.athrow.android_stock_rotation.activity.MainActivity.MODULE_PICKING;
-import static rocks.athrow.android_stock_rotation.activity.MainActivity.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.activity.MainActivity.MODULE_SALVAGE;
 
 /**
  * Created by jose on 1/15/17.

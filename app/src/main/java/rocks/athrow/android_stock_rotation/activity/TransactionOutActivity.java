@@ -1,10 +1,12 @@
 package rocks.athrow.android_stock_rotation.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 /**
+ * TransactionOutActivity
  * Created by joselopez on 1/13/17.
  */
 
@@ -28,6 +31,7 @@ public class TransactionOutActivity extends TransactionBaseActivity {
         setContentView(R.layout.activity_transaction_out);
         Intent intent = getIntent();
         if (intent != null) {
+            mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
@@ -43,7 +47,7 @@ public class TransactionOutActivity extends TransactionBaseActivity {
         mButtonScanCurrentLocation = (LinearLayout) findViewById(R.id.scan_current_location);
         mCurrentLocationView = (EditText) findViewById(R.id.input_current_location);
         mCaseQtyView = (EditText) findViewById(R.id.input_case_qty);
-        mButtonCommit = (LinearLayout) findViewById(R.id.button_move);
+        mButtonCommit = (LinearLayout) findViewById(R.id.button_pick);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle("Staging");
@@ -101,7 +105,7 @@ public class TransactionOutActivity extends TransactionBaseActivity {
         mButtonCommit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moveButton();
+                shipButton();
             }
         });
 
@@ -127,19 +131,18 @@ public class TransactionOutActivity extends TransactionBaseActivity {
                     transaction.getExpirationDate()
             );
             baseSetCurrentLocationView(transaction.getLocationStart());
-            baseSetNewLocationView(transaction.getLocationEnd());
             baseSetCaseQtyView(transaction.getQtyCasesString());
         }
     }
 
-    private void moveButton() {
+    private void shipButton() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Complete the move of this item?")
-                .setTitle("Move Item");
+        builder.setMessage("Commit shipping?")
+                .setTitle("Ship Item");
         builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //commitTransaction();
-                Utilities.showToast(getApplicationContext(), "Move Completed!", Toast.LENGTH_SHORT);
+                commitTransaction();
+                Utilities.showToast(getApplicationContext(), "Shipping Completed!", Toast.LENGTH_SHORT);
                 finish();
             }
         });
@@ -149,6 +152,69 @@ public class TransactionOutActivity extends TransactionBaseActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    /**
+     * commitTransaction
+     * A method to commit the move transaction
+     */
+    private void commitTransaction() {
+        Context context = getApplicationContext();
+        Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
+        if (transaction != null && transaction.isValidRecord()) {
+            RealmQueries.saveTransfer(
+                    context,
+                    transaction.getId(),
+                    transaction.getType1(),
+                    OUT,
+                    transaction.getItemId(),
+                    transaction.getSku(),
+                    transaction.getItemDescription(),
+                    transaction.getTagNumber(),
+                    transaction.getPackSize(),
+                    transaction.getReceivingId(),
+                    transaction.getReceivedDate(),
+                    transaction.getExpirationDate(),
+                    transaction.getLocationStart(),
+                    transaction.getQtyCases()
+            );
+            RealmQueries.commitTransaction(context, mTransactionId);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.scan_delete:
+                baseDeleteTransaction(mTransactionId);
+                return super.onOptionsItemSelected(item);
+            case R.id.scan_save:
+                int save = baseSaveTransaction();
+                if (save == 1) {
+                    Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
+                    if (transaction != null && transaction.isValidRecord()) {
+                        setViewMode();
+                        mMode = MODE_VIEW;
+                        invalidateOptionsMenu();
+                    } else {
+                        Utilities.showToast(getApplicationContext(),
+                                "Invalid record. The item, the current location, and the quantity are required.",
+                                Toast.LENGTH_SHORT);
+                    }
+                }
+                return super.onOptionsItemSelected(item);
+            case R.id.scan_edit:
+                setEditMode();
+                mMode = MODE_EDIT;
+                invalidateOptionsMenu();
+                return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                baseBackPressed();
+                return (true);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

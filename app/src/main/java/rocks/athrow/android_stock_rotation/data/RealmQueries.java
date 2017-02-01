@@ -98,9 +98,16 @@ public final class RealmQueries {
             realm.beginTransaction();
             transaction.setIsCompleted(true);
             transaction.setDateCompleted(new Date());
+            String currentLocation = transaction.getLocationStart();
+            String newLocation = transaction.getLocationEnd();
             realm.copyToRealmOrUpdate(transaction);
             realm.commitTransaction();
-            realm.close();
+            if (currentLocation != null) {
+                updateLocationQty(context, currentLocation);
+            }
+            if (newLocation != null) {
+                updateLocationQty(context, newLocation);
+            }
             apiResponse.setResponseCode(200);
 
         }
@@ -121,6 +128,7 @@ public final class RealmQueries {
      * @param newLocation     the new location
      * @return an APIResponse object
      */
+
     public static APIResponse saveTransaction(
             Context context,
             String transactionType,
@@ -209,12 +217,13 @@ public final class RealmQueries {
             String itemId,
             int sku,
             String itemDescription,
+            String tagNumber,
             String packSize,
             int receivingId,
             String receivedDate,
+            String expirationDate,
             String location,
             int caseQty
-            //int looseQty
     ) {
         APIResponse apiResponse = new APIResponse();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -230,12 +239,13 @@ public final class RealmQueries {
         transfer.setItemId(itemId);
         transfer.setSku(sku);
         transfer.setItemDescription(itemDescription);
+        transfer.setTagNumber(tagNumber);
         transfer.setPackSize(packSize);
         transfer.setReceivingId(receivingId);
         transfer.setReceivedDate(receivedDate);
+        transfer.setExpirationDate(expirationDate);
         transfer.setLocation(location);
         transfer.setCaseQty(caseQty);
-        //transfer.setLooseQty(looseQty);
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
@@ -363,14 +373,14 @@ public final class RealmQueries {
 
 
     /**
-     * getLocation
+     * getLocationByBarcode
      * A method to get a Location object. Used with the barcode scanner.
      *
      * @param context a Context object
      * @param barcode the location's barcode
      * @return a Location object
      */
-    public static RealmResults<Location> getLocation(Context context, String barcode) {
+    public static RealmResults<Location> getLocationByBarcode(Context context, String barcode) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -381,6 +391,32 @@ public final class RealmQueries {
         return realmResults;
     }
 
+    public static RealmResults<Location> getLocationByName(Context context, String locationName) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults =
+                realm.where(Location.class).equalTo(Location.FIELD_LOCATION, locationName).findAll();
+        realm.beginTransaction();
+        realm.commitTransaction();
+        return realmResults;
+    }
+
+    public static int updateLocationQty(Context context, String locationName) {
+        int count = getCountCasesByLocation(context, locationName, null).intValue();
+        RealmResults<Location> locations = getLocationByName(context, locationName);
+        if (locations.size() > 0) {
+            Location location = locations.get(0);
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            Realm.setDefaultConfiguration(realmConfig);
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            location.setFmCaseQty(count);
+            realm.copyToRealmOrUpdate(location);
+            realm.commitTransaction();
+        }
+        return count;
+    }
 
     /**
      * getCountPendingTransactions
@@ -524,13 +560,14 @@ public final class RealmQueries {
 
     /**
      * getLocationItemsFromTransfers
+     *
      * @param context
      * @param transfers
      * @return
      */
     private static ArrayList<LocationItem> getLocationItemsFromTransfers(Context context, RealmResults<Transfer> transfers) {
-        if ( transfers == null ){
-            return  null;
+        if (transfers == null) {
+            return null;
         }
         int size = transfers.size();
         if (size == 0) {

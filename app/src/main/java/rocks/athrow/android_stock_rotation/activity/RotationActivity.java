@@ -88,7 +88,7 @@ public class RotationActivity extends AppCompatActivity {
                         moveIntent.putExtra("mode", "edit");
                         startActivity(moveIntent);
                         break;
-                    case MainActivity.MODULE_PICKING:
+                    case MainActivity.MODULE_STAGING:
                         String pickTransactionId = UUID.randomUUID().toString();
                         Intent pickIntent = new Intent(this, TransactionOutActivity.class);
                         pickIntent.putExtra("transaction_id", pickTransactionId);

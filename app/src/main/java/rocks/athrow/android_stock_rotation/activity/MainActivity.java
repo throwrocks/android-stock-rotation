@@ -35,12 +35,14 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
 
 
 public class MainActivity extends AppCompatActivity {
-    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
+    private static final String NEVER = "Never";
+    private static final String LAST_SYNC = "last_sync";
+    private static final String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     private static final String LOG_TAG = "MainActivity";
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
-    public static final String MODULE_PICKING = "Stage";
+    public static final String MODULE_STAGING = "Stage";
     public static final String MODULE_SALVAGE = "Salvage";
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         modulePicking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(MODULE_PICKING);
+                startActivity(MODULE_STAGING);
             }
         });
         moduleSalvage.setOnClickListener(new View.OnClickListener() {
@@ -227,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-        String lastSyncString = preferencesHelper.loadString("last_sync", "Never");
+        String lastSyncString = preferencesHelper.loadString(LAST_SYNC, NEVER);
         String lastSyncDateDisplay;
-        if ( !lastSyncString.equals("Never")){
+        if ( !lastSyncString.equals(NEVER)){
             Date lastSyncDate = Utilities.getStringAsDate(lastSyncString, DATE_TIME_DISPLAY, null);
             lastSyncDateDisplay = Utilities.getDateAsString(lastSyncDate, DATE_TIME_DISPLAY, null);
         }else{
@@ -272,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         protected int[] doInBackground(String... params) {
             int countReceiving = RealmQueries.getCountPendingTransactions(context, MODULE_RECEIVING);
             int countMoving = RealmQueries.getCountPendingTransactions(context, MODULE_MOVING);
-            int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_PICKING);
+            int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_STAGING);
             int countSalvage = RealmQueries.getCountPendingTransactions(context, MODULE_SALVAGE);
             int countTransfers = RealmQueries.getCountPendingTransfers(context);
             int[] results = new int[5];

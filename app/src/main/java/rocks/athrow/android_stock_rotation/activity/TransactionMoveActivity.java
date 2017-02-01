@@ -4,14 +4,10 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,16 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
-import rocks.athrow.android_stock_rotation.data.Item;
-import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
-import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
-import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
 /**
  * TransactionMoveActivity
@@ -44,6 +34,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         setContentView(R.layout.activity_transaction_move);
         Intent intent = getIntent();
         if (intent != null) {
+            mRotationType = intent.getStringExtra("type");
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
@@ -174,43 +165,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    /**
-     * saveTransaction
-     * A method to saveTransaction the transaction record
-     *
-     * @return 1 for succes, 0 for error
-     */
-    private int saveTransaction() {
-        String skuString = mInputItemSku.getText().toString();
-        String itemDescription = mInputItemDescription.getText().toString();
-        String tagNumber = mInputTagNumber.getText().toString();
-        String packSize = mInputPackSize.getText().toString();
-        String receivedDate = mInputReceivedDate.getText().toString();
-        String expirationDate = mInputExpirationDate.getText().toString();
-        String caseQtyString = mCaseQtyView.getText().toString();
-        String currentLocation = mCurrentLocationView.getText().toString();
-        String newLocation = mNewLocationView.getText().toString();
-        APIResponse apiResponse = RealmQueries.saveTransaction(
-                getApplicationContext(),
-                MainActivity.MODULE_MOVING,
-                mTransactionId,
-                mItemId,
-                skuString,
-                itemDescription,
-                tagNumber,
-                packSize,
-                mReceivingId,
-                receivedDate,
-                expirationDate,
-                caseQtyString,
-                currentLocation,
-                newLocation);
-        if (apiResponse.getResponseCode() == 200) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+
 
     /**
      * commitTransaction
@@ -228,12 +183,13 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     transaction.getItemId(),
                     transaction.getSku(),
                     transaction.getItemDescription(),
+                    transaction.getTagNumber(),
                     transaction.getPackSize(),
                     transaction.getReceivingId(),
                     transaction.getReceivedDate(),
+                    transaction.getExpirationDate(),
                     transaction.getLocationStart(),
                     transaction.getQtyCases()
-                    //transaction.getQtyLoose()
             );
             RealmQueries.saveTransfer(
                     context,
@@ -243,12 +199,13 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     transaction.getItemId(),
                     transaction.getSku(),
                     transaction.getItemDescription(),
+                    transaction.getTagNumber(),
                     transaction.getPackSize(),
                     transaction.getReceivingId(),
                     transaction.getReceivedDate(),
+                    transaction.getExpirationDate(),
                     transaction.getLocationEnd(),
                     transaction.getQtyCases()
-                    //transaction.getQtyLoose()
             );
             RealmQueries.commitTransaction(context, mTransactionId);
         }
@@ -256,100 +213,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
 
 
 
-    /**
-     * onActivityResult
-     *
-     * @param requestCode the request code
-     * @param resultCode  the result code
-     * @param intent      the intent from the barcode initiateScan
-     */
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (mScanType == null) {
-            Log.e("mScanType", "null");
-            return;
-        }
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanResult == null) {
-            Log.e("scanResult", "null");
-            return;
-        }
-        String contents = scanResult.getContents();
-        if (contents == null) {
-            Log.e("contents", "null");
-            return;
-        }
-        mBarcodeContents = contents;
-        Log.e("Barcode", contents);
-        Context context = getApplicationContext();
-        Resources res = getResources();
-        int toastLenght = Toast.LENGTH_SHORT;
-        switch (mScanType) {
-            case SCAN_ITEM:
-                RealmResults<Item> items = RealmQueries.getItemByTagNumber(context, contents);
-                if (items.size() > 0) {
-                    Item record = items.get(0);
-                    mItemId = record.getId();
-                    String sku = Integer.toString(record.getSKU());
-                    String description = record.getDescription();
-                    String tagNumber = record.getTagNumber();
-                    String packSize = record.getPackSize();
-                    String receivedDate = record.getReceivedDate();
-                    String expirationDate = record.getExpirationDate();
-                    mReceivingId = record.getReceivingId();
-                    baseSetItemViews(
-                            sku,
-                            description,
-                            tagNumber,
-                            packSize,
-                            receivedDate,
-                            expirationDate
-                    );
-                    saveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
-                }
-                break;
-            case SCAN_CURRENT_LOCATION:
-                RealmResults<Location> currentLocations = RealmQueries.getLocation(context, contents);
-                if (currentLocations.size() > 0) {
-                    Location record = currentLocations.get(0);
-                    String location = record.getLocation();
-                    baseSetCurrentLocationView(location);
-                    saveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
-                }
-                break;
-            case SCAN_NEW_LOCATION:
-                RealmResults<Location> newLocations = RealmQueries.getLocation(context, contents);
-                if (newLocations.size() > 0) {
-                    Location record = newLocations.get(0);
-                    String location = record.getLocation();
-                    baseSetNewLocationView(location);
-                    saveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
-                }
-                break;
-        }
-    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_scan, menu);
-        if (mMode.equals(MODE_EDIT)) {
-            menu.findItem(R.id.scan_edit).setVisible(false);
-            menu.findItem(R.id.scan_save).setVisible(true);
-        } else {
-            menu.findItem(R.id.scan_edit).setVisible(true);
-            menu.findItem(R.id.scan_save).setVisible(false);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    // TODO: Move to BaseActivity?
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -357,7 +221,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                 baseDeleteTransaction(mTransactionId);
                 return super.onOptionsItemSelected(item);
             case R.id.scan_save:
-                int save = saveTransaction();
+                int save = baseSaveTransaction();
                 if (save == 1) {
                     Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
                     if (transaction != null && transaction.isValidRecord()) {
@@ -405,6 +269,5 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         setCurrentMode();
         super.onRestoreInstanceState(savedInstanceState);
     }
-
 
 }
