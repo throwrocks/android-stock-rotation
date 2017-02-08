@@ -32,6 +32,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
         TextView viewDate;
+        TextView viewStatus;
         TextView viewSku;
         TextView viewItemDescription;
         TextView viewPackSize;
@@ -45,6 +46,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         ViewHolder(View view) {
             super(view);
             viewDate = (TextView) view.findViewById(R.id.transfer_date);
+            viewStatus = (TextView) view.findViewById(R.id.transfer_status);
             viewSku = (TextView) view.findViewById(R.id.transfer_sku);
             viewItemDescription = (TextView) view.findViewById(R.id.transfer_item_description);
             viewPackSize = (TextView) view.findViewById(R.id.transfer_pack_size);
@@ -71,6 +73,11 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         Transfer transfer = getItem(position);
         Date date = transfer.getDate();
         String dateString = Utilities.getDateAsString(date, DATE_TIME_DISPLAY, null);
+        boolean statusBoolean = transfer.getInit();
+        String status = "Waiting";
+        if ( statusBoolean == true ){
+            status = "Posted";
+        }
         int sku = transfer.getSku();
         String itemDescription = transfer.getItemDescription();
         String packSize = transfer.getPackSize();
@@ -84,6 +91,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String caseQtyString = String.valueOf(caseQty);
         //String looseQtyString = String.valueOf(looseQty);
         vh.viewDate.setText(dateString);
+        vh.viewStatus.setText(status);
         vh.viewSku.setText(skuString);
         vh.viewItemDescription.setText(itemDescription);
         vh.viewPackSize.setText(packSize);

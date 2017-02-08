@@ -80,9 +80,10 @@ public final class SyncDB {
         RealmResults<Transfer> transfers;
         transfers = realm.where(Transfer.class).equalTo(Transfer.FIELD_INIT, false).findAll();
         int size = transfers.size();
-        if ( transfers.size() > 0){
+        Log.e(LOG_TAG, "Post Transfers: " + size);
+        if ( size > 0){
             for (int i = 0; i < size; i++) {
-                Transfer transfer = transfers.get(0);
+                Transfer transfer = transfers.get(i);
                 String json = transfers.get(i).getJSON();
                 APIResponse apiResponse = API.postTransfer(json);
                 if ( apiResponse.getResponseCode() == 201){

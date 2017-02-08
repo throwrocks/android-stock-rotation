@@ -96,6 +96,14 @@ public class RotationActivity extends AppCompatActivity {
                         pickIntent.putExtra("mode", "edit");
                         startActivity(pickIntent);
                         break;
+                    case MainActivity.MODULE_RECEIVING:
+                        String receiveTransactionId = UUID.randomUUID().toString();
+                        Intent receiveIntent = new Intent(this, TransactionInActivity.class);
+                        receiveIntent.putExtra("transaction_id", receiveTransactionId);
+                        receiveIntent.putExtra("type", mRotationType);
+                        receiveIntent.putExtra("mode", "edit");
+                        startActivity(receiveIntent);
+                        break;
                 }
             default:
                 return super.onOptionsItemSelected(item);

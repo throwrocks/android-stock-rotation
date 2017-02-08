@@ -279,10 +279,10 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         receivedDate = mInputReceivedDate.getText().toString();
         expirationDate = mInputExpirationDate.getText().toString();
         caseQtyString = mCaseQtyView.getText().toString();
-        if (mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_STAGING)) {
+        if (mCurrentLocationView != null && (mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_STAGING))) {
             currentLocation = mCurrentLocationView.getText().toString();
         }
-        if (mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_RECEIVING)) {
+        if (mNewLocationView != null && ( mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_RECEIVING))) {
             newLocation = mNewLocationView.getText().toString();
         }
         APIResponse apiResponse = RealmQueries.saveTransaction(
