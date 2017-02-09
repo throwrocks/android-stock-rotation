@@ -108,7 +108,7 @@ public final class SyncDB {
         Realm realm = Realm.getDefaultInstance();
         switch (type) {
             case "items":
-                JSONArray itemsArray = getJSONArray(responseText);
+                JSONArray itemsArray = ParseJSON.getJSONArray(responseText);
                 if (itemsArray == null) {
                     return;
                 }
@@ -141,7 +141,7 @@ public final class SyncDB {
                 realm.close();
                 break;
             case "locations":
-                JSONArray locationsArray = getJSONArray(responseText);
+                JSONArray locationsArray = ParseJSON.getJSONArray(responseText);
                 if (locationsArray == null) {
                     return;
                 }
@@ -175,7 +175,7 @@ public final class SyncDB {
                 realm.close();
                 break;
             case "transfers":
-                JSONArray transfersArray = getJSONArray(responseText);
+                JSONArray transfersArray = ParseJSON.getJSONArray(responseText);
                 if (transfersArray == null) {
                     return;
                 }
@@ -216,22 +216,6 @@ public final class SyncDB {
                 break;
         }
         realm.close();
-    }
-
-    private static JSONArray getJSONArray(String JSON) {
-        JSONArray jsonArray = null;
-        try {
-            JSONObject jsonObject = new JSONObject(JSON);
-            if ( jsonObject.has(DATA)) {
-                jsonArray = jsonObject.getJSONArray(DATA);
-            }else{
-                Log.e(LOG_TAG, "Nothing found");
-                return null;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonArray;
     }
 
 }

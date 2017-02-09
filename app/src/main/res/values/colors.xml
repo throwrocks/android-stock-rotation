@@ -8,4 +8,11 @@
     <color name="dividerColor">#BDBDBD</color>
     <color name="white">#FFFFFF</color>
     <color name="warning">#AD1457</color>
+
+    <color name="in">#4CAF50</color>
+    <color name="out">#EF6C00</color>
+    <color name="move">#8840A7</color>
+    <color name="stage">#2DC55E</color>
+    <color name="receive">#1A9172</color>
+    <color name="init">#424242</color>
 </resources>

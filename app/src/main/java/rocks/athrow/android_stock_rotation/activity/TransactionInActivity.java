@@ -176,7 +176,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
                     transaction.getReceivingId(),
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate(),
-                    transaction.getLocationStart(),
+                    transaction.getLocationEnd(),
                     transaction.getQtyCases()
             );
             RealmQueries.commitTransaction(context, mTransactionId);

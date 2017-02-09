@@ -274,7 +274,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         String newLocation = null;
         skuString = mInputItemSku.getText().toString();
         itemDescription = mInputItemDescription.getText().toString();
-        tagNumber = mInputItemSku.getText().toString();
+        tagNumber = mInputTagNumber.getText().toString();
         packSize = mInputPackSize.getText().toString();
         receivedDate = mInputReceivedDate.getText().toString();
         expirationDate = mInputExpirationDate.getText().toString();

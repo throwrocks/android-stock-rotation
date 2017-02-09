@@ -504,28 +504,27 @@ public final class RealmQueries {
     }
 
     /**
-     * findItemsWithLocations
+     * searchActivityQuery
      *
      * @param context
      * @param searchCriteria
      * @return
      */
-    public static ArrayList<LocationItem> findItemsWithLocations(Context context, String location, String searchCriteria) {
-        if ((location == null || location.isEmpty()) && (searchCriteria == null || searchCriteria.isEmpty())) {
-            return null;
-        }
-        if (location != null && !location.isEmpty() && searchCriteria != null && !searchCriteria.isEmpty()) {
+    public static ArrayList<LocationItem> searchActivityQuery(Context context, String searchCriteria) {
+        if (searchCriteria == null || searchCriteria.isEmpty()) {
             return null;
         }
         String searchType;
-        if (location != null) {
-            searchType = "location";
-        } else if (searchCriteria.matches("[0-9]+")) {
+        if (searchCriteria.matches("[0-9]+")) {
             searchType = "sku";
         } else {
-            searchCriteria = searchCriteria.toUpperCase();
             searchType = "desc";
+            searchCriteria = searchCriteria.toUpperCase();
         }
+        return getLocationItems(context, searchType, searchCriteria);
+    }
+
+    public static ArrayList<LocationItem> getLocationItems(Context context, String searchType, String searchCriteria) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -534,7 +533,7 @@ public final class RealmQueries {
         switch (searchType) {
             case "location":
                 transfers = realm.where(Transfer.class).
-                        equalTo(Transfer.FIELD_LOCATION, location).
+                        equalTo(Transfer.FIELD_LOCATION, searchCriteria).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
                 transfers.distinct(Transfer.FIELD_ITEM_ID);
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
@@ -543,6 +542,12 @@ public final class RealmQueries {
                 int skuNumber = Integer.parseInt(searchCriteria);
                 transfers = realm.where(Transfer.class).
                         equalTo(Transfer.FIELD_SKU, skuNumber).
+                        equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
+                break;
+            case "tagNumber":
+                transfers = realm.where(Transfer.class).
+                        equalTo(Transfer.FIELD_TAG_NUMBER, searchCriteria).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
                 break;

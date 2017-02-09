@@ -12,26 +12,27 @@
         android:padding="8dp">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <TextView
-                android:layout_weight="1"
                 android:id="@+id/transfer_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
             <TextView
-                android:gravity="end"
-                android:text="Status"
-                android:layout_weight="1"
                 android:id="@+id/transfer_status"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end" />
         </LinearLayout>
 
-
+        <include layout="@layout/divider" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +50,30 @@
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="8dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label_tag_number"
+                style="@style/LabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_tag_number" />
+
+            <TextView
+                android:id="@+id/transfer_tag_number"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -71,12 +95,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/label_received_date"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:text="@string/label_received_date" />
 
             <TextView
@@ -85,10 +114,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp" />
-
         </LinearLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/label_expiration_date"
+                style="@style/LabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_expiration_date" />
+
+            <TextView
+                android:id="@+id/transfer_expiration_date"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <include layout="@layout/divider" />
+
+        <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -101,19 +151,19 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/transfer_type1"
-                style="@style/PrimaryTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" />
-
-            <TextView
                 android:id="@+id/transfer_type2"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="4dp"
+                android:textColor="@color/white" />
 
+            <TextView
+                android:id="@+id/transfer_type1"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

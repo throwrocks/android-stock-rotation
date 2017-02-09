@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.Date;
 
 import rocks.athrow.android_stock_rotation.R;
@@ -35,8 +33,10 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         TextView viewStatus;
         TextView viewSku;
         TextView viewItemDescription;
+        TextView viewTagNumber;
         TextView viewPackSize;
         TextView viewReceivedDate;
+        TextView viewExpirationDate;
         TextView viewType1;
         TextView viewType2;
         TextView viewLocation;
@@ -49,8 +49,10 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
             viewStatus = (TextView) view.findViewById(R.id.transfer_status);
             viewSku = (TextView) view.findViewById(R.id.transfer_sku);
             viewItemDescription = (TextView) view.findViewById(R.id.transfer_item_description);
+            viewTagNumber = (TextView) view.findViewById(R.id.transfer_tag_number);
             viewPackSize = (TextView) view.findViewById(R.id.transfer_pack_size);
             viewReceivedDate = (TextView) view.findViewById(R.id.transfer_received_date);
+            viewExpirationDate = (TextView) view.findViewById(R.id.transfer_expiration_date);
             viewType1 = (TextView) view.findViewById(R.id.transfer_type1);
             viewType2 = (TextView) view.findViewById(R.id.transfer_type2);
             viewLocation = (TextView) view.findViewById(R.id.transfer_location);
@@ -75,32 +77,40 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String dateString = Utilities.getDateAsString(date, DATE_TIME_DISPLAY, null);
         boolean statusBoolean = transfer.getInit();
         String status = "Waiting";
-        if ( statusBoolean == true ){
+        if ( statusBoolean ){
             status = "Posted";
         }
         int sku = transfer.getSku();
         String itemDescription = transfer.getItemDescription();
         String packSize = transfer.getPackSize();
+        String tagNumber = transfer.getTagNumber();
         String receivedDate = transfer.getReceivedDate();
+        String expirationDate = transfer.getExpirationDate();
         String type1 = transfer.getTransactionType();
         String type2 = transfer.getType();
         String location = transfer.getLocation();
         int caseQty = transfer.getCaseQty();
-        //int looseQty = transfer.getLooseQty();
         String skuString = String.valueOf(sku);
         String caseQtyString = String.valueOf(caseQty);
-        //String looseQtyString = String.valueOf(looseQty);
         vh.viewDate.setText(dateString);
         vh.viewStatus.setText(status);
+        if ( status.equals("Waiting")){
+            vh.viewStatus.setTextColor(mContext.getResources().getColor(R.color.warning));
+        }else{
+            vh.viewStatus.setTextColor(mContext.getResources().getColor(R.color.primaryText));
+        }
         vh.viewSku.setText(skuString);
         vh.viewItemDescription.setText(itemDescription);
+        vh.viewTagNumber.setText(tagNumber);
         vh.viewPackSize.setText(packSize);
         vh.viewReceivedDate.setText(receivedDate);
+        vh.viewExpirationDate.setText(expirationDate);
         vh.viewType1.setText(type1);
         vh.viewType2.setText(type2);
+        Utilities.badgeFormat(vh.viewType1, type1, mContext);
+        Utilities.badgeFormat(vh.viewType2, type2, mContext);
         vh.viewLocation.setText(location);
         vh.viewCaseQty.setText(caseQtyString);
-        //vh.viewLooseQty.setText(looseQtyString);
     }
 
     @Override

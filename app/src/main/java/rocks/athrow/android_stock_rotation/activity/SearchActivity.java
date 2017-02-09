@@ -88,7 +88,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<LocationItem>  doInBackground(String... params) {
-            return RealmQueries.findItemsWithLocations(context, null, params[0]);
+            return RealmQueries.searchActivityQuery(context, params[0]);
         }
 
         @Override

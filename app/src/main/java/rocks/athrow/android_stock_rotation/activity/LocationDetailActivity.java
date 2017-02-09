@@ -40,7 +40,7 @@ public class LocationDetailActivity extends AppCompatActivity {
      * setUpItems
      */
     private void setupItems(){
-        ArrayList<LocationItem> items = RealmQueries.findItemsWithLocations(getApplicationContext(), mLocation, null);
+        ArrayList<LocationItem> items = RealmQueries.getLocationItems(getApplicationContext(), "location", mLocation);
         if ( items == null ){
             return;
         }

@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.ContextCompat;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import rocks.athrow.android_stock_rotation.R;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -179,62 +182,32 @@ public final class Utilities {
     }
 
 
-    public static void setItemViews(
-            TextView inputItemSku,
-            TextView inputItemDescription,
-            TextView inputTagNumber,
-            TextView inputPackSize,
-            TextView inputReceivedDate,
-            TextView inputExpirationDate,
-            String sku,
-            String description,
-            String tagNumber,
-            String packSize,
-            String receivedDate,
-            String expirationDate) {
-        inputItemSku.setText(sku);
-        inputItemDescription.setText(description);
-        inputTagNumber.setText(tagNumber);
-        inputPackSize.setText(packSize);
-        inputReceivedDate.setText(receivedDate);
-        inputExpirationDate.setText(expirationDate);
+    public static void badgeFormat(TextView view, String status, Context context) {
+        switch (status) {
+            case "in":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_in));
+                break;
+            case "out":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_out));
+                break;
+            case "Receive":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_receive));
+                break;
+            case "Move":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_move));
+                break;
+            case "Stage":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_stage));
+                break;
+            case "Init":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_init));
+                break;
+
+        }
+
     }
 
-    /**
-     * setQtys
-     * A method to set the item qtys
-     *
-     * @param caseQty  the case qty
-     */
-    public static void setQtys(
-            TextView inputCaseQty,
-            //TextView inputLooseQty,
-            String caseQty
-            /*String looseQty*/) {
-        inputCaseQty.setText(caseQty);
-        //inputLooseQty.setText(looseQty);
-    }
 
-    /**
-     * setCurrentLocationView
-     *
-     * @param location
-     */
-    public static void setCurrentLocationView(
-            TextView inputCurrentLocation,
-            String location) {
-        inputCurrentLocation.setText(location);
-    }
 
-    /**
-     * setNewLocation
-     *
-     * @param location
-     */
-    public static void setNewLocationView(
-            TextView inputNewLocation,
-            String location) {
-        inputNewLocation.setText(location);
-    }
 
 }

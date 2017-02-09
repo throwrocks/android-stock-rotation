@@ -11,17 +11,20 @@
         android:padding="16dp">
 
         <RadioGroup
+            android:id="@+id/validate_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:orientation="horizontal">
 
             <RadioButton
+                android:id="@+id/validate_type_sku"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SKU" />
 
             <RadioButton
+                android:id="@+id/validate_type_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -29,10 +32,11 @@
         </RadioGroup>
 
         <EditText
-            android:enabled="false"
+            android:id="@+id/validate_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".5" />
+            android:layout_weight=".5"
+            android:enabled="false" />
 
         <LinearLayout
             android:id="@+id/validate_new_scan"
@@ -58,46 +62,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp">
 
         <TextView
+            android:id="@+id/validate_sku"
+            style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SKU"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/validate_item_description"
+            style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="ITEM DESCRIPTION"
             android:textSize="18sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Edison"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="FileMaker"
-            android:textSize="18sp" />
-    </LinearLayout>
+    <include layout="@layout/item_validate"/>
 
     <android.support.v7.widget.RecyclerView
+
         android:id="@+id/validate_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
