@@ -21,6 +21,7 @@ import rocks.athrow.android_stock_rotation.data.Comparison;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
@@ -44,7 +45,8 @@ public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHo
         TextView viewPackSize;
         TextView viewReceivedDate;
         TextView viewExpirationDate;
-        TextView viewCaseQty;
+        TextView viewEdisonTotalQty;
+        TextView viewFileMakerTotalQty;
         ViewHolder(View view) {
             super(view);
             viewContainer = (LinearLayout) view.findViewById(R.id.validate_item_container);
@@ -53,52 +55,56 @@ public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHo
             viewPackSize = (TextView) view.findViewById(R.id.validate_edison_pack_size);
             viewReceivedDate = (TextView) view.findViewById(R.id.validate_edison_received_date);
             viewExpirationDate = (TextView) view.findViewById(R.id.validate_edison_expiration_date);
-            viewCaseQty = (TextView) view.findViewById(R.id.validate_edison_case_qty);
+            viewEdisonTotalQty = (TextView) view.findViewById(R.id.validate_edison_total_qty);
+            viewFileMakerTotalQty = (TextView) view.findViewById(R.id.validate_filemaker_total_qty);
         }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Comparison comparison = mItems.get(position);
-        JSONArray edisonResults = comparison.getEdisonResults();
+        JSONObject edisonResult = comparison.getEdisonResult();
         ArrayList<LocationItem> fmResults = comparison.getFmResults();
-        try {
-            JSONObject record = edisonResults.getJSONObject(0);
-            String tagNumber = record.getString(Item.FIELD_TAG_NUMBER);
-            String packSize = record.getString(Item.FIELD_PACK_SIZE);
-            String receivedDate = record.getString(Item.FIELD_RECEIVED_DATE);
-            String expirationDate = record.getString(Item.FIELD_EXPIRATION_DATE);
-            String countCases = record.getString(Item.FIELD_EDISON_QTY);
-            holder.viewTagNumber.setText(tagNumber);
-            holder.viewPackSize.setText(packSize);
-            holder.viewReceivedDate.setText(receivedDate);
-            holder.viewExpirationDate.setText(expirationDate);
-            holder.viewCaseQty.setText(countCases);
-            int count = fmResults.size();
-            int totalCases = 0;
-            for(int i=0; i < count; i++){
-                LinearLayout fmColumn = getFmColumn(holder);
-                holder.viewFmContainer.addView(fmColumn);
-                LocationItem item = fmResults.get(i);
-                String location = item.getLocation();
-                String qty = item.getCaseQty();
-                totalCases = totalCases + Integer.parseInt(qty);
-                TextView locationView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_location);
-                locationView.setVisibility(View.VISIBLE);
-                TextView qtyView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_case_qty);
-                locationView.setText(location);
-                qtyView.setText(qty);
-            }
-            LinearLayout fmColumn = getFmColumn(holder);
-            holder.viewFmContainer.addView(fmColumn);
-            TextView totalView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_total_label);
-            totalView.setVisibility(View.VISIBLE);
-            TextView qtyView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_case_qty);
-            qtyView.setText(String.valueOf(totalCases));
+            try {
+                String tagNumber = edisonResult.getString(Item.FIELD_TAG_NUMBER);
+                String packSize = edisonResult.getString(Item.FIELD_PACK_SIZE);
+                String receivedDate = edisonResult.getString(Item.FIELD_RECEIVED_DATE);
+                String expirationDate = edisonResult.getString(Item.FIELD_EXPIRATION_DATE);
+                String countCases = edisonResult.getString(Item.FIELD_EDISON_QTY);
+                holder.viewTagNumber.setText(tagNumber);
+                holder.viewPackSize.setText(packSize);
+                holder.viewReceivedDate.setText(receivedDate);
+                holder.viewExpirationDate.setText(expirationDate);
+                holder.viewEdisonTotalQty.setText(countCases);
+                if ( fmResults != null ){
+                    int count = fmResults.size();
+                    int fmTotalCases = 0;
+                    holder.viewFmContainer.removeAllViews();
+                    for(int i=0; i < count; i++){
+                        LinearLayout fmColumn = getFmColumn(holder);
+                        holder.viewFmContainer.addView(fmColumn);
+                        LocationItem item = fmResults.get(i);
+                        String location = item.getLocation();
+                        String qty = item.getCaseQty();
+                        fmTotalCases = fmTotalCases + Integer.parseInt(qty);
+                        TextView locationView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_location);
+                        locationView.setVisibility(View.VISIBLE);
+                        TextView qtyView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_case_qty);
+                        locationView.setText(location);
+                        qtyView.setText(qty);
+                    }
+                    TextView fmQty = holder.viewFileMakerTotalQty;
+                    fmQty.setText(""+fmTotalCases);
+                    if ( fmTotalCases == Integer.parseInt(countCases)){
+                        Utilities.badgeFormat(fmQty,"match",mContext);
+                    }else{
+                        Utilities.badgeFormat(fmQty,"mismatch",mContext);
+                    }
+                }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        }catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override

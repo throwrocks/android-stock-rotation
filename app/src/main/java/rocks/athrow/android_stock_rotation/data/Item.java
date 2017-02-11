@@ -1,6 +1,7 @@
 package rocks.athrow.android_stock_rotation.data;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -24,6 +25,7 @@ public class Item extends RealmObject {
     private String id;
     private int serialNumber;
     private String tagNumber;
+    @Index
     private int SKU;
     private String description;
     private String packSize;

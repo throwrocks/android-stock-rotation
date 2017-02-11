@@ -202,12 +202,13 @@ public final class Utilities {
             case "Init":
                 view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_init));
                 break;
-
+            case "match":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_validate_match));
+                break;
+            case "mismatch":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_validate_mismatch));
+                break;
         }
-
     }
-
-
-
 
 }

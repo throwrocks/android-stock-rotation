@@ -18,6 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,7 @@ import rocks.athrow.android_stock_rotation.adapter.ValidateAdapter;
 import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.data.Comparison;
+import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.ParseJSON;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
@@ -43,10 +46,14 @@ public class ValidateActivity extends AppCompatActivity {
     private String mScanType;
     private String mBarcodeContents;
     private EditText mScanInput;
+    private String mSKU;
+    private String mItemDescription;
     private TextView mSkuView;
     private TextView mItemDescriptionView;
     private RadioGroup mValidateRadioGroup;
+    private LinearLayout mHeaders;
     private LinearLayout mScanButton;
+    private RecyclerView mRecyclerView;
     private ArrayList<Comparison> mResults;
 
     @Override
@@ -57,14 +64,16 @@ public class ValidateActivity extends AppCompatActivity {
         mValidateRadioGroup = (RadioGroup) findViewById(R.id.validate_type);
         mSkuView = (TextView) findViewById(R.id.validate_sku);
         mItemDescriptionView = (TextView) findViewById(R.id.validate_item_description);
+        mHeaders = (LinearLayout) findViewById(R.id.validate_result_headers);
         mScanButton = (LinearLayout) findViewById(R.id.validate_new_scan);
+        mRecyclerView = (RecyclerView) findViewById(R.id.validate_results);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 scan();
             }
         });
-        setupRecyclerView();
+        hideRecyclerView();
     }
 
     private void scan() {
@@ -116,24 +125,61 @@ public class ValidateActivity extends AppCompatActivity {
 
         private ArrayList<Comparison> getResults(String type, String searchCriteria) {
             ArrayList<Comparison> results = new ArrayList<>();
-            Comparison comparison = new Comparison();
             ArrayList<LocationItem> fmResults;
             JSONArray edisonResults;
             switch (type) {
                 case "Tag #":
-                    APIResponse apiResponse = API.getItemByTag(searchCriteria);
-                    String responseText = apiResponse.getResponseText();
-                    edisonResults = ParseJSON.getJSONArray(responseText);
-                    if (edisonResults != null && edisonResults.length() > 0) {
-                        comparison.setEdisonResults(edisonResults);
+                    Comparison tagComparison = new Comparison();
+                    APIResponse tagAPIResponse = API.getItemByTag(searchCriteria);
+                    String tagResponseText = tagAPIResponse.getResponseText();
+                    edisonResults = ParseJSON.getJSONArray(tagResponseText);
+                    if (edisonResults == null || edisonResults.length() > 0) {
+                        return results;
+                    }
+                    JSONObject tagComparisonEdisonRecord = null;
+                    try {
+                        tagComparisonEdisonRecord = edisonResults.getJSONObject(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (tagComparisonEdisonRecord == null) {
+                        return results;
                     }
                     fmResults = RealmQueries.getLocationItems(context, "tagNumber", searchCriteria);
                     if (fmResults != null && fmResults.size() > 0) {
-                        comparison.setFmResults(fmResults);
+                        tagComparison.setFmResults(fmResults);
+                        tagComparison.setEdisonResult(tagComparisonEdisonRecord);
+                        results.add(tagComparison);
                     }
-                    results.add(comparison);
                     break;
-                case "sku":
+                case "SKU":
+                    int sku = RealmQueries.getSKUFromTag(context, searchCriteria);
+                    if (sku == 0) {
+                        return results;
+                    }
+                    APIResponse skuAPIResponse = API.getItemBySKU(sku);
+                    String skuResponseText = skuAPIResponse.getResponseText();
+                    edisonResults = ParseJSON.getJSONArray(skuResponseText);
+                    if (edisonResults == null || edisonResults.length() == 0) {
+                        return results;
+                    }
+                    mSKU = String.valueOf(sku);
+                    int countEdisonResults = edisonResults.length();
+                    for (int i = 0; i < countEdisonResults; i++) {
+                        Comparison skuComparison = new Comparison();
+                        try {
+                            JSONObject edisonRecord = edisonResults.getJSONObject(i);
+                            mItemDescription = edisonRecord.getString(Item.FIELD_DESCRIPTION);
+                            fmResults = RealmQueries.getLocationItems(context, "tagNumber", edisonRecord.getString(Item.FIELD_TAG_NUMBER));
+                            if ((fmResults != null && fmResults.size() > 0) || edisonRecord.getInt(Item.FIELD_EDISON_QTY) > 0) {
+                                skuComparison.setEdisonResult(edisonRecord);
+                                skuComparison.setFmResults(fmResults);
+                                results.add(skuComparison);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     break;
             }
             return results;
@@ -147,31 +193,33 @@ public class ValidateActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Comparison> results) {
             if (results == null) {
+                hideRecyclerView();
                 return;
             }
             int size = results.size();
             if (size == 0) {
+                hideRecyclerView();
                 return;
             }
             mResults = results;
-            Comparison comparison = results.get(0);
-            if ( comparison.getFmResults() != null ){
-                LocationItem fmResult = comparison.getFmResults().get(0);
-                mSkuView.setText(fmResult.getSKU());
-                mItemDescriptionView.setText(fmResult.getDescription());
-                setupRecyclerView();
-                super.onPostExecute(results);
-            }
-
-
+            mSkuView.setText(mSKU);
+            mItemDescriptionView.setText(mItemDescription);
+            setupRecyclerView();
+            super.onPostExecute(results);
         }
     }
 
-    private void setupRecyclerView(){
+    private void hideRecyclerView(){
+        mHeaders.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+    }
+
+    private void setupRecyclerView() {
         Context context = getApplicationContext();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.validate_results);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mHeaders.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         ValidateAdapter adapter = new ValidateAdapter(context, mResults);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
     }
 }

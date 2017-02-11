@@ -609,4 +609,20 @@ public final class RealmQueries {
         return results;
     }
 
+    public static int getSKUFromTag(Context context, String tagNumber) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Item> results = realm.where(Item.class).
+                equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll().
+                distinct(Item.FIELD_SKU);
+        realm.commitTransaction();
+        if (results.size() > 0) {
+            return results.get(0).getSKU();
+        } else {
+            return 0;
+        }
+    }
+
 }
