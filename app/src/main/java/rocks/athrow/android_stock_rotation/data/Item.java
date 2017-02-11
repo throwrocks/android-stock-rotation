@@ -19,6 +19,7 @@ public class Item extends RealmObject {
     public static final String FIELD_RECEIVED_DATE = "receivedDate";
     public static final String FIELD_EXPIRATION_DATE ="expirationDate";
     public static final String FIELD_ITEM_TYPE = "itemType";
+    public static final String FIELD_EDISON_QTY = "edisonCaseQty";
     @PrimaryKey
     private String id;
     private int serialNumber;

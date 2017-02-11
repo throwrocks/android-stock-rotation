@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -19,8 +22,10 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 
 import rocks.athrow.android_stock_rotation.R;
+import rocks.athrow.android_stock_rotation.adapter.ValidateAdapter;
 import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.data.Comparison;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.ParseJSON;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
@@ -30,6 +35,7 @@ import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 import static rocks.athrow.android_stock_rotation.data.RealmQueries.getLocationItems;
 
 /**
+ * ValidateActivity
  * Created by joselopez on 1/27/17.
  */
 
@@ -41,6 +47,7 @@ public class ValidateActivity extends AppCompatActivity {
     private TextView mItemDescriptionView;
     private RadioGroup mValidateRadioGroup;
     private LinearLayout mScanButton;
+    private ArrayList<Comparison> mResults;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,17 +64,18 @@ public class ValidateActivity extends AppCompatActivity {
                 scan();
             }
         });
+        setupRecyclerView();
     }
 
     private void scan() {
         int typeId = mValidateRadioGroup.getCheckedRadioButtonId();
-        if (typeId > 0 ) {
+        if (typeId > 0) {
             RadioButton radioButton = (RadioButton) findViewById(typeId);
             mScanType = radioButton.getText().toString();
         }
         Log.d("type id ", "" + typeId);
         Log.d("type selection ", "" + mScanType);
-        if ( typeId > 0 && ( mScanType.equals("SKU") || mScanType.equals("Tag #"))){
+        if (typeId > 0 && (mScanType.equals("SKU") || mScanType.equals("Tag #"))) {
             initiateScan();
         }
     }
@@ -103,35 +111,67 @@ public class ValidateActivity extends AppCompatActivity {
      * UpdateCounts
      * AsyncTask to set the total counts, off the UI thread because of multiple database calls
      */
-    private class QueryAPI extends AsyncTask<String, Void, ArrayList<LocationItem>> {
+    private class QueryAPI extends AsyncTask<String, Void, ArrayList<Comparison>> {
         Context context = getApplicationContext();
 
-        @Override
-        protected ArrayList<LocationItem> doInBackground(String... params) {
-            APIResponse apiResponse = API.getItemByTag(mBarcodeContents);
-            String responseText = apiResponse.getResponseText();
-            JSONArray results = ParseJSON.getJSONArray(responseText);
-            ArrayList<LocationItem> locationItems = null;
-            if ( results != null && results.length() > 0 ) {
-                locationItems = RealmQueries.getLocationItems(context, "tagNumber", mBarcodeContents);
+        private ArrayList<Comparison> getResults(String type, String searchCriteria) {
+            ArrayList<Comparison> results = new ArrayList<>();
+            Comparison comparison = new Comparison();
+            ArrayList<LocationItem> fmResults;
+            JSONArray edisonResults;
+            switch (type) {
+                case "Tag #":
+                    APIResponse apiResponse = API.getItemByTag(searchCriteria);
+                    String responseText = apiResponse.getResponseText();
+                    edisonResults = ParseJSON.getJSONArray(responseText);
+                    if (edisonResults != null && edisonResults.length() > 0) {
+                        comparison.setEdisonResults(edisonResults);
+                    }
+                    fmResults = RealmQueries.getLocationItems(context, "tagNumber", searchCriteria);
+                    if (fmResults != null && fmResults.size() > 0) {
+                        comparison.setFmResults(fmResults);
+                    }
+                    results.add(comparison);
+                    break;
+                case "sku":
+                    break;
             }
-            return locationItems;
+            return results;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<LocationItem> locationItems) {
-            if ( locationItems == null ){
+        protected ArrayList<Comparison> doInBackground(String... params) {
+            return getResults(mScanType, mBarcodeContents);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Comparison> results) {
+            if (results == null) {
                 return;
             }
-            int size = locationItems.size();
-            if ( size == 0 ){
+            int size = results.size();
+            if (size == 0) {
                 return;
             }
-            LocationItem item = locationItems.get(0);
-            mSkuView.setText(item.getSKU());
-            mItemDescriptionView.setText(item.getDescription());
-            super.onPostExecute(locationItems);
+            mResults = results;
+            Comparison comparison = results.get(0);
+            if ( comparison.getFmResults() != null ){
+                LocationItem fmResult = comparison.getFmResults().get(0);
+                mSkuView.setText(fmResult.getSKU());
+                mItemDescriptionView.setText(fmResult.getDescription());
+                setupRecyclerView();
+                super.onPostExecute(results);
+            }
+
 
         }
+    }
+
+    private void setupRecyclerView(){
+        Context context = getApplicationContext();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.validate_results);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        ValidateAdapter adapter = new ValidateAdapter(context, mResults);
+        recyclerView.setAdapter(adapter);
     }
 }

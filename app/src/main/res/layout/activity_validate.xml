@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp">
 
         <RadioGroup
             android:id="@+id/validate_type"
@@ -63,6 +65,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:paddingStart="16dp">
 
         <TextView
@@ -82,8 +85,27 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-    <include layout="@layout/item_validate"/>
-
+   <LinearLayout
+       android:id="@+id/validate_result_headers"
+       android:layout_marginStart="16dp"
+       android:layout_marginEnd="16dp"
+       android:orientation="horizontal"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       <TextView
+           style="@style/resultHeaders"
+           android:layout_weight="1"
+           android:text="Edison"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content" />
+       <TextView
+           style="@style/resultHeaders"
+           android:layout_gravity="start"
+           android:layout_weight="1"
+           android:text="FileMaker"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content" />
+   </LinearLayout>
     <android.support.v7.widget.RecyclerView
 
         android:id="@+id/validate_results"
