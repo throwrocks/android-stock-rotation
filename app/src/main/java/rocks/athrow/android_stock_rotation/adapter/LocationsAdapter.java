@@ -12,9 +12,11 @@ import android.widget.TextView;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
 import rocks.athrow.android_stock_rotation.data.Location;
+import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 
 /**
+ * LocationsAdapter
  * Created by jose on 1/15/17.
  */
 
@@ -23,7 +25,6 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
 
     public LocationsAdapter(Context context) {
         this.mContext = context;
-
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -59,7 +60,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, LocationDetailActivity.class);
-                intent.putExtra("location", locationName);
+                intent.putExtra(Z.LOCATION, locationName);
                 mContext.startActivity(intent);
             }
         });

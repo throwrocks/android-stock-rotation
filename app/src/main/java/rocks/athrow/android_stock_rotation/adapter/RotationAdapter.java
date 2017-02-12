@@ -18,6 +18,11 @@ import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
+
 /**
  * RotationAdapter
  * Created by joselopez on 1/11/17.
@@ -116,16 +121,16 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             public void onClick(View view) {
                 Intent intent;
                 switch (mRotationType) {
-                    case MainActivity.MODULE_MOVING:
+                    case MODULE_MOVING:
                         intent = new Intent(mContext, TransactionMoveActivity.class);
                         break;
-                    case MainActivity.MODULE_RECEIVING:
+                    case MODULE_RECEIVING:
                         intent = new Intent(mContext, TransactionInActivity.class);
                         break;
-                    case MainActivity.MODULE_SALVAGE:
+                    case MODULE_ADJUST:
                         intent = new Intent(mContext, TransactionOutActivity.class);
                         break;
-                    case MainActivity.MODULE_STAGING:
+                    case MODULE_STAGING:
                         intent = new Intent(mContext, TransactionOutActivity.class);
                         break;
                     default:

@@ -53,7 +53,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag #: " />
+                android:text="@string/label_tag_number" />
 
             <TextView
                 android:id="@+id/search_items_tag_number"
@@ -94,7 +94,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:text="@string/label_received_date" />
 
             <TextView
                 android:id="@+id/search_items_received_date"
@@ -114,7 +114,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expiration Date: " />
+                android:text="@string/label_expiration_date" />
 
             <TextView
                 android:id="@+id/search_items_expirtation_date"
@@ -134,7 +134,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Case Qty: " />
+                android:text="@string/label_case_qty" />
 
             <TextView
                 android:id="@+id/search_items_cases_qty"
@@ -157,6 +157,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/search_items_adjust_button"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -167,6 +168,7 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/search_items_move_button"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -177,6 +179,7 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/search_items_stage_button"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

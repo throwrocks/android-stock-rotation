@@ -68,7 +68,7 @@ public class SearchActivity extends AppCompatActivity {
         }
         int size = items.size();
         if ( size > 0){
-            mAdapter = new SearchDetailsAdapter(items);
+            mAdapter = new SearchDetailsAdapter(getApplicationContext(), items);
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_details_container);
             LinearLayoutManager manager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(manager);

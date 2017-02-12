@@ -65,7 +65,7 @@
                 android:text="@string/label_case_qty" />
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="@color/primaryText"
                 android:layout_marginStart="8dp"
                 android:id="@+id/validate_filemaker_total_qty"
                 style="@style/PrimaryTextStyle"

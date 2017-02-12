@@ -60,7 +60,6 @@ public class LocationsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Context context = getApplicationContext();
-        //updateLocationQtys();
         setContentView(R.layout.activity_locations);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);

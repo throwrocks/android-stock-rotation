@@ -17,7 +17,20 @@ import android.widget.Toast;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
+import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_VIEW;
+import static rocks.athrow.android_stock_rotation.data.Z.OUT;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
+import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
 
 /**
  * TransactionOutActivity
@@ -25,16 +38,20 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
  */
 
 public class TransactionOutActivity extends TransactionBaseActivity {
+    private String mCurrentLocation;
+    private String mTagNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_out);
         Intent intent = getIntent();
         if (intent != null) {
-            mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
+            mRotationType = intent.getStringExtra(Z.MODULE_TYPE);
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
+            mCurrentLocation = intent.getStringExtra(Z.CURRENT_LOCATION);
+            mTagNumber = intent.getStringExtra(Z.TAG_NUMBER);
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         mInputItemSku = (TextView) findViewById(R.id.input_item_sku);
@@ -50,9 +67,13 @@ public class TransactionOutActivity extends TransactionBaseActivity {
         mButtonCommit = (LinearLayout) findViewById(R.id.button_pick);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setTitle("Staging");
+            ab.setTitle("Stage");
         }
         setCurrentMode();
+        if ( mCurrentLocation != null && mTagNumber != null){
+            scanItem(mTagNumber);
+            scanCurrentLocation(mCurrentLocation, "name");
+        }
     }
 
     /**
@@ -215,6 +236,16 @@ public class TransactionOutActivity extends TransactionBaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mScanType = savedInstanceState.getString(SCAN_TYPE);
+        mBarcodeContents = savedInstanceState.getString(BARCODE_CONTENTS);
+        mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
+        mItemId = savedInstanceState.getString(ITEM_ID);
+        mMode = savedInstanceState.getString(MODE);
+        setCurrentMode();
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
 }

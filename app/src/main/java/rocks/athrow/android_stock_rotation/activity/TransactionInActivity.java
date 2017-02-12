@@ -19,6 +19,18 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
+import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Z.IN;
+import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_VIEW;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+
 /**
  * TransactionInActivity
  * Created by joselopez on 1/13/17.
@@ -31,7 +43,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
         setContentView(R.layout.activity_transaction_in);
         Intent intent = getIntent();
         if (intent != null) {
-            mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
+            mRotationType = intent.getStringExtra(MODULE_TYPE);
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
@@ -215,6 +227,16 @@ public class TransactionInActivity extends TransactionBaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mScanType = savedInstanceState.getString(SCAN_TYPE);
+        mBarcodeContents = savedInstanceState.getString(BARCODE_CONTENTS);
+        mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
+        mItemId = savedInstanceState.getString(ITEM_ID);
+        mMode = savedInstanceState.getString(MODE);
+        setCurrentMode();
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
 }

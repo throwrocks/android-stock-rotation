@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +35,6 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
-import static rocks.athrow.android_stock_rotation.data.RealmQueries.getLocationItems;
 
 /**
  * ValidateActivity
@@ -53,6 +52,7 @@ public class ValidateActivity extends AppCompatActivity {
     private RadioGroup mValidateRadioGroup;
     private LinearLayout mHeaders;
     private LinearLayout mScanButton;
+    private String mInputText;
     private RecyclerView mRecyclerView;
     private ArrayList<Comparison> mResults;
 
@@ -73,6 +73,10 @@ public class ValidateActivity extends AppCompatActivity {
                 scan();
             }
         });
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setTitle("Validate");
+        }
         hideRecyclerView();
     }
 
@@ -111,7 +115,6 @@ public class ValidateActivity extends AppCompatActivity {
         }
         mBarcodeContents = contents;
         Log.e("Barcode", contents);
-        mScanInput.setText(mBarcodeContents);
         QueryAPI queryAPI = new QueryAPI();
         queryAPI.execute(mScanType);
     }
@@ -122,18 +125,18 @@ public class ValidateActivity extends AppCompatActivity {
      */
     private class QueryAPI extends AsyncTask<String, Void, ArrayList<Comparison>> {
         Context context = getApplicationContext();
-
         private ArrayList<Comparison> getResults(String type, String searchCriteria) {
             ArrayList<Comparison> results = new ArrayList<>();
             ArrayList<LocationItem> fmResults;
             JSONArray edisonResults;
             switch (type) {
                 case "Tag #":
+                    mInputText = searchCriteria;
                     Comparison tagComparison = new Comparison();
                     APIResponse tagAPIResponse = API.getItemByTag(searchCriteria);
                     String tagResponseText = tagAPIResponse.getResponseText();
                     edisonResults = ParseJSON.getJSONArray(tagResponseText);
-                    if (edisonResults == null || edisonResults.length() > 0) {
+                    if (edisonResults == null || edisonResults.length() == 0) {
                         return results;
                     }
                     JSONObject tagComparisonEdisonRecord = null;
@@ -145,7 +148,7 @@ public class ValidateActivity extends AppCompatActivity {
                     if (tagComparisonEdisonRecord == null) {
                         return results;
                     }
-                    fmResults = RealmQueries.getLocationItems(context, "tagNumber", searchCriteria);
+                    fmResults = RealmQueries.getLocationItems(context, Item.FIELD_TAG_NUMBER, searchCriteria);
                     if (fmResults != null && fmResults.size() > 0) {
                         tagComparison.setFmResults(fmResults);
                         tagComparison.setEdisonResult(tagComparisonEdisonRecord);
@@ -153,6 +156,7 @@ public class ValidateActivity extends AppCompatActivity {
                     }
                     break;
                 case "SKU":
+                    mInputText = "";
                     int sku = RealmQueries.getSKUFromTag(context, searchCriteria);
                     if (sku == 0) {
                         return results;
@@ -164,13 +168,14 @@ public class ValidateActivity extends AppCompatActivity {
                         return results;
                     }
                     mSKU = String.valueOf(sku);
+                    mInputText = mSKU;
                     int countEdisonResults = edisonResults.length();
                     for (int i = 0; i < countEdisonResults; i++) {
                         Comparison skuComparison = new Comparison();
                         try {
                             JSONObject edisonRecord = edisonResults.getJSONObject(i);
                             mItemDescription = edisonRecord.getString(Item.FIELD_DESCRIPTION);
-                            fmResults = RealmQueries.getLocationItems(context, "tagNumber", edisonRecord.getString(Item.FIELD_TAG_NUMBER));
+                            fmResults = RealmQueries.getLocationItems(context, Item.FIELD_TAG_NUMBER, edisonRecord.getString(Item.FIELD_TAG_NUMBER));
                             if ((fmResults != null && fmResults.size() > 0) || edisonRecord.getInt(Item.FIELD_EDISON_QTY) > 0) {
                                 skuComparison.setEdisonResult(edisonRecord);
                                 skuComparison.setFmResults(fmResults);
@@ -201,6 +206,7 @@ public class ValidateActivity extends AppCompatActivity {
                 hideRecyclerView();
                 return;
             }
+            mScanInput.setText(mInputText);
             mResults = results;
             mSkuView.setText(mSKU);
             mItemDescriptionView.setText(mItemDescription);

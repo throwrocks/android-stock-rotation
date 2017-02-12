@@ -33,17 +33,18 @@ import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String NEVER = "Never";
     private static final String LAST_SYNC = "last_sync";
     private static final String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     private static final String LOG_TAG = "MainActivity";
-    public static final String MODULE_TYPE = "type";
-    public static final String MODULE_RECEIVING = "Receive";
-    public static final String MODULE_MOVING = "Move";
-    public static final String MODULE_STAGING = "Stage";
-    public static final String MODULE_SALVAGE = "Salvage";
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
     private Runnable mSyncStatusRunnable;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout moduleReceiving = (LinearLayout) findViewById(R.id.module_receiving);
         LinearLayout moduleMoving = (LinearLayout) findViewById(R.id.module_moving);
         LinearLayout modulePicking = (LinearLayout) findViewById(R.id.module_picking);
-        LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_salvage);
+        LinearLayout moduleSalvage = (LinearLayout) findViewById(R.id.module_adjust);
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
         LinearLayout moduleValidate = (LinearLayout) findViewById(R.id.module_validate);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         moduleSalvage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(MODULE_SALVAGE);
+                startActivity(MODULE_ADJUST);
             }
         });
         moduleLocations.setOnClickListener(new View.OnClickListener() {
@@ -275,13 +276,13 @@ public class MainActivity extends AppCompatActivity {
             int countReceiving = RealmQueries.getCountPendingTransactions(context, MODULE_RECEIVING);
             int countMoving = RealmQueries.getCountPendingTransactions(context, MODULE_MOVING);
             int countPicking = RealmQueries.getCountPendingTransactions(context, MODULE_STAGING);
-            int countSalvage = RealmQueries.getCountPendingTransactions(context, MODULE_SALVAGE);
+            int countAdjust = RealmQueries.getCountPendingTransactions(context, MODULE_ADJUST);
             int countTransfers = RealmQueries.getCountPendingTransfers(context);
             int[] results = new int[5];
             results[0] = countReceiving;
             results[1] = countMoving;
             results[2] = countPicking;
-            results[3] = countSalvage;
+            results[3] = countAdjust;
             results[4] = countTransfers;
             return results;
         }
@@ -292,12 +293,12 @@ public class MainActivity extends AppCompatActivity {
             TextView countReceivingView = (TextView) findViewById(R.id.count_receiving);
             TextView countMovingView = (TextView) findViewById(R.id.count_moving);
             TextView countPickingView = (TextView) findViewById(R.id.count_picking);
-            TextView countSalvageView = (TextView) findViewById(R.id.count_salvage);
+            TextView countAdjustView = (TextView) findViewById(R.id.count_adjust);
             TextView countTransfersView = (TextView) findViewById(R.id.count_transfers);
             countReceivingView.setText(String.valueOf(counts[0]));
             countMovingView.setText(String.valueOf(counts[1]));
             countPickingView.setText(String.valueOf(counts[2]));
-            countSalvageView.setText(String.valueOf(counts[3]));
+            countAdjustView.setText(String.valueOf(counts[3]));
             countTransfersView.setText(String.valueOf(counts[4]));
         }
     }

@@ -35,6 +35,7 @@
                 android:layout_marginStart="8dp"
                 android:textSize="18sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +46,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag #: " />
+                android:text="@string/label_tag_number" />
 
             <TextView
                 android:id="@+id/location_details_tag_number"
@@ -55,6 +56,7 @@
                 android:layout_marginStart="8dp"
                 android:textStyle="bold" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +88,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:text="@string/label_received_date" />
 
             <TextView
                 android:id="@+id/location_details_received_date"
@@ -95,6 +97,7 @@
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,15 +108,16 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expiration Date: " />
+                android:text="@string/label_expiration_date" />
 
             <TextView
-                android:id="@+id/location_details_expirtation_date"
+                android:id="@+id/location_details_expiration_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,7 +128,7 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Case Qty: " />
+                android:text="@string/label_case_qty" />
 
             <TextView
                 android:id="@+id/location_details_cases_qty"
@@ -147,6 +151,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/location_details_button_adjust"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -157,6 +162,7 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/location_details_button_move"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -167,6 +173,7 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/location_details_button_stage"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

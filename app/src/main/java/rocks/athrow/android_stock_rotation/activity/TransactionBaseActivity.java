@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,12 +20,27 @@ import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
+import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static rocks.athrow.android_stock_rotation.data.Z.BARCODE;
+import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
+import static rocks.athrow.android_stock_rotation.data.Z.NAME;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
 
 /**
  * TransactionBaseActivity
@@ -32,16 +48,6 @@ import static android.view.View.VISIBLE;
  */
 
 public abstract class TransactionBaseActivity extends AppCompatActivity {
-    public static final String ITEM_ID = "item_id";
-    public static final String TRANSACTION_ID = "transaction_id";
-    public static final String MODE = "mode";
-    public static final String MODE_EDIT = "edit";
-    public static final String MODE_VIEW = "view";
-    public static final String SCAN_ITEM = "item";
-    public static final String SCAN_CURRENT_LOCATION = "currentLocation";
-    public static final String SCAN_NEW_LOCATION = "newLocation";
-    public static final String IN = "in";
-    public static final String OUT = "out";
 
     public String mRotationType;
     public TextView mInputItemSku;
@@ -64,7 +70,10 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
     public EditText mNewLocationView;
     public LinearLayout mButtonCommit;
 
-
+    /**
+     * baseSetViewMode
+     * Sets the layout to view mode (no editing)
+     */
     public void baseSetViewMode() {
         if (mButtonScanItem != null) {
             mButtonScanItem.setVisibility(GONE);
@@ -75,7 +84,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mButtonScanNewLocation != null) {
             mButtonScanNewLocation.setVisibility(GONE);
         }
-        if (mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_RECEIVING)) {
+        if (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_RECEIVING)) {
             if (mButtonCommit != null && (mNewLocationView != null && !mNewLocationView.getText().toString().isEmpty())) {
                 mButtonCommit.setVisibility(VISIBLE);
             } else if (mButtonCommit != null) {
@@ -95,6 +104,10 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * baseSetEditMode
+     * Sets the layout to edit mode
+     */
     public void baseSetEditMode() {
         if (mButtonScanItem != null) {
             mButtonScanItem.setVisibility(VISIBLE);
@@ -116,6 +129,16 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the item views
+     *
+     * @param sku            the item's sku
+     * @param description    the item's description
+     * @param tagNumber      the item's tag number
+     * @param packSize       the item's pack size
+     * @param receivedDate   the item's received date
+     * @param expirationDate the item's expiration date
+     */
     public void baseSetItemViews(
             String sku,
             String description,
@@ -131,19 +154,38 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         mInputExpirationDate.setText(expirationDate);
     }
 
+    /**
+     * baseSetCaseQtyView
+     *
+     * @param caseQty sets the transaction's case qty
+     */
     public void baseSetCaseQtyView(String caseQty) {
         mCaseQtyView.setText(caseQty);
     }
 
+    /**
+     * baseSetCurrentLocationView
+     *
+     * @param location the transaction's current location (for move and stage)
+     */
     public void baseSetCurrentLocationView(String location) {
         mCurrentLocationView.setText(location);
     }
 
+    /**
+     * baseSetNewLocationView
+     *
+     * @param location the transaction's new location (for receive and move)
+     */
     public void baseSetNewLocationView(String location) {
         mNewLocationView.setText(location);
     }
 
 
+    /**
+     * initiateScan
+     * Initiates the barcode scanner app
+     */
     public void initiateScan() {
         if (mScanType != null) {
             IntentIntegrator integrator = new IntentIntegrator(this);
@@ -151,6 +193,12 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * baseDeleteTransaction
+     * Deletes the transaction record. Called from the options menu
+     *
+     * @param transactionId the id of the transaction to be deleted
+     */
     public void baseDeleteTransaction(String transactionId) {
         APIResponse apiResponse = RealmQueries.deleteTransaction(getApplicationContext(), transactionId);
         Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
@@ -159,6 +207,9 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * onBackPressed
+     */
     @Override
     public void onBackPressed() {
         baseBackPressed();
@@ -167,8 +218,8 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
 
     /**
      * baseBackPressed
-     * A method to handle the up navigation and baseBackPressed button press
-     * It deletes the transaction record if it's invalid
+     * Handle the up navigation and back button press
+     * Deletes the transaction if the record is invalid
      */
     public void baseBackPressed() {
         Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
@@ -180,6 +231,8 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
 
     /**
      * onActivityResult
+     * Called after scanning a barcode
+     * Handles scanning an item or a location (current location or new location)
      *
      * @param requestCode the request code
      * @param resultCode  the result code
@@ -202,63 +255,95 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
         mBarcodeContents = contents;
         Log.e("Barcode", contents);
+        switch (mScanType) {
+            case SCAN_ITEM:
+                scanItem(contents);
+                break;
+            case SCAN_CURRENT_LOCATION:
+                scanCurrentLocation(contents, BARCODE);
+                break;
+            case SCAN_NEW_LOCATION:
+                scanNewLocation(contents);
+                break;
+        }
+    }
+
+    public void scanItem(String contents){
         Context context = getApplicationContext();
         Resources res = getResources();
         int toastLenght = Toast.LENGTH_SHORT;
-        switch (mScanType) {
-            case SCAN_ITEM:
-                RealmResults<Item> items = RealmQueries.getItemByTagNumber(context, contents);
-                if (items.size() > 0) {
-                    Item record = items.get(0);
-                    mItemId = record.getId();
-                    String sku = Integer.toString(record.getSKU());
-                    String description = record.getDescription();
-                    String tagNumber = record.getTagNumber();
-                    String packSize = record.getPackSize();
-                    String receivedDate = record.getReceivedDate();
-                    String expirationDate = record.getExpirationDate();
-                    mReceivingId = record.getReceivingId();
-                    baseSetItemViews(
-                            sku,
-                            description,
-                            tagNumber,
-                            packSize,
-                            receivedDate,
-                            expirationDate
-                    );
-                    baseSaveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
-                }
-                break;
-            case SCAN_CURRENT_LOCATION:
-                RealmResults<Location> currentLocations = RealmQueries.getLocationByBarcode(context, contents);
-                if (currentLocations.size() > 0) {
-                    Location record = currentLocations.get(0);
-                    String location = record.getLocation();
-                    baseSetCurrentLocationView(location);
-                    baseSaveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
-                }
-                break;
-            case SCAN_NEW_LOCATION:
-                RealmResults<Location> newLocations = RealmQueries.getLocationByBarcode(context, contents);
-                if (newLocations.size() > 0) {
-                    Location record = newLocations.get(0);
-                    String location = record.getLocation();
-                    baseSetNewLocationView(location);
-                    baseSaveTransaction();
-                } else {
-                    Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
-                }
-                break;
+        RealmResults<Item> items = RealmQueries.getItemByTagNumber(context, contents);
+        if (items.size() > 0) {
+            Item record = items.get(0);
+            mItemId = record.getId();
+            String sku = Integer.toString(record.getSKU());
+            String description = record.getDescription();
+            String tagNumber = record.getTagNumber();
+            String packSize = record.getPackSize();
+            String receivedDate = record.getReceivedDate();
+            String expirationDate = record.getExpirationDate();
+            mReceivingId = record.getReceivingId();
+            baseSetItemViews(
+                    sku,
+                    description,
+                    tagNumber,
+                    packSize,
+                    receivedDate,
+                    expirationDate
+            );
+            baseSaveTransaction();
+        } else {
+            Utilities.showToast(context, res.getString(R.string.error_item_not_found), toastLenght);
+        }
+    }
+
+    /**
+     * scanCurrentLocation
+     *
+     * @param contents the scan or intent contents
+     * @param type barcode number or location name
+     */
+    public void scanCurrentLocation(String contents, String type){
+        if ( !type.equals(BARCODE) && !type.equals(NAME)){
+            return;
+        }
+        Context context = getApplicationContext();
+        Resources res = getResources();
+        int toastLenght = Toast.LENGTH_SHORT;
+        RealmResults<Location> currentLocations = null;
+        if ( type.equals(BARCODE)){
+            currentLocations = RealmQueries.getLocationByBarcode(context, contents);
+        }else if ( type.equals(NAME)){
+            currentLocations = RealmQueries.getLocationByName(context, contents);
+        }
+        if (currentLocations != null && currentLocations.size() > 0) {
+            Location record = currentLocations.get(0);
+            String location = record.getLocation();
+            baseSetCurrentLocationView(location);
+            baseSaveTransaction();
+        } else {
+            Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
+        }
+    }
+
+    public void scanNewLocation(String contents){
+        Context context = getApplicationContext();
+        Resources res = getResources();
+        int toastLenght = Toast.LENGTH_SHORT;
+        RealmResults<Location> newLocations = RealmQueries.getLocationByBarcode(context, contents);
+        if (newLocations.size() > 0) {
+            Location record = newLocations.get(0);
+            String location = record.getLocation();
+            baseSetNewLocationView(location);
+            baseSaveTransaction();
+        } else {
+            Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLenght);
         }
     }
 
     /**
      * baseSaveTransaction
-     * A method to baseSaveTransaction the transaction record
+     * Save the transaction record
      *
      * @return 1 for succes, 0 for error
      */
@@ -279,10 +364,10 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         receivedDate = mInputReceivedDate.getText().toString();
         expirationDate = mInputExpirationDate.getText().toString();
         caseQtyString = mCaseQtyView.getText().toString();
-        if (mCurrentLocationView != null && (mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_STAGING))) {
+        if (mCurrentLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_STAGING))) {
             currentLocation = mCurrentLocationView.getText().toString();
         }
-        if (mNewLocationView != null && ( mRotationType.equals(MainActivity.MODULE_MOVING) || mRotationType.equals(MainActivity.MODULE_RECEIVING))) {
+        if (mNewLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_RECEIVING))) {
             newLocation = mNewLocationView.getText().toString();
         }
         APIResponse apiResponse = RealmQueries.saveTransaction(
@@ -307,7 +392,12 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * onCreateOptionsMenu
+     *
+     * @param menu the menu view
+     * @return the inflated menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -322,5 +412,14 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(BARCODE_CONTENTS, mBarcodeContents);
+        outState.putString(SCAN_TYPE, mScanType);
+        outState.putString(TRANSACTION_ID, mTransactionId);
+        outState.putString(ITEM_ID, mItemId);
+        outState.putString(MODE, mMode);
+        super.onSaveInstanceState(outState);
+    }
 
 }

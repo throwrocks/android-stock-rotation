@@ -15,12 +15,14 @@ import rocks.athrow.android_stock_rotation.data.Transfer;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransfersListAdapter;
 
 /**
+ * TransfersActivity
  * Created by jose on 1/15/17.
  */
 
 public class TransfersActivity extends AppCompatActivity {
     private TransfersAdapter mTransferAdapter;
     private RealmResults<Transfer> mRealmResults;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,16 +30,14 @@ public class TransfersActivity extends AppCompatActivity {
         updateRealmResults();
         setupRecyclerView();
     }
+
     private void updateRealmResults() {
         Context context = getApplicationContext();
         mRealmResults = RealmQueries.getTransfers(context);
     }
+
     private void setupRecyclerView() {
-        //TextView emptyText = (TextView) findViewById(R.id.empty_view);
-        if (mRealmResults == null || mRealmResults.size() == 0) {
-            //emptyText.setVisibility(View.VISIBLE);
-        } else {
-            //emptyText.setVisibility(View.GONE);
+        if (mRealmResults != null && mRealmResults.size() > 0) {
             mTransferAdapter = new TransfersAdapter(TransfersActivity.this);
             RealmTransfersListAdapter realmTransfersListAdapter =
                     new RealmTransfersListAdapter(getApplicationContext(), mRealmResults);

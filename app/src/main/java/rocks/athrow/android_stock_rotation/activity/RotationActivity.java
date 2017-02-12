@@ -21,7 +21,13 @@ import rocks.athrow.android_stock_rotation.adapter.RotationAdapter;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
-
+import static rocks.athrow.android_stock_rotation.data.Z.MODE;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
 /**
  * RotationActivity
  * Created by joselopez on 1/9/17.
@@ -37,7 +43,7 @@ public class RotationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rotation);
         Intent intent = getIntent();
-        mRotationType = intent.getStringExtra(MainActivity.MODULE_TYPE);
+        mRotationType = intent.getStringExtra(MODULE_TYPE);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle(mRotationType);
@@ -46,13 +52,13 @@ public class RotationActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(MainActivity.MODULE_TYPE, mRotationType);
+        outState.putString(MODULE_TYPE, mRotationType);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        mRotationType = savedInstanceState.getString(MainActivity.MODULE_TYPE);
+        mRotationType = savedInstanceState.getString(MODULE_TYPE);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -80,28 +86,28 @@ public class RotationActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.rotation_add_item:
                 switch (mRotationType) {
-                    case MainActivity.MODULE_MOVING:
+                    case MODULE_MOVING:
                         String moveTransactionId = UUID.randomUUID().toString();
                         Intent moveIntent = new Intent(this, TransactionMoveActivity.class);
-                        moveIntent.putExtra("transaction_id", moveTransactionId);
-                        moveIntent.putExtra("type", mRotationType);
-                        moveIntent.putExtra("mode", "edit");
+                        moveIntent.putExtra(TRANSACTION_ID, moveTransactionId);
+                        moveIntent.putExtra(MODULE_TYPE, mRotationType);
+                        moveIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(moveIntent);
                         break;
-                    case MainActivity.MODULE_STAGING:
+                    case MODULE_STAGING:
                         String pickTransactionId = UUID.randomUUID().toString();
                         Intent pickIntent = new Intent(this, TransactionOutActivity.class);
-                        pickIntent.putExtra("transaction_id", pickTransactionId);
-                        pickIntent.putExtra("type", mRotationType);
-                        pickIntent.putExtra("mode", "edit");
+                        pickIntent.putExtra(TRANSACTION_ID, pickTransactionId);
+                        pickIntent.putExtra(MODULE_TYPE, mRotationType);
+                        pickIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(pickIntent);
                         break;
-                    case MainActivity.MODULE_RECEIVING:
+                    case MODULE_RECEIVING:
                         String receiveTransactionId = UUID.randomUUID().toString();
                         Intent receiveIntent = new Intent(this, TransactionInActivity.class);
-                        receiveIntent.putExtra("transaction_id", receiveTransactionId);
-                        receiveIntent.putExtra("type", mRotationType);
-                        receiveIntent.putExtra("mode", "edit");
+                        receiveIntent.putExtra(TRANSACTION_ID, receiveTransactionId);
+                        receiveIntent.putExtra(MODULE_TYPE, mRotationType);
+                        receiveIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(receiveIntent);
                         break;
                 }

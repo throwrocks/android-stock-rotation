@@ -16,6 +16,7 @@
     <string name="label_received_date">Rec. Date:</string>
     <string name="label_expiration_date">Exp. Date:</string>
     <string name="label_case_qty">Case Qty:</string>
+    <string name="label_cases">Cases: </string>
     <string name="label_loose_qty">Loose Qty:</string>
     <string name="label_new_location">New Location:</string>
     <string name="no_item_selected">No item selected</string>

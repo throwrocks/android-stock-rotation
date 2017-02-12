@@ -44,7 +44,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         if ( items == null ){
             return;
         }
-        mAdapter = new LocationDetailsAdapter(items);
+        mAdapter = new LocationDetailsAdapter(getApplicationContext(), items);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_details_container);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);

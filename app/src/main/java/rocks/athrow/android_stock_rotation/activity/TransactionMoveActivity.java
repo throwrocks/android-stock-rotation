@@ -21,23 +21,43 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
+import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.IN;
+import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODE_VIEW;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Z.OUT;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
+import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+
 /**
  * TransactionMoveActivity
  * Created by joselopez on 1/13/17.
  */
 
 public class TransactionMoveActivity extends TransactionBaseActivity {
-
+    public static final String MODULE_TYPE = "type";
+    private String mCurrentLocation;
+    private String mTagNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_move);
         Intent intent = getIntent();
         if (intent != null) {
-            mRotationType = intent.getStringExtra("type");
+            mRotationType = intent.getStringExtra(MODULE_TYPE);
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
+            mCurrentLocation = intent.getStringExtra(CURRENT_LOCATION);
+            mTagNumber = intent.getStringExtra(TAG_NUMBER);
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         mInputItemSku = (TextView) findViewById(R.id.input_item_sku);
@@ -55,9 +75,13 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         mButtonCommit = (LinearLayout) findViewById(R.id.button_move);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setTitle(MainActivity.MODULE_MOVING);
+            ab.setTitle(MODULE_MOVING);
         }
         setCurrentMode();
+        if ( mCurrentLocation != null && mTagNumber != null){
+            scanItem(mTagNumber);
+            scanCurrentLocation(mCurrentLocation, "name");
+        }
     }
 
     /**
@@ -102,7 +126,6 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                 initiateScan();
             }
         });
-
     }
 
     /**
@@ -212,8 +235,6 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
     }
 
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -248,21 +269,10 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         }
     }
 
-    // TODO: Move to BaseActivity?
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString("barcode_contents", mBarcodeContents);
-        outState.putString("scan_type", mScanType);
-        outState.putString(TRANSACTION_ID, mTransactionId);
-        outState.putString(ITEM_ID, mItemId);
-        outState.putString(MODE, mMode);
-        super.onSaveInstanceState(outState);
-    }
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        mScanType = savedInstanceState.getString("scan_type");
-        mBarcodeContents = savedInstanceState.getString("barcode_contents");
+        mScanType = savedInstanceState.getString(SCAN_TYPE);
+        mBarcodeContents = savedInstanceState.getString(BARCODE_CONTENTS);
         mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
         mItemId = savedInstanceState.getString(ITEM_ID);
         mMode = savedInstanceState.getString(MODE);

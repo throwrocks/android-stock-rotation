@@ -338,7 +338,7 @@ public final class RealmQueries {
                             .findAll();
         }
         realm.commitTransaction();
-        return realmResults;
+        return realmResults.sort(Location.FIELD_SERIAL_NUMBER);
     }
 
     /**
