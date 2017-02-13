@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
@@ -121,6 +122,20 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
                 mContext.startActivity(intent);
             }
         });*/
+        viewHolder.adjustButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = UUID.randomUUID().toString();
+                Intent intent = new Intent(mContext, TransactionAdjustActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(MODULE_TYPE, Z.MODULE_ADJUST);
+                intent.putExtra(TRANSACTION_ID, id);
+                intent.putExtra(CURRENT_LOCATION, location);
+                intent.putExtra(TAG_NUMBER, tagNumber);
+                intent.putExtra(MODE, MODE_EDIT);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

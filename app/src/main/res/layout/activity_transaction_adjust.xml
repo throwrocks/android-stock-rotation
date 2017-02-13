@@ -20,7 +20,16 @@
             android:layout_marginTop="8dp"
             android:background="@color/dividerColor" />
 
-        <include layout="@layout/content_input_count_in" />
+        <include layout="@layout/content_input_current_location" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/dividerColor" />
+
+        <include layout="@layout/content_input_count_adjust" />
 
         <View
             android:layout_width="match_parent"
@@ -37,7 +46,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/button_receive"
+                android:id="@+id/button_adjust"
                 style="@style/Base.Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,13 +57,13 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:background="@drawable/receive" />
+                    android:background="@drawable/adjust" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@string/module_receive" />
+                    android:text="@string/module_adjustment" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

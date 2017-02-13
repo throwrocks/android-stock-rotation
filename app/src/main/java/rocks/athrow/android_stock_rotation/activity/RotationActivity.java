@@ -23,6 +23,7 @@ import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
@@ -94,14 +95,14 @@ public class RotationActivity extends AppCompatActivity {
                         moveIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(moveIntent);
                         break;
-                    case MODULE_STAGING:
+                    /*case MODULE_STAGING:
                         String pickTransactionId = UUID.randomUUID().toString();
                         Intent pickIntent = new Intent(this, TransactionOutActivity.class);
                         pickIntent.putExtra(TRANSACTION_ID, pickTransactionId);
                         pickIntent.putExtra(MODULE_TYPE, mRotationType);
                         pickIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(pickIntent);
-                        break;
+                        break;*/
                     case MODULE_RECEIVING:
                         String receiveTransactionId = UUID.randomUUID().toString();
                         Intent receiveIntent = new Intent(this, TransactionInActivity.class);
@@ -109,6 +110,14 @@ public class RotationActivity extends AppCompatActivity {
                         receiveIntent.putExtra(MODULE_TYPE, mRotationType);
                         receiveIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(receiveIntent);
+                        break;
+                    case MODULE_ADJUST:
+                        String adjustTransactionId = UUID.randomUUID().toString();
+                        Intent adjustIntent = new Intent(this, TransactionAdjustActivity.class);
+                        adjustIntent.putExtra(TRANSACTION_ID, adjustTransactionId);
+                        adjustIntent.putExtra(MODULE_TYPE, mRotationType);
+                        adjustIntent.putExtra(MODE, MODE_EDIT);
+                        startActivity(adjustIntent);
                         break;
                 }
             default:

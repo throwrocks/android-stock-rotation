@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.activity.MainActivity;
+import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionInActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
@@ -101,7 +102,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewExpirationDate.setText(expirationDate);
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
-        if (mRotationType.equals("Move") || mRotationType.equals("Receive")) {
+        if (mRotationType.equals("Move") ||  mRotationType.equals("Receive")) {
             vh.viewLocation2Label.setVisibility(View.VISIBLE);
             vh.viewLocation2.setVisibility(View.VISIBLE);
             if (locationEnd.isEmpty()) {
@@ -128,11 +129,11 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
                         intent = new Intent(mContext, TransactionInActivity.class);
                         break;
                     case MODULE_ADJUST:
-                        intent = new Intent(mContext, TransactionOutActivity.class);
+                        intent = new Intent(mContext, TransactionAdjustActivity.class);
                         break;
-                    case MODULE_STAGING:
+                    /*case MODULE_STAGING:
                         intent = new Intent(mContext, TransactionOutActivity.class);
-                        break;
+                        break;*/
                     default:
                         intent = new Intent(mContext, TransactionInActivity.class);
                 }

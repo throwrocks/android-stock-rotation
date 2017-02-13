@@ -22,37 +22,9 @@ public final class RealmQueries {
         throw new AssertionError("No Utilities instances for you!");
     }
 
-    /**
-     * deleteTransaction
-     * A method to delete an individual transaction by id
-     *
-     * @param context       a context object
-     * @param transactionId the transaction id to delete
-     * @return an APIResponse object
-     */
-    public static APIResponse deleteTransaction(Context context, String transactionId) {
-        final APIResponse apiResponse = new APIResponse();
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        final RealmResults<Transaction> results =
-                realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                results.deleteAllFromRealm();
-                if (results.size() == 0) {
-                    apiResponse.setResponseCode(200);
-                    apiResponse.setResponseText("Record deleted");
-                } else {
-                    apiResponse.setResponseCode(0);
-                    apiResponse.setResponseText("Could not delete record");
-                }
-            }
-        });
-        return apiResponse;
-    }
-
+    /**--------------------------------------------------------------------------------------------
+     GENERAL
+     ---------------------------------------------------------------------------------------------**/
     /**
      * deleteDatabase
      *
@@ -93,6 +65,50 @@ public final class RealmQueries {
         realm.close();
         Realm.compactRealm(realmConfig);
     }
+    /**--------------------------------------------------------------------------------------------
+     TRANSACTIONS
+     ---------------------------------------------------------------------------------------------**/
+
+    /**
+     * getTransaction
+     * A method to get a transaction record by id
+     *
+     * @param context       a Context object
+     * @param transactionId the transaction id to be returned
+     * @return a Transaction object
+     */
+    public static Transaction getTransaction(Context context, String transactionId) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transaction> realmResults = realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
+        realm.commitTransaction();
+        if (realmResults.size() > 0) {
+            return realmResults.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * getTransactions
+     * A method to get a transaction record by id
+     *
+     * @param context a Context object
+     * @return a Transaction object
+     */
+    public static RealmResults<Transfer> getTransfers(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transfer> realmResults =
+                realm.where(Transfer.class).findAll().sort(Transfer.FIELD_DATE, Sort.DESCENDING);
+        realm.commitTransaction();
+        return realmResults;
+    }
+
 
     /**
      * deleteInvalidTransactions
@@ -115,6 +131,36 @@ public final class RealmQueries {
         Realm.compactRealm(realmConfig);
     }
 
+    /**
+     * deleteTransaction
+     * A method to delete an individual transaction by id
+     *
+     * @param context       a context object
+     * @param transactionId the transaction id to delete
+     * @return an APIResponse object
+     */
+    public static APIResponse deleteTransaction(Context context, String transactionId) {
+        final APIResponse apiResponse = new APIResponse();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        final RealmResults<Transaction> results =
+                realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                results.deleteAllFromRealm();
+                if (results.size() == 0) {
+                    apiResponse.setResponseCode(200);
+                    apiResponse.setResponseText("Record deleted");
+                } else {
+                    apiResponse.setResponseCode(0);
+                    apiResponse.setResponseText("Could not delete record");
+                }
+            }
+        });
+        return apiResponse;
+    }
 
     /**
      * commitTransaction
@@ -236,6 +282,42 @@ public final class RealmQueries {
         return apiResponse;
     }
 
+    /**
+     * getCountPendingTransactions
+     * This is used to populate the counts on the buttons on MainActivity
+     *
+     * @param context a Context object
+     * @param type    the type of Transaction (receiving, moving, picking, salvage)
+     * @return the number of pending transactions
+     */
+    public static int getCountPendingTransactions(Context context, String type) {
+        return getPendingTransactions(context, type).size();
+    }
+
+    /**
+     * getPendingTransactions
+     * This is used to populate the RecyclerView on the StockRotation Activity
+     *
+     * @param context a Context object
+     * @param type    the type of Transaction
+     * @return a RealResults object with the pending transactions
+     */
+
+    public static RealmResults<Transaction> getPendingTransactions(Context context, String type) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transaction> realmResults =
+                realm.where(Transaction.class).
+                        equalTo(Transaction.TYPE1, type).
+                        equalTo(Transaction.IS_COMPLETE, false).findAll();
+        realm.commitTransaction();
+        return realmResults;
+    }
+    /**--------------------------------------------------------------------------------------------
+     TRANSFERS
+     ---------------------------------------------------------------------------------------------**/
 
     /**
      * saveTransfer
@@ -290,45 +372,58 @@ public final class RealmQueries {
     }
 
     /**
-     * getTransaction
-     * A method to get a transaction record by id
+     * getCountCasesByLocation
      *
-     * @param context       a Context object
-     * @param transactionId the transaction id to be returned
-     * @return a Transaction object
+     * @param context  a Context object
+     * @param location the location
+     * @param itemId   an optional itemId
+     * @return the total number of cases
      */
-    public static Transaction getTransaction(Context context, String transactionId) {
+    public static Number getCountCasesByLocation(Context context, String location, String itemId) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Transaction> realmResults = realm.where(Transaction.class).equalTo(Transaction.ID, transactionId).findAll();
-        realm.commitTransaction();
-        if (realmResults.size() > 0) {
-            return realmResults.get(0);
+        RealmResults<Transfer> inResults;
+        RealmResults<Transfer> outResults;
+        if (itemId != null) {
+            inResults = realm.where(Transfer.class).
+                    equalTo(Transfer.FIELD_LOCATION, location).
+                    equalTo(Transfer.FIELD_TYPE, Z.IN).
+                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
+
+            outResults = realm.where(Transfer.class).
+                    equalTo(Transfer.FIELD_LOCATION, location).
+                    equalTo(Transfer.FIELD_TYPE, Z.OUT).
+                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
         } else {
-            return null;
+            inResults =
+                    realm.where(Transfer.class).
+                            equalTo(Transfer.FIELD_LOCATION, location).
+                            equalTo(Transfer.FIELD_TYPE, Z.IN).findAll();
+            outResults =
+                    realm.where(Transfer.class).
+                            equalTo(Transfer.FIELD_LOCATION, location).
+                            equalTo(Transfer.FIELD_TYPE, Z.OUT).findAll();
         }
+        Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
+        Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
+        return inTransfers.longValue() - outTransfers.longValue();
     }
 
     /**
-     * getTransactions
-     * A method to get a transaction record by id
+     * getCountTransfers
+     * This is used to populate the transfer count on the button on MainActivity
      *
      * @param context a Context object
-     * @return a Transaction object
+     * @return the number of pending transfer
      */
-    public static RealmResults<Transfer> getTransfers(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Transfer> realmResults =
-                realm.where(Transfer.class).findAll().sort(Transfer.FIELD_DATE, Sort.DESCENDING);
-        realm.commitTransaction();
-        return realmResults;
+    public static int getCountPendingTransfers(Context context) {
+        return getTransfers(context).size();
     }
 
+    /**--------------------------------------------------------------------------------------------
+     ITEMS
+     ---------------------------------------------------------------------------------------------**/
 
     /**
      * getItem
@@ -349,6 +444,32 @@ public final class RealmQueries {
     }
 
     /**
+     * getSKUFromTag
+     *
+     * @param context
+     * @param tagNumber
+     * @return
+     */
+    public static int getSKUFromTag(Context context, String tagNumber) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Item> results = realm.where(Item.class).
+                equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll().
+                distinct(Item.FIELD_SKU);
+        realm.commitTransaction();
+        if (results.size() > 0) {
+            return results.get(0).getSKU();
+        } else {
+            return 0;
+        }
+    }
+    /**--------------------------------------------------------------------------------------------
+     LOCATIONS
+     ---------------------------------------------------------------------------------------------**/
+
+    /**
      * getLocations
      * A method to get all locations by type
      *
@@ -362,16 +483,25 @@ public final class RealmQueries {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<Location> realmResults;
-        if (type.equals("All")) {
+        if (type.equals("All") && !isPrimary) {
             realmResults =
                     realm.where(Location.class)
-                            .equalTo(Location.FIELD_IS_PRIMARY, type)
+                            .findAll();
+        } else if (type.equals("All") && isPrimary)
+            realmResults =
+                    realm.where(Location.class)
+                            .equalTo(Location.FIELD_IS_PRIMARY, true)
+                            .findAll();
+        else if (!type.equals("All") && isPrimary) {
+            realmResults =
+                    realm.where(Location.class)
+                            .equalTo(Location.FIELD_TYPE, type)
+                            .equalTo(Location.FIELD_IS_PRIMARY, true)
                             .findAll();
         } else {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
-                            .equalTo(Location.FIELD_IS_PRIMARY, type)
                             .findAll();
         }
         realm.commitTransaction();
@@ -388,7 +518,7 @@ public final class RealmQueries {
      * @param locationName the location's name
      * @return a RealmResults object
      */
-    public static RealmResults<Location> getLocations(Context context, String type, String locationName) {
+    public static RealmResults<Location> getLocations(Context context, String type, String locationName, boolean isPrimary) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -397,14 +527,17 @@ public final class RealmQueries {
         if (type.equals("All")) {
             realmResults = realm.where(Location.class)
                     .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                    .equalTo(Location.FIELD_IS_PRIMARY, isPrimary)
                     .findAll();
         } else {
             realmResults = realm.where(Location.class)
                     .equalTo(Location.FIELD_TYPE, type)
                     .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
+                    .equalTo(Location.FIELD_IS_PRIMARY, isPrimary)
                     .findAll();
         }
-        realm.commitTransaction();;
+        realm.commitTransaction();
+        ;
         return realmResults;
     }
 
@@ -455,95 +588,16 @@ public final class RealmQueries {
         return count;
     }
 
-    /**
-     * getCountPendingTransactions
-     * This is used to populate the counts on the buttons on MainActivity
-     *
-     * @param context a Context object
-     * @param type    the type of Transaction (receiving, moving, picking, salvage)
-     * @return the number of pending transactions
-     */
-    public static int getCountPendingTransactions(Context context, String type) {
-        return getPendingTransactions(context, type).size();
-    }
-
-    /**
-     * getCountTransfers
-     * This is used to populate the transfer count on the button on MainActivity
-     *
-     * @param context a Context object
-     * @return the number of pending transfer
-     */
-    public static int getCountPendingTransfers(Context context) {
-        return getTransfers(context).size();
-    }
-
-    /**
-     * getPendingTransactions
-     * This is used to populate the RecyclerView on the StockRotation Activity
-     *
-     * @param context a Context object
-     * @param type    the type of Transaction
-     * @return a RealResults object with the pending transactions
-     */
-    public static RealmResults<Transaction> getPendingTransactions(Context context, String type) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Transaction> realmResults =
-                realm.where(Transaction.class).
-                        equalTo(Transaction.TYPE1, type).
-                        equalTo(Transaction.IS_COMPLETE, false).findAll();
-        realm.commitTransaction();
-        return realmResults;
-    }
-
-    /**
-     * getCountCasesByLocation
-     *
-     * @param context  a Context object
-     * @param location the location
-     * @param itemId   an optional itemId
-     * @return the total number of cases
-     */
-    public static Number getCountCasesByLocation(Context context, String location, String itemId) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Transfer> inResults;
-        RealmResults<Transfer> outResults;
-        if (itemId != null) {
-            inResults = realm.where(Transfer.class).
-                    equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, Z.IN).
-                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
-
-            outResults = realm.where(Transfer.class).
-                    equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, Z.OUT).
-                    equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
-        } else {
-            inResults =
-                    realm.where(Transfer.class).
-                            equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, Z.IN).findAll();
-            outResults =
-                    realm.where(Transfer.class).
-                            equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, Z.OUT).findAll();
-        }
-        Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
-        Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
-        return inTransfers.longValue() - outTransfers.longValue();
-    }
+    /**--------------------------------------------------------------------------------------------
+     LOCATION ITEMS
+     ---------------------------------------------------------------------------------------------**/
 
     /**
      * searchActivityQuery
      *
-     * @param context
-     * @param searchCriteria
-     * @return
+     * @param context        required context object
+     * @param searchCriteria the search criteria, can be a sku number or a description
+     * @return an ArrayList of LocationItem objects
      */
     public static ArrayList<LocationItem> searchActivityQuery(Context context, String searchCriteria) {
         if (searchCriteria == null || searchCriteria.isEmpty()) {
@@ -648,33 +702,9 @@ public final class RealmQueries {
                 locationItem.setLocation(itemLocation);
                 locationItem.setCaseQty(casesQty);
                 results.add(index, locationItem);
-                index ++;
+                index++;
             }
         }
         return results;
     }
-
-    /**
-     * getSKUFromTag
-     *
-     * @param context
-     * @param tagNumber
-     * @return
-     */
-    public static int getSKUFromTag(Context context, String tagNumber) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Item> results = realm.where(Item.class).
-                equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll().
-                distinct(Item.FIELD_SKU);
-        realm.commitTransaction();
-        if (results.size() > 0) {
-            return results.get(0).getSKU();
-        } else {
-            return 0;
-        }
-    }
-
 }

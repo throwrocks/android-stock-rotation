@@ -26,8 +26,6 @@ import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
-import static android.R.attr.type;
-
 
 /**
  * Created by jose on 1/15/17.
@@ -43,7 +41,8 @@ public class LocationsActivity extends AppCompatActivity {
     private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
     private String mSearchCriteria;
-    private CheckBox mPrimary;
+    private CheckBox mPrimaryCheckBox;
+    private boolean mPrimaryOnly;
     private LocationsAdapter mAdapter;
     private RealmResults<Location> mRealmResults;
     private EditText mSearchField;
@@ -60,7 +59,7 @@ public class LocationsActivity extends AppCompatActivity {
         mSearchCriteria = preferencesHelper.loadString("locations_search_criteria", "");
         mSearchField = (EditText) findViewById(R.id.locations_search);
         mSpinner = (Spinner) findViewById(R.id.locations_spinner);
-        mPrimary = (CheckBox) findViewById(R.id.locations_primary);
+        mPrimaryCheckBox = (CheckBox) findViewById(R.id.locations_primary);
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
@@ -70,7 +69,7 @@ public class LocationsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                filterLocations(item, mPrimary.isChecked());
+                filterLocations(item);
             }
 
             @Override
@@ -79,10 +78,10 @@ public class LocationsActivity extends AppCompatActivity {
             }
         });
         /** Primary Only Click Listener **/
-        mPrimary.setOnClickListener(new View.OnClickListener() {
+        mPrimaryCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setPrimaryOnly(mPrimary.isChecked());
+                setPrimaryOnly(mPrimaryCheckBox.isChecked());
             }
         });
         /** Search Field Click Listener  **/
@@ -94,7 +93,7 @@ public class LocationsActivity extends AppCompatActivity {
                     mSearchCriteria = mSearchField.getText().toString();
                     PreferencesHelper preferencesHelper = new PreferencesHelper(context);
                     preferencesHelper.save("locations_search_criteria", mSearchCriteria);
-                    mRealmResults = RealmQueries.getLocations(getApplicationContext(), mLocationsFilter, mSearchCriteria);
+                    mRealmResults = RealmQueries.getLocations(getApplicationContext(), mLocationsFilter, mSearchCriteria, mPrimaryOnly);
                     setupRecyclerView();
                     View view = getCurrentFocus();
                     if (view != null) {
@@ -134,14 +133,14 @@ public class LocationsActivity extends AppCompatActivity {
     private void updateRealmResults() {
         Context context = getApplicationContext();
         if (mSearchCriteria != null && !mSearchCriteria.isEmpty()) {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria);
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria, mPrimaryOnly);
         } else {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter);
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mPrimaryOnly );
         }
 
     }
 
-    private void filterLocations(String type, boolean primaryOnly) {
+    private void filterLocations(String type) {
         Context context = getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("locations_filter", type);
@@ -154,6 +153,7 @@ public class LocationsActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("locations_filter_primary_only", primaryOnly);
+        mPrimaryOnly = primaryOnly;
         updateRealmResults();
         setupRecyclerView();
     }

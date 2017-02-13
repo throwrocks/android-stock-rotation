@@ -32,6 +32,7 @@ import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
 import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
@@ -363,7 +364,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         receivedDate = mInputReceivedDate.getText().toString();
         expirationDate = mInputExpirationDate.getText().toString();
         caseQtyString = mCaseQtyView.getText().toString();
-        if (mCurrentLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_STAGING))) {
+        if (mCurrentLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_ADJUST) /* || mRotationType.equals(MODULE_STAGING)*/)) {
             currentLocation = mCurrentLocationView.getText().toString();
         }
         if (mNewLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_RECEIVING))) {

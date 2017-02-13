@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.R;
@@ -53,6 +54,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
         LocationsAdapter.ViewHolder vh = (LocationsAdapter.ViewHolder) viewHolder;
         Location location = getItem(position);
         final String locationName = location.getLocation();
+        //boolean isPrimary = location.isPrimary();
         String caseQty = String.valueOf(location.getFmCaseQty());
         vh.viewLocationName.setText(locationName);
         vh.viewLocationQty.setText(caseQty);

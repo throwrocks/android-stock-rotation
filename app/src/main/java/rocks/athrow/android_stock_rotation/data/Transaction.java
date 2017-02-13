@@ -240,8 +240,10 @@ public class Transaction extends RealmObject {
         if (getItemId() == null || getItemId().isEmpty()) {
             return false;
         }
-        if (getType1().equals("Moving") &&
-                (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 && getQtyLoose() == 0)) {
+        if (getType1().equals("Moving") && (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 )) {
+            return false;
+        }
+        if (getType1().equals("Adjust") && (getLocationStart() == null || getLocationStart().isEmpty())) {
             return false;
         }
         return true;

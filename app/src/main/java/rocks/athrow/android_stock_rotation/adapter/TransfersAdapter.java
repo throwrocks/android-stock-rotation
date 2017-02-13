@@ -25,7 +25,6 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
 
     public TransfersAdapter(Context context) {
         this.mContext = context;
-
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

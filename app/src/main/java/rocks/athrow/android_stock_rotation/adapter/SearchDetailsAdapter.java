@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import rocks.athrow.android_stock_rotation.R;
+import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
@@ -21,6 +22,7 @@ import rocks.athrow.android_stock_rotation.data.Z;
 import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
 import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
@@ -109,13 +111,27 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
                 mContext.startActivity(intent);
             }
         });
-        viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
+        /*viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String id = UUID.randomUUID().toString();
                 Intent intent = new Intent(mContext, TransactionOutActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(MODULE_TYPE, MODULE_STAGING);
+                intent.putExtra(TRANSACTION_ID, id);
+                intent.putExtra(CURRENT_LOCATION, location);
+                intent.putExtra(TAG_NUMBER, tagNumber);
+                intent.putExtra(MODE, MODE_EDIT);
+                mContext.startActivity(intent);
+            }
+        });*/
+        viewHolder.adjustButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = UUID.randomUUID().toString();
+                Intent intent = new Intent(mContext, TransactionAdjustActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(MODULE_TYPE, MODULE_ADJUST);
                 intent.putExtra(TRANSACTION_ID, id);
                 intent.putExtra(CURRENT_LOCATION, location);
                 intent.putExtra(TAG_NUMBER, tagNumber);

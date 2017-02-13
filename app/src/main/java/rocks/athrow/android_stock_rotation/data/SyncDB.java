@@ -82,20 +82,21 @@ public final class SyncDB {
         transfers = realm.where(Transfer.class).equalTo(Transfer.FIELD_INIT, false).findAll();
         int size = transfers.size();
         Log.e(LOG_TAG, "Post Transfers: " + size);
+        realm.beginTransaction();
         if ( size > 0){
             for (int i = 0; i < size; i++) {
                 Transfer transfer = transfers.get(i);
                 String json = transfers.get(i).getJSON();
                 APIResponse apiResponse = API.postTransfer(json);
                 if ( apiResponse.getResponseCode() == 201){
-                    realm.beginTransaction();
                     transfer.setInit(true);
                     transfer.setInitDate(new Date());
                     realm.copyToRealmOrUpdate(transfer);
                 }
             }
-            realm.commitTransaction();
         }
+        realm.commitTransaction();
+        realm.close();
     }
 
     public static void storeCalcs(Context context){
@@ -163,7 +164,7 @@ public final class SyncDB {
                         location.setBarcode(record.getString(Location.FIELD_BARCODE));
                         location.setLocation(locationName);
                         location.setType(record.getString(Location.FIELD_TYPE));
-                        realm.copyToRealmOrUpdate(location);
+                        location.setPrimary(record.getBoolean(Location.FIELD_IS_PRIMARY));
                         realm.copyToRealmOrUpdate(location);
                         Log.d(LOG_TAG, "Save Location " + i + ": " + name);
                     } catch (JSONException e) {

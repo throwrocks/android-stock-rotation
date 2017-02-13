@@ -196,8 +196,11 @@ public final class Utilities {
             case "Move":
                 view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_move));
                 break;
-            case "Stage":
+            /*case "Stage":
                 view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_stage));
+                break;*/
+            case "Adjust":
+                view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_adjust));
                 break;
             case "Init":
                 view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_init));
