@@ -35,6 +35,8 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
+import static android.view.View.GONE;
+
 
 /**
  * ValidateActivity
@@ -45,14 +47,17 @@ public class ValidateActivity extends AppCompatActivity {
     private String mScanType;
     private String mBarcodeContents;
     private EditText mScanInput;
+    private String mInputText;
     private String mSKU;
     private String mItemDescription;
     private TextView mSkuView;
     private TextView mItemDescriptionView;
     private RadioGroup mValidateRadioGroup;
-    private LinearLayout mHeaders;
+    private RadioButton mValidateSkuType;
+    private RadioButton mValidateTagNumberType;
+    private LinearLayout mScanItem;
+    private LinearLayout mResultHeaders;
     private LinearLayout mScanButton;
-    private String mInputText;
     private RecyclerView mRecyclerView;
     private ArrayList<Comparison> mResults;
 
@@ -62,9 +67,12 @@ public class ValidateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_validate);
         mScanInput = (EditText) findViewById(R.id.validate_input);
         mValidateRadioGroup = (RadioGroup) findViewById(R.id.validate_type);
+        mValidateSkuType = (RadioButton) findViewById(R.id.validate_type_sku);
+        mValidateTagNumberType = (RadioButton) findViewById(R.id.validate_type_tag);
         mSkuView = (TextView) findViewById(R.id.validate_sku);
         mItemDescriptionView = (TextView) findViewById(R.id.validate_item_description);
-        mHeaders = (LinearLayout) findViewById(R.id.validate_result_headers);
+        mResultHeaders = (LinearLayout) findViewById(R.id.validate_result_headers);
+        mScanItem = (LinearLayout) findViewById(R.id.validate_scan_item);
         mScanButton = (LinearLayout) findViewById(R.id.validate_new_scan);
         mRecyclerView = (RecyclerView) findViewById(R.id.validate_results);
         mScanButton.setOnClickListener(new View.OnClickListener() {
@@ -73,21 +81,50 @@ public class ValidateActivity extends AppCompatActivity {
                 scan();
             }
         });
+        mValidateSkuType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectSku();
+            }
+        });
+        mValidateTagNumberType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectTagNumber();
+            }
+        });
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle("Validate");
         }
+        if ( savedInstanceState != null ){
+            mInputText = savedInstanceState.getString("input_text");
+            mBarcodeContents = savedInstanceState.getString("barcode_contents");
+            mScanType = savedInstanceState.getString("scan_type");
+            QueryAPI queryAPI = new QueryAPI();
+            queryAPI.execute(mScanType);
+        }else{
+            hideRecyclerView();
+        }
+
+    }
+
+    private void selectSku(){
+        hideRecyclerView();
+    }
+    private void selectTagNumber(){
         hideRecyclerView();
     }
 
+    /**
+     * scan()
+     */
     private void scan() {
         int typeId = mValidateRadioGroup.getCheckedRadioButtonId();
         if (typeId > 0) {
             RadioButton radioButton = (RadioButton) findViewById(typeId);
             mScanType = radioButton.getText().toString();
         }
-        Log.d("type id ", "" + typeId);
-        Log.d("type selection ", "" + mScanType);
         if (typeId > 0 && (mScanType.equals("SKU") || mScanType.equals("Tag #"))) {
             initiateScan();
         }
@@ -142,6 +179,8 @@ public class ValidateActivity extends AppCompatActivity {
                     JSONObject tagComparisonEdisonRecord = null;
                     try {
                         tagComparisonEdisonRecord = edisonResults.getJSONObject(0);
+                        mItemDescription = tagComparisonEdisonRecord.getString(Item.FIELD_DESCRIPTION);
+                        mSKU = tagComparisonEdisonRecord.getString(Item.FIELD_SKU);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -208,24 +247,35 @@ public class ValidateActivity extends AppCompatActivity {
             }
             mScanInput.setText(mInputText);
             mResults = results;
-            mSkuView.setText(mSKU);
-            mItemDescriptionView.setText(mItemDescription);
             setupRecyclerView();
             super.onPostExecute(results);
         }
     }
 
     private void hideRecyclerView(){
-        mHeaders.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.GONE);
+        mScanInput.setText("");
+        mScanItem.setVisibility(GONE);
+        mResultHeaders.setVisibility(GONE);
+        mRecyclerView.setVisibility(GONE);
     }
 
     private void setupRecyclerView() {
         Context context = getApplicationContext();
-        mHeaders.setVisibility(View.VISIBLE);
+        mScanItem.setVisibility(View.VISIBLE);
+        mResultHeaders.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mSkuView.setText(mSKU);
+        mItemDescriptionView.setText(mItemDescription);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         ValidateAdapter adapter = new ValidateAdapter(context, mResults);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("input_text", mInputText);
+        outState.putString("barcode_contents", mBarcodeContents);
+        outState.putString("scan_type", mScanType);
     }
 }

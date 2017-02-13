@@ -48,7 +48,6 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
  */
 
 public abstract class TransactionBaseActivity extends AppCompatActivity {
-
     public String mRotationType;
     public TextView mInputItemSku;
     public TextView mInputItemDescription;
@@ -125,7 +124,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
             mCaseQtyView.setEnabled(true);
         }
         if (mNewLocationView != null) {
-            mNewLocationView.setEnabled(true);
+            //mNewLocationView.setEnabled(true);
         }
     }
 

@@ -25,8 +25,6 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import java.util.Date;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
@@ -38,7 +36,6 @@ import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
-
 
 public class MainActivity extends AppCompatActivity {
     private static final String NEVER = "Never";
@@ -55,16 +52,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Context context = getApplicationContext();
-        RealmQueries.deleteInvalidTransactions(context);
-        RealmQueries.deleteRequests(context);
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm.compactRealm(realmConfig);
+        RealmQueries.deleteInvalidTransactions(context);
         mSyncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         mSyncIcon = (ImageView) findViewById(R.id.sync_icon);
         mSyncStatusHandler = new Handler();
@@ -75,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
         LinearLayout moduleValidate = (LinearLayout) findViewById(R.id.module_validate);
-        //LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
 
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         JobInfo.Builder jobInfo = new JobInfo.Builder(1, serviceName);
         jobInfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         jobInfo.setPeriodic(10000);
-        //jobInfo.setBackoffCriteria(10000, JobInfo.BACKOFF_POLICY_LINEAR);
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo.build());
         if (result == 1) {
@@ -170,11 +161,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.main_search:
-                Intent intent = new Intent(this, SearchActivity.class);
-                startActivity(intent);
-            default:
-                return super.onOptionsItemSelected(item);
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivity(searchIntent);
+                break;
+            case R.id.main_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateSyncStatus() {

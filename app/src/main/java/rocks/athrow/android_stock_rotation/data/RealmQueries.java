@@ -53,6 +53,52 @@ public final class RealmQueries {
         return apiResponse;
     }
 
+    /**
+     * deleteDatabase
+     *
+     * @param context required context object
+     */
+    public static void deleteDatabase(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        final RealmResults<Transfer> transfers = realm.where(Transfer.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                transfers.deleteAllFromRealm();
+            }
+        });
+        final RealmResults<Item> items = realm.where(Item.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                items.deleteAllFromRealm();
+            }
+        });
+        final RealmResults<Location> locations = realm.where(Location.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                locations.deleteAllFromRealm();
+            }
+        });
+        final RealmResults<Transaction> transactions = realm.where(Transaction.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                transactions.deleteAllFromRealm();
+            }
+        });
+        realm.close();
+        Realm.compactRealm(realmConfig);
+    }
+
+    /**
+     * deleteInvalidTransactions
+     *
+     * @param context
+     */
     public static void deleteInvalidTransactions(Context context) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -65,29 +111,18 @@ public final class RealmQueries {
                 results.deleteAllFromRealm();
             }
         });
+        realm.close();
+        Realm.compactRealm(realmConfig);
     }
+
 
     /**
-     * deleteRequests
-     * Requests are used temporarily for the UpdateDBService to parse new API results and save
-     * them to the database
+     * commitTransaction
      *
-     * @param context a Context object
+     * @param context       required context object
+     * @param transactionId the transaction's id
+     * @return an APIResponse object
      */
-    public static void deleteRequests(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        final RealmResults<Request> results =
-                realm.where(Request.class).findAll();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                results.deleteAllFromRealm();
-            }
-        });
-    }
-
     public static APIResponse commitTransaction(Context context, String transactionId) {
         APIResponse apiResponse = new APIResponse();
         Transaction transaction = getTransaction(context, transactionId);
@@ -109,7 +144,7 @@ public final class RealmQueries {
                 updateLocationQty(context, newLocation);
             }
             apiResponse.setResponseCode(200);
-
+            realm.close();
         }
         return apiResponse;
     }
@@ -367,7 +402,7 @@ public final class RealmQueries {
                     .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
                     .findAll();
         }
-        realm.commitTransaction();
+        realm.commitTransaction();;
         return realmResults;
     }
 
@@ -480,22 +515,22 @@ public final class RealmQueries {
         if (itemId != null) {
             inResults = realm.where(Transfer.class).
                     equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, "in").
+                    equalTo(Transfer.FIELD_TYPE, Z.IN).
                     equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
 
             outResults = realm.where(Transfer.class).
                     equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, "out").
+                    equalTo(Transfer.FIELD_TYPE, Z.OUT).
                     equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
         } else {
             inResults =
                     realm.where(Transfer.class).
                             equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                            equalTo(Transfer.FIELD_TYPE, Z.IN).findAll();
             outResults =
                     realm.where(Transfer.class).
                             equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, "out").findAll();
+                            equalTo(Transfer.FIELD_TYPE, Z.OUT).findAll();
         }
         Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
         Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
@@ -524,6 +559,14 @@ public final class RealmQueries {
         return getLocationItems(context, searchType, searchCriteria);
     }
 
+    /**
+     * getLocationItems
+     *
+     * @param context
+     * @param searchType
+     * @param searchCriteria
+     * @return
+     */
     public static ArrayList<LocationItem> getLocationItems(Context context, String searchType, String searchCriteria) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -609,6 +652,13 @@ public final class RealmQueries {
         return results;
     }
 
+    /**
+     * getSKUFromTag
+     *
+     * @param context
+     * @param tagNumber
+     * @return
+     */
     public static int getSKUFromTag(Context context, String tagNumber) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);

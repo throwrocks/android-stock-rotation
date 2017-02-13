@@ -16,11 +16,9 @@ public class PreferencesHelper {
 
     private static final String FILE_NAME = "rocks.throw.service_tickets.preferences";
 
-
     public PreferencesHelper(Context context) {
         prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }
-
 
     /**
      * Save the specified value to the shared preferences

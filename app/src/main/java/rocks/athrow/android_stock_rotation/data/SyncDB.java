@@ -139,6 +139,7 @@ public final class SyncDB {
                     }
                 }
                 realm.close();
+                Realm.compactRealm(realmConfig);
                 break;
             case "locations":
                 JSONArray locationsArray = ParseJSON.getJSONArray(responseText);
@@ -173,6 +174,7 @@ public final class SyncDB {
                     }
                 }
                 realm.close();
+                Realm.compactRealm(realmConfig);
                 break;
             case "transfers":
                 JSONArray transfersArray = ParseJSON.getJSONArray(responseText);
@@ -213,6 +215,7 @@ public final class SyncDB {
                     }
                 }
                 realm.close();
+                Realm.compactRealm(realmConfig);
                 break;
         }
         realm.close();
