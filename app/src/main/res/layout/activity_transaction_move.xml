@@ -44,6 +44,7 @@
             android:layout_marginTop="16dp"
             android:gravity="end"
             android:orientation="horizontal">
+
             <LinearLayout
                 android:id="@+id/button_move"
                 style="@style/Base.Widget.AppCompat.Button"
@@ -62,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Move" />
+                    android:text="@string/module_move" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

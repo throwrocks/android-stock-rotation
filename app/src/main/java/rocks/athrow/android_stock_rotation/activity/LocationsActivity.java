@@ -1,33 +1,23 @@
 package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.UUID;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.LocationsAdapter;
@@ -35,6 +25,8 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
+
+import static android.R.attr.type;
 
 
 /**
@@ -51,10 +43,11 @@ public class LocationsActivity extends AppCompatActivity {
     private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
     private String mSearchCriteria;
+    private CheckBox mPrimary;
     private LocationsAdapter mAdapter;
     private RealmResults<Location> mRealmResults;
     private EditText mSearchField;
-    private Spinner mSearchFilter;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,16 +59,18 @@ public class LocationsActivity extends AppCompatActivity {
         mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
         mSearchCriteria = preferencesHelper.loadString("locations_search_criteria", "");
         mSearchField = (EditText) findViewById(R.id.locations_search);
-        mSearchFilter = (Spinner) findViewById(R.id.locations_spinner);
+        mSpinner = (Spinner) findViewById(R.id.locations_spinner);
+        mPrimary = (CheckBox) findViewById(R.id.locations_primary);
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSearchFilter.setAdapter(spinnerAdapter);
-        mSearchFilter.setSelection(getFilterPosition(mLocationsFilter));
-        mSearchFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinner.setAdapter(spinnerAdapter);
+        mSpinner.setSelection(getFilterPosition(mLocationsFilter));
+        /** Spinner Click Listener **/
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                filterLocations(item);
+                filterLocations(item, mPrimary.isChecked());
             }
 
             @Override
@@ -83,6 +78,14 @@ public class LocationsActivity extends AppCompatActivity {
 
             }
         });
+        /** Primary Only Click Listener **/
+        mPrimary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setPrimaryOnly(mPrimary.isChecked());
+            }
+        });
+        /** Search Field Click Listener  **/
         mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -138,11 +141,19 @@ public class LocationsActivity extends AppCompatActivity {
 
     }
 
-    private void filterLocations(String type) {
+    private void filterLocations(String type, boolean primaryOnly) {
         Context context = getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("locations_filter", type);
         mLocationsFilter = type;
+        updateRealmResults();
+        setupRecyclerView();
+    }
+
+    private void setPrimaryOnly(boolean primaryOnly){
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save("locations_filter_primary_only", primaryOnly);
         updateRealmResults();
         setupRecyclerView();
     }

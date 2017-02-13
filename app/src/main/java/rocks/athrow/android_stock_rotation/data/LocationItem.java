@@ -15,11 +15,12 @@ public class LocationItem {
     private String description;
     private String packSize;
     private String receivedDate;
-    private String expirtationDate;
+    private String expirationDate;
     private String location;
     private String caseQty;
     private String inventoryTag;
     private int receivingId;
+    private boolean inPrimary;
 
     public String getItemId() {
         return itemId;
@@ -63,11 +64,11 @@ public class LocationItem {
     }
 
     public String getExpirationDate() {
-        return expirtationDate;
+        return expirationDate;
     }
 
     public void setExpirationDate(String expirtationDate) {
-        this.expirtationDate = expirtationDate;
+        this.expirationDate = expirtationDate;
     }
 
     public String getLocation() {
@@ -100,5 +101,13 @@ public class LocationItem {
 
     public void setReceivingId(int receivingId) {
         this.receivingId = receivingId;
+    }
+
+    public boolean isInPrimary() {
+        return inPrimary;
+    }
+
+    public void setInPrimary(boolean inPrimary) {
+        this.inPrimary = inPrimary;
     }
 }

@@ -64,7 +64,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
             casesView = (TextView) view.findViewById(R.id.search_items_cases_qty);
             adjustButton = (Button) view.findViewById(R.id.search_items_adjust_button);
             moveButton = (Button) view.findViewById(R.id.search_items_move_button);
-            stageButton = (Button) view.findViewById(R.id.search_items_stage_button);
+            //stageButton = (Button) view.findViewById(R.id.search_items_stage_button);
         }
     }
 

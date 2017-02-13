@@ -51,7 +51,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
         TextView casesView;
         Button adjustButton;
         Button moveButton;
-        Button stageButton;
+        //Button stageButton;
         ViewHolder(View view) {
             super(view);
             skuView = (TextView) view.findViewById(R.id.location_details_item_sku);
@@ -63,7 +63,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
             casesView = (TextView) view.findViewById(R.id.location_details_cases_qty);
             adjustButton = (Button) view.findViewById(R.id.location_details_button_adjust);
             moveButton = (Button) view.findViewById(R.id.location_details_button_move);
-            stageButton = (Button) view.findViewById(R.id.location_details_button_stage);
+            //stageButton = (Button) view.findViewById(R.id.location_details_button_stage);
         }
     }
 
@@ -107,7 +107,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
                 mContext.startActivity(intent);
             }
         });
-        viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
+        /*viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String id = UUID.randomUUID().toString();
@@ -120,7 +120,7 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
                 intent.putExtra(MODE, MODE_EDIT);
                 mContext.startActivity(intent);
             }
-        });
+        });*/
     }
 
     @Override

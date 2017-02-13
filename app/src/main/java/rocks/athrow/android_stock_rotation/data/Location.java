@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.data;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -16,6 +17,7 @@ public class Location extends RealmObject {
     public final static String FIELD_BARCODE = "barcode";
     public final static String FIELD_TYPE = "type";
     public final static String FIELD_EDISON_QTY = "edisonCaseQty";
+    public final static String FIELD_IS_PRIMARY = "isPrimary";
     @PrimaryKey
     private int serialNumber;
     private String location;
@@ -24,6 +26,8 @@ public class Location extends RealmObject {
     private int fmCaseQty;
     private boolean init;
     private Date initDate;
+    @Index
+    private boolean isPrimary;
 
     public int getSerialNumber() {
         return serialNumber;
@@ -79,5 +83,13 @@ public class Location extends RealmObject {
 
     public void setInitDate(Date initDate) {
         this.initDate = initDate;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
     }
 }

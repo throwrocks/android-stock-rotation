@@ -356,7 +356,7 @@ public final class RealmQueries {
      * @param type    the locations type (freezer, cooler, paper, dry)
      * @return a RealmResults object
      */
-    public static RealmResults<Location> getLocations(Context context, String type) {
+    public static RealmResults<Location> getLocations(Context context, String type, boolean isPrimary) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -365,11 +365,13 @@ public final class RealmQueries {
         if (type.equals("All")) {
             realmResults =
                     realm.where(Location.class)
+                            .equalTo(Location.FIELD_IS_PRIMARY, type)
                             .findAll();
         } else {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
+                            .equalTo(Location.FIELD_IS_PRIMARY, type)
                             .findAll();
         }
         realm.commitTransaction();
@@ -509,7 +511,6 @@ public final class RealmQueries {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
         RealmResults<Transfer> inResults;
         RealmResults<Transfer> outResults;
         if (itemId != null) {
@@ -534,7 +535,6 @@ public final class RealmQueries {
         }
         Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
         Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);
-        realm.commitTransaction();
         return inTransfers.longValue() - outTransfers.longValue();
     }
 
@@ -621,6 +621,7 @@ public final class RealmQueries {
         if (size == 0) {
             return null;
         }
+        int index = 0;
         ArrayList<LocationItem> results = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             Transfer transfer = transfers.get(i);
@@ -646,7 +647,8 @@ public final class RealmQueries {
                 locationItem.setExpirationDate(expirationDate);
                 locationItem.setLocation(itemLocation);
                 locationItem.setCaseQty(casesQty);
-                results.add(i, locationItem);
+                results.add(index, locationItem);
+                index ++;
             }
         }
         return results;

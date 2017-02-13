@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -91,9 +92,9 @@ public final class SyncDB {
                     transfer.setInit(true);
                     transfer.setInitDate(new Date());
                     realm.copyToRealmOrUpdate(transfer);
-                    realm.commitTransaction();
                 }
             }
+            realm.commitTransaction();
         }
     }
 
@@ -114,12 +115,12 @@ public final class SyncDB {
                 }
                 int countItems = itemsArray.length();
                 Log.e(LOG_TAG, "Items: " + countItems);
+                realm.beginTransaction();
                 for (int i = 0; i < countItems; i++) {
                     try {
                         Log.d(LOG_TAG, "Item update: " + i);
                         Item item = new Item();
                         JSONObject record = itemsArray.getJSONObject(i);
-                        realm.beginTransaction();
                         item.setId(record.getString(Item.FIELD_ID));
                         item.setSerialNumber(record.getInt(Item.FIELD_SERIAL_NUMBER));
                         item.setTagNumber(record.getString(Item.FIELD_TAG_NUMBER));
@@ -130,14 +131,15 @@ public final class SyncDB {
                         item.setReceivedDate(record.getString(Item.FIELD_RECEIVED_DATE));
                         item.setExpirationDate(record.getString(Item.FIELD_EXPIRATION_DATE));
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
-                        item.setEdisonCaseQty(record.getInt(Location.FIELD_EDISON_QTY));
+                        item.setEdisonCaseQty(record.getInt(Item.FIELD_EDISON_QTY));
+                        item.setPrimaryLocation(record.getString(Item.FIELD_PRIMARY_LOCATION));
                         realm.copyToRealmOrUpdate(item);
-                        realm.commitTransaction();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
+                realm.commitTransaction();
                 realm.close();
                 Realm.compactRealm(realmConfig);
                 break;
@@ -148,31 +150,37 @@ public final class SyncDB {
                 }
                 int countLocations = locationsArray.length();
                 Log.e(LOG_TAG, "Locations: " + countLocations);
+                realm.beginTransaction();
+                String[] locationNames = new String[countLocations];
+                // Save the locations
                 for (int i = 0; i < countLocations; i++) {
                     try {
-                        Log.d(LOG_TAG, "Location update: " + i);
                         Location location = new Location();
                         JSONObject record = locationsArray.getJSONObject(i);
-                        realm.beginTransaction();
                         String locationName = record.getString(Location.FIELD_LOCATION);
+                        locationNames[i] = locationName;
                         location.setSerialNumber(record.getInt(Location.FIELD_SERIAL_NUMBER));
                         location.setBarcode(record.getString(Location.FIELD_BARCODE));
                         location.setLocation(locationName);
                         location.setType(record.getString(Location.FIELD_TYPE));
                         realm.copyToRealmOrUpdate(location);
-                        realm.commitTransaction();
-                        // Set the initial qtys
-                        int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, locationName, null).toString());
-                        realm.beginTransaction();
-                        location.setFmCaseQty(qty);
                         realm.copyToRealmOrUpdate(location);
-                        realm.commitTransaction();
-                        Log.d(LOG_TAG, "Update Location " + i + ": " + name + " Qty: " + qty);
+                        Log.d(LOG_TAG, "Save Location " + i + ": " + name);
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
+                // Store the location case quantities
+                for ( int i = 0; i < countLocations; i++){
+                    String locationName = locationNames[i];
+                    int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, locationName, null).toString());
+                    Location location = realm.where(Location.class).equalTo(Location.FIELD_LOCATION, locationName).findAll().get(0);
+                    location.setFmCaseQty(qty);
+                    realm.copyToRealmOrUpdate(location);
+                    Log.d(LOG_TAG, "Location count " + i + ": " + locationName + " = " + qty);
+                }
+                realm.commitTransaction();
                 realm.close();
                 Realm.compactRealm(realmConfig);
                 break;
@@ -183,12 +191,12 @@ public final class SyncDB {
                 }
                 int countTransfers = transfersArray.length();
                 Log.e(LOG_TAG, "Transfers: " + countTransfers);
+                realm.beginTransaction();
                 for (int i = 0; i < countTransfers; i++) {
                     try {
                         Log.d(LOG_TAG, "Transfer update: " + i);
                         Transfer transfer = new Transfer();
                         JSONObject record = transfersArray.getJSONObject(i);
-                        realm.beginTransaction();
                         transfer.setId(record.getString(Transfer.FIELD_ID));
                         transfer.setType(record.getString(Transfer.FIELD_TYPE));
                         transfer.setSerialNumber(record.getInt(Transfer.FIELD_SERIAL_NUMBER));
@@ -208,12 +216,12 @@ public final class SyncDB {
                         transfer.setInit(true);
                         transfer.setInitDate(new Date());
                         realm.copyToRealmOrUpdate(transfer);
-                        realm.commitTransaction();
                     } catch (JSONException e) {
                         realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
+                realm.commitTransaction();
                 realm.close();
                 Realm.compactRealm(realmConfig);
                 break;

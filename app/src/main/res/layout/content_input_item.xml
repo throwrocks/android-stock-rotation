@@ -59,9 +59,10 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag #: " />
+                android:text="@string/label_tag_number" />
 
             <TextView
+                android:layout_marginStart="8dp"
                 android:id="@+id/input_tag_number"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
@@ -79,9 +80,10 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:text="@string/label_received_date" />
 
             <TextView
+                android:layout_marginStart="8dp"
                 android:id="@+id/input_received_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
@@ -100,9 +102,10 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expiration Date: " />
+                android:text="@string/label_expiration_date" />
 
             <TextView
+                android:layout_marginStart="8dp"
                 android:id="@+id/input_expiration_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"

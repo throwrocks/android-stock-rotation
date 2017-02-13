@@ -95,12 +95,12 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mCaseQtyView != null) {
             mCaseQtyView.setEnabled(false);
         }
-        if (mCurrentLocationView != null) {
+        /*if (mCurrentLocationView != null) {
             mCurrentLocationView.setEnabled(false);
         }
         if (mNewLocationView != null) {
             mNewLocationView.setEnabled(false);
-        }
+        }*/
     }
 
     /**
@@ -123,9 +123,9 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mCaseQtyView != null) {
             mCaseQtyView.setEnabled(true);
         }
-        if (mNewLocationView != null) {
-            //mNewLocationView.setEnabled(true);
-        }
+        /*if (mNewLocationView != null) {
+            mNewLocationView.setEnabled(true);
+        }*/
     }
 
     /**

@@ -22,6 +22,13 @@
         <item name="android:paddingBottom">16dp</item>
     </style>
 
+    <style name="syncDisplay">
+        <item name="android:background">@drawable/abc_btn_borderless_material</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:gravity">start</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
     <style name="resultHeaders">
         <item name="android:textColor">#BDBDBD</item>
         <item name="android:textSize">16sp</item>

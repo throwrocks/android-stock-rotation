@@ -3,14 +3,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/block_current_location"
     android:layout_width="match_parent"
-    android:gravity="center"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
@@ -21,12 +21,13 @@
             android:text="@string/hint_current_location" />
 
         <EditText
-            android:layout_marginStart="8dp"
             android:id="@+id/input_current_location"
             style="@style/PrimaryTextStyle"
-            android:textSize="24sp"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:enabled="false"
+            android:textSize="24sp"
             android:textStyle="italic" />
     </LinearLayout>
 

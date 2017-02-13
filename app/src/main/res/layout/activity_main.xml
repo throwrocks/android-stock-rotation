@@ -76,7 +76,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
-
+        <!--
         <LinearLayout
             android:id="@+id/module_picking"
             style="@style/mainButton"
@@ -107,7 +107,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
         </LinearLayout>
-
+        -->
         <LinearLayout
             android:id="@+id/module_adjust"
             style="@style/mainButton"
@@ -215,7 +215,7 @@
 
         <LinearLayout
             android:id="@+id/module_sync"
-            style="@style/mainButton"
+            style="@style/syncDisplay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">

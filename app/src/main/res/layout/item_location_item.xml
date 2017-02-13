@@ -171,7 +171,7 @@
                 android:includeFontPadding="true"
                 android:text="@string/module_move"
                 android:textSize="12sp" />
-
+            <!--
             <Button
                 android:id="@+id/location_details_button_stage"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
@@ -182,7 +182,7 @@
                 android:includeFontPadding="true"
                 android:text="@string/module_pick"
                 android:textSize="12sp" />
-
+            -->
         </LinearLayout>
 
     </LinearLayout>

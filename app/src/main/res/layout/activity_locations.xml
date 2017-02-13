@@ -7,42 +7,71 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
         android:padding="8dp">
 
         <LinearLayout
-            android:layout_gravity="start"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1.25"
+            android:gravity="start"
+            android:orientation="vertical">
 
-            <TextView
-                android:gravity="center"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Filter: "
-                android:textStyle="italic" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/locations_spinner"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/label_filter"
+                    android:textStyle="italic" />
+
+                <Spinner
+                    android:id="@+id/locations_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_primary"
+                    android:textStyle="italic" />
+
+                <CheckBox
+                    android:id="@+id/locations_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Find Location: " />
+                android:text="@string/label_find_location" />
 
             <EditText
                 android:id="@+id/locations_search"
@@ -51,9 +80,20 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1" />
+
         </LinearLayout>
 
+
     </LinearLayout>
+
+
+    <View xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/dividerColor" />
+
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/locations_list"

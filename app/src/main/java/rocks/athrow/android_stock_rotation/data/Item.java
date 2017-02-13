@@ -4,6 +4,8 @@ import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
+import static android.R.id.primary;
+
 /**
  * Item
  * Created by joselopez on 1/9/17.
@@ -21,6 +23,7 @@ public class Item extends RealmObject {
     public static final String FIELD_EXPIRATION_DATE ="expirationDate";
     public static final String FIELD_ITEM_TYPE = "itemType";
     public static final String FIELD_EDISON_QTY = "edisonCaseQty";
+    public static final String FIELD_PRIMARY_LOCATION = "primaryLocation";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -35,6 +38,7 @@ public class Item extends RealmObject {
     private String itemType;
     private int fmCaseQty;
     private int edisonCaseQty;
+    private String primaryLocation;
 
     public String getId() {
         return id;
@@ -130,5 +134,13 @@ public class Item extends RealmObject {
 
     public void setEdisonCaseQty(int edisonCaseQty) {
         this.edisonCaseQty = edisonCaseQty;
+    }
+
+    public String getPrimaryLocation() {
+        return primaryLocation;
+    }
+
+    public void setPrimaryLocation(String primaryLocation) {
+        this.primaryLocation = primaryLocation;
     }
 }
