@@ -16,12 +16,15 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Find Item: " />
+            android:labelFor="@+id/search_items"
+            android:text="@string/label_find_items" />
 
         <EditText
+
             android:id="@+id/search_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:hint="@string/hint_find_items"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1" />

@@ -2,6 +2,8 @@ package rocks.athrow.android_stock_rotation.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,7 +56,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
         LocationsAdapter.ViewHolder vh = (LocationsAdapter.ViewHolder) viewHolder;
         Location location = getItem(position);
         final String locationName = location.getLocation();
-        //boolean isPrimary = location.isPrimary();
+        boolean isPrimary = location.isPrimary();
         String caseQty = String.valueOf(location.getFmCaseQty());
         vh.viewLocationName.setText(locationName);
         vh.viewLocationQty.setText(caseQty);
@@ -66,6 +68,9 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
                 mContext.startActivity(intent);
             }
         });
+        if ( !isPrimary ){
+            vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.secondaryText));
+        }
     }
 
     @Override

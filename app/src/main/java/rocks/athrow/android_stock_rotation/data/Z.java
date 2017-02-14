@@ -28,4 +28,6 @@ public abstract class Z {
     public static final String BARCODE = "barcode";
     public static final String NAME = "name";
     public static final String SCAN_TYPE = "scan_type";
+    public static final String MATCH = "match";
+    public static final String MISMATCH = "mismatch";
 }

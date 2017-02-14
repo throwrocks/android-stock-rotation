@@ -26,13 +26,19 @@ import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
+import static android.R.attr.type;
+
 
 /**
+ * LocationsActivity
  * Created by jose on 1/15/17.
  */
 
 public class LocationsActivity extends AppCompatActivity {
     private final static String LOCATIONS_FILTER = "locations_filter";
+    private final static String LOCATIONS_SEARCH_CRITERIA = "locations_search_criteria";
+    private final static String LOCATIONS_FILTER_PRIMARY_ONLY = "locations_filter_primary_only";
+    private final static String EMPTY = "";
     private final static String ALL = "All";
     private final static String FREEZER = "Freezer";
     private final static String COOLER = "Cooler";
@@ -54,16 +60,12 @@ public class LocationsActivity extends AppCompatActivity {
         final Context context = getApplicationContext();
         setContentView(R.layout.activity_locations);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        PreferencesHelper preferencesHelper = new PreferencesHelper(this);
-        mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
-        mSearchCriteria = preferencesHelper.loadString("locations_search_criteria", "");
         mSearchField = (EditText) findViewById(R.id.locations_search);
         mSpinner = (Spinner) findViewById(R.id.locations_spinner);
         mPrimaryCheckBox = (CheckBox) findViewById(R.id.locations_primary);
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
-        mSpinner.setSelection(getFilterPosition(mLocationsFilter));
         /** Spinner Click Listener **/
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -92,7 +94,7 @@ public class LocationsActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     mSearchCriteria = mSearchField.getText().toString();
                     PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-                    preferencesHelper.save("locations_search_criteria", mSearchCriteria);
+                    preferencesHelper.save(LOCATIONS_SEARCH_CRITERIA, mSearchCriteria);
                     mRealmResults = RealmQueries.getLocations(getApplicationContext(), mLocationsFilter, mSearchCriteria, mPrimaryOnly);
                     setupRecyclerView();
                     View view = getCurrentFocus();
@@ -105,9 +107,78 @@ public class LocationsActivity extends AppCompatActivity {
                 return handled;
             }
         });
-        mSearchField.setText(mSearchCriteria);
     }
 
+    private void updateRealmResults() {
+        Context context = getApplicationContext();
+        if (mSearchCriteria != null && !mSearchCriteria.isEmpty()) {
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria, mPrimaryOnly);
+        } else {
+            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mPrimaryOnly);
+        }
+
+    }
+
+    private void filterLocations(String type) {
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save(LOCATIONS_FILTER, type);
+        mLocationsFilter = type;
+        updateRealmResults();
+        setupRecyclerView();
+    }
+
+    private void setPrimaryOnly(boolean primaryOnly) {
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, primaryOnly);
+        mPrimaryOnly = primaryOnly;
+        updateRealmResults();
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
+        mAdapter = new LocationsAdapter(LocationsActivity.this);
+        RealmLocationsListAdapter realmAdapter =
+                new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
+        mAdapter.setRealmAdapter(realmAdapter);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.locations_list);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save(LOCATIONS_FILTER, mLocationsFilter);
+        preferencesHelper.save(LOCATIONS_SEARCH_CRITERIA, mSearchCriteria);
+        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, mPrimaryOnly);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(this);
+        mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
+        mSearchCriteria = preferencesHelper.loadString(LOCATIONS_SEARCH_CRITERIA, EMPTY);
+        mPrimaryOnly = preferencesHelper.loadBoolean(LOCATIONS_FILTER_PRIMARY_ONLY);
+        mSearchField.setText(mSearchCriteria);
+        mSpinner.setSelection(getFilterPosition(mLocationsFilter));
+        mPrimaryCheckBox.setChecked(mPrimaryOnly);
+        updateRealmResults();
+        setupRecyclerView();
+    }
+
+    /**
+     * getFilterPosition
+     * Returns the index of the specific filter name
+     *
+     * @param filter the filename (Freezer, Cooler, Dry, Paper, All)
+     * @return the index
+     */
     private int getFilterPosition(String filter) {
         int position = 4;
         switch (filter) {
@@ -128,44 +199,5 @@ public class LocationsActivity extends AppCompatActivity {
                 break;
         }
         return position;
-    }
-
-    private void updateRealmResults() {
-        Context context = getApplicationContext();
-        if (mSearchCriteria != null && !mSearchCriteria.isEmpty()) {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria, mPrimaryOnly);
-        } else {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mPrimaryOnly );
-        }
-
-    }
-
-    private void filterLocations(String type) {
-        Context context = getApplicationContext();
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        preferencesHelper.save("locations_filter", type);
-        mLocationsFilter = type;
-        updateRealmResults();
-        setupRecyclerView();
-    }
-
-    private void setPrimaryOnly(boolean primaryOnly){
-        Context context = getApplicationContext();
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        preferencesHelper.save("locations_filter_primary_only", primaryOnly);
-        mPrimaryOnly = primaryOnly;
-        updateRealmResults();
-        setupRecyclerView();
-    }
-
-    private void setupRecyclerView() {
-        mAdapter = new LocationsAdapter(LocationsActivity.this);
-        RealmLocationsListAdapter realmAdapter =
-                new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
-        mAdapter.setRealmAdapter(realmAdapter);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.locations_list);
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(mAdapter);
     }
 }

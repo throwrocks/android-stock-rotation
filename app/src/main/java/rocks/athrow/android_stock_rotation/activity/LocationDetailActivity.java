@@ -21,6 +21,7 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
  */
 
 public class LocationDetailActivity extends AppCompatActivity {
+    private static String LOCATION = "location";
     private String mLocation;
     private LocationDetailsAdapter mAdapter;
     @Override
@@ -29,7 +30,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_location_details);
         Intent intent = getIntent();
         if (intent != null) {
-            mLocation = intent.getStringExtra("location");
+            mLocation = intent.getStringExtra(LOCATION);
         }
         TextView locationView = (TextView) findViewById(R.id.location_details_location);
         locationView.setText(mLocation);
@@ -40,7 +41,7 @@ public class LocationDetailActivity extends AppCompatActivity {
      * setUpItems
      */
     private void setupItems(){
-        ArrayList<LocationItem> items = RealmQueries.getLocationItems(getApplicationContext(), "location", mLocation);
+        ArrayList<LocationItem> items = RealmQueries.getLocationItems(getApplicationContext(), LOCATION, mLocation);
         if ( items == null ){
             return;
         }
@@ -50,4 +51,11 @@ public class LocationDetailActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupItems();
+    }
+
 }

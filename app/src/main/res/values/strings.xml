@@ -23,6 +23,9 @@
     <string name="label_filter">Area:</string>
     <string name="label_find_location">Find Loc.: </string>
     <string name="label_primary">Primary only: </string>
+    <string name="label_find_items">Find Item:</string>
+    <string name="label_current_case_qty">Current Case Qty:</string>
+    <string name="hint_find_items"><small>Enter a SKU or an Item Description</small></string>
     <!-- Dummy values-->
     <string name="no_item_selected">No item selected</string>
     <string name="n_a">N/A</string>

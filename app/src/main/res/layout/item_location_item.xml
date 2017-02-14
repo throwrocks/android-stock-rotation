@@ -93,6 +93,7 @@
             <TextView
                 android:id="@+id/location_details_received_date"
                 style="@style/PrimaryTextStyle"
+                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -113,6 +114,7 @@
             <TextView
                 android:id="@+id/location_details_expiration_date"
                 style="@style/PrimaryTextStyle"
+                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -133,6 +135,7 @@
             <TextView
                 android:id="@+id/location_details_cases_qty"
                 style="@style/PrimaryTextStyle"
+                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

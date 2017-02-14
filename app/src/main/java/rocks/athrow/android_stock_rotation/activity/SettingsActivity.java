@@ -1,13 +1,16 @@
 package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 
 /**
  * SettingsActivity
@@ -23,14 +26,28 @@ public class SettingsActivity extends PreferenceActivity {
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Context context = getApplicationContext();
-                CharSequence text = "Database deleted!";
-                int duration = Toast.LENGTH_SHORT;
-                RealmQueries.deleteDatabase(context);
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                deleteDatabase();
                 return true;
             }
         });
+    }
+
+    private void deleteDatabase(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Delete all records in the device?")
+                .setTitle("Delete Database");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                RealmQueries.deleteDatabase(getApplicationContext());
+                Utilities.showToast(getApplicationContext(), "Database deleted!", Toast.LENGTH_SHORT);
+                finish();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
