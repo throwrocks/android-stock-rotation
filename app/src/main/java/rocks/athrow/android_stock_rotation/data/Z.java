@@ -9,7 +9,6 @@ public abstract class Z {
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
-    public static final String MODULE_STAGING = "Stage";
     public static final String MODULE_ADJUST = "Adjust";
     public static final String CURRENT_LOCATION = "current_location";
     public static final String TAG_NUMBER = "tag_number";

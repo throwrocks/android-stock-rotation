@@ -9,11 +9,12 @@ import io.realm.annotations.PrimaryKey;
  * Created by joselopez on 1/9/17.
  */
 
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Transaction extends RealmObject {
-    public static final String ID = "id";
-    public static final String TYPE1 = "type1";
-    public static final String IS_COMPLETE = "isCompleted";
-    public static final String IS_VALID = "isValidRecord";
+    static final String ID = "id";
+    static final String TYPE1 = "type1";
+    static final String IS_COMPLETE = "isCompleted";
+    static final String IS_VALID = "isValidRecord";
     @PrimaryKey
     private String id;
     private Date date;
@@ -26,7 +27,6 @@ public class Transaction extends RealmObject {
     private String receivedDate;
     private String expirationDate;
     private String type1; // Receiving, Move, Salvage, Picking
-    private String type2; // In or out
     private String locationStart;
     private int qtyCases;
     private int qtyLoose;
@@ -105,14 +105,6 @@ public class Transaction extends RealmObject {
         this.type1 = type1;
     }
 
-    public String getType2() {
-        return type2;
-    }
-
-    public void setType2(String type2) {
-        this.type2 = type2;
-    }
-
     public String getLocationStart() {
         if (locationStart == null) {
             return "";
@@ -135,22 +127,6 @@ public class Transaction extends RealmObject {
 
     public void setQtyCases(int qtyCases) {
         this.qtyCases = qtyCases;
-    }
-
-    public int getQtyLoose() {
-        return qtyLoose;
-    }
-
-    public String getQtyLooseString() {
-        return String.valueOf(qtyLoose);
-    }
-
-    public void setQtyLoose(int qtyLoose) {
-        this.qtyLoose = qtyLoose;
-    }
-
-    public Date getDateCompleted() {
-        return dateCompleted;
     }
 
     public void setDateCompleted(Date dateCompleted) {
@@ -209,48 +185,17 @@ public class Transaction extends RealmObject {
         this.locationEnd = locationEnd;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getEmployeeName() {
-        return employeeName;
-    }
-
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
-    }
-
-    public Boolean getCompleted() {
-        return isCompleted;
-    }
-
-    public void setCompleted(Boolean completed) {
-        isCompleted = completed;
-    }
-
     public boolean isValidRecord() {
         if (getId() == null || getId().isEmpty()) {
             return false;
-        }
-        if (getItemId() == null || getItemId().isEmpty()) {
+        } else if (getItemId() == null || getItemId().isEmpty()) {
             return false;
-        }
-        if (getType1().equals("Moving") && (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 )) {
+        } else if (getType1().equals("Moving") && (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 )) {
             return false;
-        }
-        if (getType1().equals("Adjust") && (getLocationStart() == null || getLocationStart().isEmpty())) {
+        }else if (getType1().equals("Adjust") && (getLocationStart() == null || getLocationStart().isEmpty())) {
             return false;
         }
         return true;
-    }
-
-    public boolean getIsValidRecord(){
-        return isValidRecord;
     }
 
     public void setIsValidRecord() {

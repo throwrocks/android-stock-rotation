@@ -16,13 +16,11 @@ import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
-import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 
 import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
 import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
@@ -34,8 +32,8 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
  */
 
 public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetailsAdapter.ViewHolder> {
-    private Context mContext;
-    private ArrayList<LocationItem> mItems;
+    private final Context mContext;
+    private final ArrayList<LocationItem> mItems;
 
     public LocationDetailsAdapter(Context context, ArrayList<LocationItem> locationItems) {
         this.mContext = context;
@@ -43,16 +41,15 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView skuView;
-        TextView itemDescriptionView;
-        TextView tagNumberView;
-        TextView packSizeView;
-        TextView receivedDateView;
-        TextView expirationDateView;
-        TextView casesView;
-        Button adjustButton;
-        Button moveButton;
-        //Button stageButton;
+        final TextView skuView;
+        final TextView itemDescriptionView;
+        final TextView tagNumberView;
+        final TextView packSizeView;
+        final TextView receivedDateView;
+        final TextView expirationDateView;
+        final TextView casesView;
+        final Button adjustButton;
+        final Button moveButton;
         ViewHolder(View view) {
             super(view);
             skuView = (TextView) view.findViewById(R.id.location_details_item_sku);
@@ -64,7 +61,6 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
             casesView = (TextView) view.findViewById(R.id.location_details_cases_qty);
             adjustButton = (Button) view.findViewById(R.id.location_details_button_adjust);
             moveButton = (Button) view.findViewById(R.id.location_details_button_move);
-            //stageButton = (Button) view.findViewById(R.id.location_details_button_stage);
         }
     }
 
@@ -108,20 +104,6 @@ public class LocationDetailsAdapter extends RecyclerView.Adapter<LocationDetails
                 mContext.startActivity(intent);
             }
         });
-        /*viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = UUID.randomUUID().toString();
-                Intent intent = new Intent(mContext, TransactionOutActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MODULE_TYPE, MODULE_STAGING);
-                intent.putExtra(TRANSACTION_ID, id);
-                intent.putExtra(CURRENT_LOCATION, location);
-                intent.putExtra(TAG_NUMBER, tagNumber);
-                intent.putExtra(MODE, MODE_EDIT);
-                mContext.startActivity(intent);
-            }
-        });*/
         viewHolder.adjustButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

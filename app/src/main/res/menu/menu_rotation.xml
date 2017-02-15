@@ -5,6 +5,6 @@
     <item
         android:id="@+id/rotation_add_item"
         android:orderInCategory="100"
-        android:title="Add Item"
+        android:title="@string/menu_add_item"
         app:showAsAction="always" />
 </menu>

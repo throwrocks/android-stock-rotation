@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:orientation="horizontal">
+    android:layout_weight=".5"
+    android:baselineAligned="false"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/label_case_qty"
+        style="@style/LabelStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight=".5"
-        android:orientation="vertical">
+        android:labelFor="@+id/input_case_qty"
+        android:text="@string/label_current_case_qty" />
 
-        <TextView
-            android:labelFor="@+id/input_case_qty"
-            android:id="@+id/label_case_qty"
-            style="@style/LabelStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_current_case_qty" />
-
-        <EditText
-            android:id="@+id/input_case_qty"
-            style="@style/PrimaryTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number" />
-
-    </LinearLayout>
+    <EditText
+        android:id="@+id/input_case_qty"
+        style="@style/PrimaryTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number" />
 </LinearLayout>

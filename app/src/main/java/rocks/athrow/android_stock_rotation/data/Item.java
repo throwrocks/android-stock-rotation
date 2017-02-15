@@ -3,14 +3,12 @@ package rocks.athrow.android_stock_rotation.data;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
-
-import static android.R.id.primary;
-
 /**
  * Item
  * Created by joselopez on 1/9/17.
  */
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class Item extends RealmObject {
     public static final String FIELD_ID = "id";
     public static final String FIELD_SERIAL_NUMBER = "serialNumber";
@@ -35,6 +33,7 @@ public class Item extends RealmObject {
     private int receivingId;
     private String receivedDate;
     private String expirationDate;
+
     private String itemType;
     private int fmCaseQty;
     private int edisonCaseQty;
@@ -46,10 +45,6 @@ public class Item extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public int getSerialNumber() {
-        return serialNumber;
     }
 
     public void setSerialNumber(int serialNumber) {
@@ -112,32 +107,12 @@ public class Item extends RealmObject {
         this.expirationDate = expirationDate;
     }
 
-    public String getItemType() {
-        return itemType;
-    }
-
     public void setItemType(String itemType) {
         this.itemType = itemType;
     }
 
-    public int getFmCaseQty() {
-        return fmCaseQty;
-    }
-
-    public void setFmCaseQty(int fmCaseQty) {
-        this.fmCaseQty = fmCaseQty;
-    }
-
-    public int getEdisonCaseQty() {
-        return edisonCaseQty;
-    }
-
     public void setEdisonCaseQty(int edisonCaseQty) {
         this.edisonCaseQty = edisonCaseQty;
-    }
-
-    public String getPrimaryLocation() {
-        return primaryLocation;
     }
 
     public void setPrimaryLocation(String primaryLocation) {

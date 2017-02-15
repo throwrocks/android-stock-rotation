@@ -12,26 +12,26 @@ import rocks.athrow.android_stock_rotation.util.Utilities;
  * Created by joselopez on 1/12/17.
  */
 
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Transfer extends RealmObject {
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
-    public final static String FIELD_ID = "id";
-    public final static String FIELD_SERIAL_NUMBER = "serialNumber";
-    public final static String FIELD_TRANSACTION_ID = "transactionId";
-    public final static String FIELD_TRANSACTION_TYPE = "transactionType";
-    public final static String FIELD_TYPE = "type";
-    public final static String FIELD_DATE = "date";
-    public final static String FIELD_ITEM_ID = "itemId";
-    public final static String FIELD_SKU = "sku";
-    public final static String FIELD_ITEM_DESCRIPTION = "itemDescription";
-    public final static String FIELD_TAG_NUMBER = "tagNumber";
-    public final static String FIELD_RECEIVING_ID = "receivingId";
-    public final static String FIELD_RECEIVED_DATE = "receivedDate";
-    public final static String FIELD_EXPIRATION_DATE = "expirationDate";
-    public final static String FIELD_PACK_SIZE = "packSize";
-    public final static String FIELD_LOCATION = "location";
-    public final static String FIELD_CASE_QTY = "caseQty";
-    public final static String FIELD_INIT = "init";
-    public final static String FIELD_INIT_DATE = "initDate";
+    final static String FIELD_ID = "id";
+    final static String FIELD_SERIAL_NUMBER = "serialNumber";
+    final static String FIELD_TRANSACTION_ID = "transactionId";
+    final static String FIELD_TRANSACTION_TYPE = "transactionType";
+    final static String FIELD_TYPE = "type";
+    final static String FIELD_DATE = "date";
+    final static String FIELD_ITEM_ID = "itemId";
+    final static String FIELD_SKU = "sku";
+    final static String FIELD_ITEM_DESCRIPTION = "itemDescription";
+    final static String FIELD_TAG_NUMBER = "tagNumber";
+    final static String FIELD_RECEIVING_ID = "receivingId";
+    final static String FIELD_RECEIVED_DATE = "receivedDate";
+    final static String FIELD_EXPIRATION_DATE = "expirationDate";
+    final static String FIELD_PACK_SIZE = "packSize";
+    final static String FIELD_LOCATION = "location";
+    final static String FIELD_CASE_QTY = "caseQty";
+    final static String FIELD_INIT = "init";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -64,19 +64,11 @@ public class Transfer extends RealmObject {
         this.id = id;
     }
 
-    public int getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(int serialNumber) {
+    void setSerialNumber(int serialNumber) {
         this.serialNumber = serialNumber;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
+    void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
 
@@ -84,7 +76,7 @@ public class Transfer extends RealmObject {
         return transactionType;
     }
 
-    public void setTransactionType(String transactionType) {
+    void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -108,7 +100,7 @@ public class Transfer extends RealmObject {
         return itemId;
     }
 
-    public void setItemId(String itemId) {
+    void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
@@ -144,18 +136,17 @@ public class Transfer extends RealmObject {
         this.packSize = packSize;
     }
 
-    public int getReceivingId() {
+    int getReceivingId() {
         return receivingId;
     }
 
-    public void setReceivingId(int receivingId) {
+    void setReceivingId(int receivingId) {
         this.receivingId = receivingId;
     }
 
     public String getReceivedDate() {
         return receivedDate;
     }
-
 
     public String getExpirationDate() {
         return expirationDate;
@@ -181,7 +172,7 @@ public class Transfer extends RealmObject {
         return caseQty;
     }
 
-    public void setCaseQty(int caseQty) {
+    void setCaseQty(int caseQty) {
         this.caseQty = caseQty;
     }
 
@@ -189,19 +180,15 @@ public class Transfer extends RealmObject {
         return init;
     }
 
-    public void setInit(boolean init) {
+    public void setInit(@SuppressWarnings("SameParameterValue") boolean init) {
         this.init = init;
     }
 
-    public Date getInitDate() {
-        return initDate;
-    }
-
-    public void setInitDate(Date initDate) {
+    void setInitDate(Date initDate) {
         this.initDate = initDate;
     }
 
-    public String getJSON() {
+    String getJSON() {
         return "{\"data\":[{"
                 + "\"id\":\"" + id + "\""
                 + ", \"transactionId\":\"" + transactionId + "\""

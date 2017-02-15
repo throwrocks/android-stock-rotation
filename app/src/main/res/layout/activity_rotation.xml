@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="You don't have any items in the queue." />
+        android:text="@string/rotation_no_items" />
 
     <android.support.v7.widget.RecyclerView
         android:paddingStart="16dp"

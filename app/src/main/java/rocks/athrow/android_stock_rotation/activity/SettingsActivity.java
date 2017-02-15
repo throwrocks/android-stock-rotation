@@ -1,6 +1,5 @@
 package rocks.athrow.android_stock_rotation.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -21,7 +20,9 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection deprecation
         addPreferencesFromResource(R.xml.settings);
+        @SuppressWarnings("deprecation")
         Preference button = findPreference("delete_database");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

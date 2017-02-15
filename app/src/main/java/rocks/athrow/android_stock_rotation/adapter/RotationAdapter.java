@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import rocks.athrow.android_stock_rotation.activity.MainActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionInActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
-import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Transaction;
@@ -22,7 +21,6 @@ import rocks.athrow.android_stock_rotation.data.Transaction;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 
 /**
  * RotationAdapter
@@ -106,7 +104,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             vh.viewLocation2Label.setVisibility(View.VISIBLE);
             vh.viewLocation2.setVisibility(View.VISIBLE);
             if (locationEnd.isEmpty()) {
-                vh.viewLocation2.setTextColor(mContext.getResources().getColor(R.color.warning));
+                vh.viewLocation2.setTextColor(ContextCompat.getColor(mContext, R.color.warning));
                 vh.viewLocation2.setTypeface(null, Typeface.ITALIC);
                 vh.viewLocation2.setText(mContext.getResources().getString(R.string.not_set));
             } else {

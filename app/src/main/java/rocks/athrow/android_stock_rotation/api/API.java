@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -19,8 +18,6 @@ import rocks.athrow.android_stock_rotation.BuildConfig;
  */
 
 public final class API {
-    private static final String GET = "GET";
-    private static final String POST = "POST";
     private static final String API_HOST = BuildConfig.API_HOST;
     private static final String API_KEY = BuildConfig.API_KEY;
     private static final String API_GET_ITEMS = API_HOST + "/script/api_get_items/items.json?RFMkey=" + API_KEY;
@@ -83,7 +80,6 @@ public final class API {
      */
     private static APIResponse httpConnect(String requestMethod, String queryURL, String postData) {
         APIResponse apiResponse = new APIResponse();
-        apiResponse.setRequestURI(queryURL);
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try {

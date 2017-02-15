@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -27,11 +26,10 @@ import static android.R.attr.name;
  */
 
 public final class SyncDB {
-    private static final String DATA = "data";
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
     private static final String LOG_TAG = "SyncDB";
 
-    public static boolean downloadNewRecords(Context context) {
+    public static void downloadNewRecords(Context context) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -70,7 +68,6 @@ public final class SyncDB {
         }
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("last_sync", new Date().toString());
-        return true;
     }
 
     public static void postTransfers(Context context){
@@ -97,10 +94,6 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-    }
-
-    public static void storeCalcs(Context context){
-        updateDB(context, "update_location_qtys", null);
     }
 
     private static void updateDB(Context context, String type, String responseText) {

@@ -2,9 +2,7 @@
     <string name="app_name">Stock Rotation</string>
     <!--Modules-->
     <string name="module_move">Move</string>
-    <string name="module_pick">Stage</string>
     <string name="module_receive">Receive</string>
-    <string name="module_salvage">Salvage</string>
     <string name="module_adjustment">Adjust</string>
     <string name="module_locations">Locations</string>
     <string name="module_validate">Validate</string>
@@ -16,22 +14,36 @@
     <string name="label_received_date">Rec. Date:</string>
     <string name="label_expiration_date">Exp. Date:</string>
     <string name="label_case_qty">Case Qty:</string>
-    <string name="label_cases">Cases: </string>
     <string name="label_qty">Qty: </string>
-    <string name="label_loose_qty">Loose Qty:</string>
+    <string name="label_current_location">Current Location:</string>
     <string name="label_new_location">New Location:</string>
     <string name="label_filter">Area:</string>
     <string name="label_find_location">Find Loc.: </string>
     <string name="label_primary">Primary only: </string>
     <string name="label_find_items">Find Item:</string>
     <string name="label_current_case_qty">Current Case Qty:</string>
+    <string name="label_edison">Edison</string>
+    <string name="label_filemaker">FileMaker</string>
+    <!-- Buttons -->
+    <string name="button_view">View</string>
+    <!-- Radio Buttons -->
+    <string name="radio_button_tag_number">Tag #</string>
+    <string name="radio_button_sku">SKU</string>
+    <!-- Menu Values-->
+    <string name="menu_edit">Edit</string>
+    <string name="menu_done">Done</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_add_item">Add Item</string>
+    <string name="menu_add_search">Search</string>
+    <string name="menu_add_settings">Settings</string>
+    <!-- Message Values -->
     <string name="hint_find_items"><small>Enter a SKU or an Item Description</small></string>
+    <string name="rotation_no_items">You don\'t have any items in the queue.</string>
     <!-- Dummy values-->
     <string name="no_item_selected">No item selected</string>
     <string name="n_a">N/A</string>
     <string name="hint_current_location">Current Location: </string>
     <string name="not_set">Not set</string>
-
     <!-- Scan Activity error messages -->
     <string name="error_location_not_found">Location not found.</string>
     <string name="error_item_not_found">Item not found.</string>

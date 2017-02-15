@@ -21,12 +21,10 @@ import android.widget.TextView;
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.LocationsAdapter;
-import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Location;
+import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
-
-import static android.R.attr.type;
 
 
 /**
@@ -49,7 +47,6 @@ public class LocationsActivity extends AppCompatActivity {
     private String mSearchCriteria;
     private CheckBox mPrimaryCheckBox;
     private boolean mPrimaryOnly;
-    private LocationsAdapter mAdapter;
     private RealmResults<Location> mRealmResults;
     private EditText mSearchField;
     private Spinner mSpinner;
@@ -138,7 +135,7 @@ public class LocationsActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        mAdapter = new LocationsAdapter(LocationsActivity.this);
+        LocationsAdapter mAdapter = new LocationsAdapter(LocationsActivity.this);
         RealmLocationsListAdapter realmAdapter =
                 new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
         mAdapter.setRealmAdapter(realmAdapter);

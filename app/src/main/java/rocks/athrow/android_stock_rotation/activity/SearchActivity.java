@@ -29,7 +29,6 @@ import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 public class SearchActivity extends AppCompatActivity {
     private String mSearchCriteria;
     private EditText mSearchField;
-    private SearchDetailsAdapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +67,7 @@ public class SearchActivity extends AppCompatActivity {
         }
         int size = items.size();
         if ( size > 0){
-            mAdapter = new SearchDetailsAdapter(getApplicationContext(), items);
+            SearchDetailsAdapter mAdapter = new SearchDetailsAdapter(getApplicationContext(), items);
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_details_container);
             LinearLayoutManager manager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(manager);
@@ -80,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
      * SearchItemsTask
      */
     private class SearchItemsTask extends AsyncTask<String, Void, ArrayList<LocationItem> > {
-        Context context;
+        final Context context;
 
         SearchItemsTask(Context context) {
             this.context = context;

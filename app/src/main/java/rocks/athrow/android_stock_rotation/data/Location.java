@@ -11,6 +11,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by joselopez on 1/9/17.
  */
 
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Location extends RealmObject {
     public final static String FIELD_SERIAL_NUMBER = "serialNumber";
     public final static String FIELD_LOCATION = "location";
@@ -29,10 +30,6 @@ public class Location extends RealmObject {
     @Index
     private boolean isPrimary;
 
-    public int getSerialNumber() {
-        return serialNumber;
-    }
-
     public void setSerialNumber(int serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -43,10 +40,6 @@ public class Location extends RealmObject {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getBarcode() {
-        return barcode;
     }
 
     public void setBarcode(String barcode) {
@@ -75,14 +68,6 @@ public class Location extends RealmObject {
 
     public void setInit(boolean init) {
         this.init = init;
-    }
-
-    public Date getInitDate() {
-        return initDate;
-    }
-
-    public void setInitDate(Date initDate) {
-        this.initDate = initDate;
     }
 
     public boolean isPrimary() {

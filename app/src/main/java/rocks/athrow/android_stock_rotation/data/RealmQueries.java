@@ -113,7 +113,7 @@ public final class RealmQueries {
     /**
      * deleteInvalidTransactions
      *
-     * @param context
+     * @param context required context object
      */
     public static void deleteInvalidTransactions(Context context) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -245,7 +245,6 @@ public final class RealmQueries {
         }
         // transactionType: Set the transaction type
         transaction.setType1(transactionType);
-        transaction.setType2("");
         // itemId: If an ItemId was provided, set the item and its information
         if (itemId != null && !itemId.isEmpty()) {
             // If an item id is provided, we must have a sku, but we need to validate it
@@ -446,9 +445,9 @@ public final class RealmQueries {
     /**
      * getSKUFromTag
      *
-     * @param context
-     * @param tagNumber
-     * @return
+     * @param context required context object
+     * @param tagNumber the item's tag number
+     * @return the item's sku number
      */
     public static int getSKUFromTag(Context context, String tagNumber) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -537,7 +536,6 @@ public final class RealmQueries {
                     .findAll();
         }
         realm.commitTransaction();
-        ;
         return realmResults;
     }
 
@@ -572,7 +570,7 @@ public final class RealmQueries {
         return realmResults;
     }
 
-    public static int updateLocationQty(Context context, String locationName) {
+    private static int updateLocationQty(Context context, String locationName) {
         int count = getCountCasesByLocation(context, locationName, null).intValue();
         RealmResults<Location> locations = getLocationByName(context, locationName);
         if (locations.size() > 0) {
@@ -616,10 +614,10 @@ public final class RealmQueries {
     /**
      * getLocationItems
      *
-     * @param context
-     * @param searchType
-     * @param searchCriteria
-     * @return
+     * @param context required context object
+     * @param searchType the type of search (location, tagNumber , sku, desc (description))
+     * @param searchCriteria the search criteria entered in the edit text view
+     * @return an ArrayList of LocationItem objects
      */
     public static ArrayList<LocationItem> getLocationItems(Context context, String searchType, String searchCriteria) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -663,9 +661,9 @@ public final class RealmQueries {
     /**
      * getLocationItemsFromTransfers
      *
-     * @param context
-     * @param transfers
-     * @return
+     * @param context required context object
+     * @param transfers a transfer object
+     * @return an ArrayList of LocationItem objects
      */
     private static ArrayList<LocationItem> getLocationItemsFromTransfers(Context context, RealmResults<Transfer> transfers) {
         if (transfers == null) {

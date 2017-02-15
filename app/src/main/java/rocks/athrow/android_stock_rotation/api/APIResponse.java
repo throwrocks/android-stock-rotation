@@ -6,21 +6,10 @@ package rocks.athrow.android_stock_rotation.api;
  */
 
 public final class APIResponse {
-
-    private String requestURI;
     private String responseText;
     private int responseCode;
-    private String meta;
 
     public APIResponse() {
-    }
-
-    public String getRequestURI() {
-        return requestURI;
-    }
-
-    public void setRequestURI(String requestURI) {
-        this.requestURI = requestURI;
     }
 
     /**
@@ -59,11 +48,4 @@ public final class APIResponse {
         return responseText;
     }
 
-    public String getMeta() {
-        return meta;
-    }
-
-    void setMeta(String meta) {
-        this.meta = meta;
-    }
 }

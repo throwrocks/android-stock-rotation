@@ -20,7 +20,6 @@ import rocks.athrow.android_stock_rotation.realmadapter.RealmTransfersListAdapte
  */
 
 public class TransfersActivity extends AppCompatActivity {
-    private TransfersAdapter mTransferAdapter;
     private RealmResults<Transfer> mRealmResults;
 
     @Override
@@ -38,7 +37,7 @@ public class TransfersActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         if (mRealmResults != null && mRealmResults.size() > 0) {
-            mTransferAdapter = new TransfersAdapter(TransfersActivity.this);
+            TransfersAdapter mTransferAdapter = new TransfersAdapter(TransfersActivity.this);
             RealmTransfersListAdapter realmTransfersListAdapter =
                     new RealmTransfersListAdapter(getApplicationContext(), mRealmResults);
             mTransferAdapter.setRealmAdapter(realmTransfersListAdapter);

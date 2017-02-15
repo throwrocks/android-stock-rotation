@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Comparison;
 import rocks.athrow.android_stock_rotation.data.Item;
-import rocks.athrow.android_stock_rotation.data.Z;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
@@ -30,8 +29,8 @@ import static rocks.athrow.android_stock_rotation.data.Z.MISMATCH;
  */
 
 public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHolder> {
-    private Context mContext;
-    private ArrayList<Comparison> mItems;
+    private final Context mContext;
+    private final ArrayList<Comparison> mItems;
 
     public ValidateAdapter(Context context, ArrayList<Comparison> items) {
         this.mContext = context;
@@ -39,15 +38,15 @@ public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout viewContainer;
-        LinearLayout viewFmContainer;
-        TextView viewTagNumber;
-        TextView viewPackSize;
-        TextView viewReceivedDate;
-        TextView viewExpirationDate;
-        TextView viewEdisonTotalQty;
-        TextView viewFileMakerTotalQtyLabel;
-        TextView viewFileMakerTotalQty;
+        final LinearLayout viewContainer;
+        final LinearLayout viewFmContainer;
+        final TextView viewTagNumber;
+        final TextView viewPackSize;
+        final TextView viewReceivedDate;
+        final TextView viewExpirationDate;
+        final TextView viewEdisonTotalQty;
+        final TextView viewFileMakerTotalQtyLabel;
+        final TextView viewFileMakerTotalQty;
 
         ViewHolder(View view) {
             super(view);

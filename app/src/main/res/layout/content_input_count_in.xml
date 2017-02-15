@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
+    android:baselineAligned="false"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -17,6 +18,7 @@
             style="@style/LabelStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:labelFor="@+id/input_case_qty"
             android:text="@string/label_case_qty" />
 
         <EditText
@@ -30,9 +32,9 @@
 
 
     <LinearLayout
-        android:layout_marginStart="8dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_weight=".5"
         android:orientation="vertical">
 
@@ -41,6 +43,7 @@
             style="@style/LabelStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:labelFor="@+id/input_new_location"
             android:text="@string/label_new_location" />
 
         <EditText

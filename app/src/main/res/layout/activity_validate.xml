@@ -23,17 +23,19 @@
                 android:id="@+id/validate_type_sku"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SKU" />
+                android:text="@string/radio_button_sku" />
 
             <RadioButton
+                android:labelFor="@+id/validate_input"
                 android:id="@+id/validate_type_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Tag #" />
+                android:text="@string/radio_button_tag_number" />
         </RadioGroup>
 
         <EditText
+            android:inputType="number"
             android:id="@+id/validate_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -97,14 +99,14 @@
        <TextView
            style="@style/resultHeaders"
            android:layout_weight="1"
-           android:text="Edison"
+           android:text="@string/label_edison"
            android:layout_width="0dp"
            android:layout_height="wrap_content" />
        <TextView
            style="@style/resultHeaders"
            android:layout_gravity="start"
            android:layout_weight="1"
-           android:text="FileMaker"
+           android:text="@string/label_filemaker"
            android:layout_width="0dp"
            android:layout_height="wrap_content" />
    </LinearLayout>

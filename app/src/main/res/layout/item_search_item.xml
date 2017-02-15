@@ -120,7 +120,7 @@
                 android:text="@string/label_expiration_date" />
 
             <TextView
-                android:id="@+id/search_items_expirtation_date"
+                android:id="@+id/search_items_expiration_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -21,9 +21,9 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
  */
 
 public class LocationDetailActivity extends AppCompatActivity {
-    private static String LOCATION = "location";
+    private static final String LOCATION = "location";
     private String mLocation;
-    private LocationDetailsAdapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +45,7 @@ public class LocationDetailActivity extends AppCompatActivity {
         if ( items == null ){
             return;
         }
-        mAdapter = new LocationDetailsAdapter(getApplicationContext(), items);
+        LocationDetailsAdapter mAdapter = new LocationDetailsAdapter(getApplicationContext(), items);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_details_container);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);

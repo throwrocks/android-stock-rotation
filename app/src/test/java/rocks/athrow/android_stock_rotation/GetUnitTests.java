@@ -18,6 +18,7 @@ import rocks.athrow.android_stock_rotation.api.APIResponse;
 import static junit.framework.Assert.assertTrue;
 
 
+@SuppressWarnings({"ALL", "SameParameterValue"})
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class GetUnitTests extends Robolectric {

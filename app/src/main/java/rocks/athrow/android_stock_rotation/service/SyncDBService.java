@@ -12,7 +12,7 @@ import rocks.athrow.android_stock_rotation.data.SyncDB;
  */
 
 public class SyncDBService extends IntentService {
-    public static final String SERVICE_NAME = "SyncDBService";
+    private static final String SERVICE_NAME = "SyncDBService";
 
     public SyncDBService() {
         super(SERVICE_NAME);
@@ -22,10 +22,5 @@ public class SyncDBService extends IntentService {
     protected void onHandleIntent(Intent workIntent) {
         SyncDB.downloadNewRecords(getApplicationContext());
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(SERVICE_NAME));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

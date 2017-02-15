@@ -43,7 +43,7 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
  */
 
 public class TransactionMoveActivity extends TransactionBaseActivity {
-    public static final String MODULE_TYPE = "type";
+    private static final String MODULE_TYPE = "type";
     private String mCurrentLocation;
     private String mTagNumber;
     @Override

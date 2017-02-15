@@ -3,13 +3,11 @@ package rocks.athrow.android_stock_rotation.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.R;
@@ -31,9 +29,9 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
-        CardView viewCard;
-        TextView viewLocationName;
-        TextView viewLocationQty;
+        final CardView viewCard;
+        final TextView viewLocationName;
+        final TextView viewLocationQty;
 
         ViewHolder(View view) {
             super(view);

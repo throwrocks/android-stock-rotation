@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -18,7 +19,6 @@
             style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SKU"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -27,7 +27,6 @@
             style="@style/PrimaryTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ITEM DESCRIPTION"
             android:textSize="18sp" />
         <LinearLayout
             android:layout_width="wrap_content"
@@ -38,15 +37,13 @@
                 android:id="@+id/label_tag_number"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/transaction_tag_number"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/n_a" />
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
         <LinearLayout
@@ -67,7 +64,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@string/n_a"
                 android:textStyle="italic" />
         </LinearLayout>
 
@@ -81,14 +77,13 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:text="@string/label_received_date" />
 
             <TextView
                 android:id="@+id/transaction_received_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/n_a" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -102,14 +97,13 @@
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received Date: " />
+                android:text="@string/label_expiration_date" />
 
             <TextView
                 android:id="@+id/transaction_expiration_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/n_a" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -123,7 +117,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -134,19 +129,19 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Case Qty: " />
+                        android:text="@string/label_case_qty" />
 
                     <TextView
                         android:id="@+id/transaction_case_qty"
                         style="@style/PrimaryTextStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="QTY 1"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -167,7 +162,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current Location: " />
+                        android:text="@string/label_current_location" />
 
                     <TextView
                         android:id="@+id/transaction_location1"
@@ -175,7 +170,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="LOC 1"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -189,7 +183,7 @@
                         android:id="@+id/transaction_label_new_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="New Location: " />
+                        android:text="@string/label_new_location" />
 
                     <TextView
                         android:id="@+id/transaction_location2"
@@ -197,7 +191,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="LOC 2"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -216,7 +209,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:gravity="center_horizontal"
-            android:text="View" />
+            android:text="@string/button_view" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

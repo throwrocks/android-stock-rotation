@@ -5,6 +5,7 @@ package rocks.athrow.android_stock_rotation.data;
  * Created by jose on 1/16/17.
  */
 
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class LocationItem {
 
     public LocationItem() {
@@ -21,10 +22,6 @@ public class LocationItem {
     private String inventoryTag;
     private int receivingId;
     private boolean inPrimary;
-
-    public String getItemId() {
-        return itemId;
-    }
 
     public void setItemId(String itemid) {
         this.itemId = itemid;
@@ -67,8 +64,8 @@ public class LocationItem {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirtationDate) {
-        this.expirationDate = expirtationDate;
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public String getLocation() {
@@ -95,19 +92,8 @@ public class LocationItem {
         this.inventoryTag = inventoryTag;
     }
 
-    public int getReceivingId() {
-        return receivingId;
-    }
-
     public void setReceivingId(int receivingId) {
         this.receivingId = receivingId;
     }
 
-    public boolean isInPrimary() {
-        return inPrimary;
-    }
-
-    public void setInPrimary(boolean inPrimary) {
-        this.inPrimary = inPrimary;
-    }
 }

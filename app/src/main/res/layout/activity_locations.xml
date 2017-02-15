@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -67,6 +68,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:labelFor="@+id/locations_search"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

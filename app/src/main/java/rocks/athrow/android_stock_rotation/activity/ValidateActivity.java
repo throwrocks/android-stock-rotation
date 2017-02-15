@@ -53,11 +53,8 @@ public class ValidateActivity extends AppCompatActivity {
     private TextView mSkuView;
     private TextView mItemDescriptionView;
     private RadioGroup mValidateRadioGroup;
-    private RadioButton mValidateSkuType;
-    private RadioButton mValidateTagNumberType;
     private LinearLayout mScanItem;
     private LinearLayout mResultHeaders;
-    private LinearLayout mScanButton;
     private RecyclerView mRecyclerView;
     private ArrayList<Comparison> mResults;
 
@@ -67,13 +64,13 @@ public class ValidateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_validate);
         mScanInput = (EditText) findViewById(R.id.validate_input);
         mValidateRadioGroup = (RadioGroup) findViewById(R.id.validate_type);
-        mValidateSkuType = (RadioButton) findViewById(R.id.validate_type_sku);
-        mValidateTagNumberType = (RadioButton) findViewById(R.id.validate_type_tag);
+        RadioButton mValidateSkuType = (RadioButton) findViewById(R.id.validate_type_sku);
+        RadioButton mValidateTagNumberType = (RadioButton) findViewById(R.id.validate_type_tag);
         mSkuView = (TextView) findViewById(R.id.validate_sku);
         mItemDescriptionView = (TextView) findViewById(R.id.validate_item_description);
         mResultHeaders = (LinearLayout) findViewById(R.id.validate_result_headers);
         mScanItem = (LinearLayout) findViewById(R.id.validate_scan_item);
-        mScanButton = (LinearLayout) findViewById(R.id.validate_new_scan);
+        LinearLayout mScanButton = (LinearLayout) findViewById(R.id.validate_new_scan);
         mRecyclerView = (RecyclerView) findViewById(R.id.validate_results);
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +127,7 @@ public class ValidateActivity extends AppCompatActivity {
         }
     }
 
-    public void initiateScan() {
+    private void initiateScan() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.initiateScan();
     }
@@ -161,7 +158,7 @@ public class ValidateActivity extends AppCompatActivity {
      * AsyncTask to set the total counts, off the UI thread because of multiple database calls
      */
     private class QueryAPI extends AsyncTask<String, Void, ArrayList<Comparison>> {
-        Context context = getApplicationContext();
+        final Context context = getApplicationContext();
         private ArrayList<Comparison> getResults(String type, String searchCriteria) {
             ArrayList<Comparison> results = new ArrayList<>();
             ArrayList<LocationItem> fmResults;

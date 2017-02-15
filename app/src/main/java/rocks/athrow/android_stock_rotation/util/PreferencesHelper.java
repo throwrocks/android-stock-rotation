@@ -3,8 +3,6 @@ package rocks.athrow.android_stock_rotation.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Date;
-
 /**
  * PreferencesHelper
  * Created by jose on 1/10/17.
@@ -12,7 +10,7 @@ import java.util.Date;
 
 public class PreferencesHelper {
 
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
 
     private static final String FILE_NAME = "rocks.throw.service_tickets.preferences";
 
@@ -30,7 +28,7 @@ public class PreferencesHelper {
         prefs.edit().putString(key, value).apply();
     }
 
-    public void save(String key, boolean value) {
+    public void save(@SuppressWarnings("SameParameterValue") String key, boolean value) {
         prefs.edit().putBoolean(key, value).apply();
     }
 
@@ -43,7 +41,7 @@ public class PreferencesHelper {
     public String loadString(String key, @SuppressWarnings("SameParameterValue") String defValue) {
         return prefs.getString(key, defValue);
     }
-    public boolean loadBoolean(String key) {
+    public boolean loadBoolean(@SuppressWarnings("SameParameterValue") String key) {
         return prefs.getBoolean(key, false);
     }
 }

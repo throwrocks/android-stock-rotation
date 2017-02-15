@@ -15,7 +15,6 @@ import java.util.UUID;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
-import rocks.athrow.android_stock_rotation.activity.TransactionOutActivity;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.Z;
 
@@ -23,7 +22,6 @@ import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
 import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
@@ -34,8 +32,8 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
  */
 
 public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdapter.ViewHolder> {
-    private Context mContext;
-    private ArrayList<LocationItem> mItems;
+    private final Context mContext;
+    private final ArrayList<LocationItem> mItems;
 
     public SearchDetailsAdapter(Context context, ArrayList<LocationItem> locationItems) {
         this.mContext = context;
@@ -43,17 +41,16 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView skuView;
-        TextView itemDescriptionView;
-        TextView tagNumberView;
-        TextView locationView;
-        TextView packSizeView;
-        TextView receivedDateView;
-        TextView expirationDateView;
-        TextView casesView;
-        Button adjustButton;
-        Button moveButton;
-        Button stageButton;
+        final TextView skuView;
+        final TextView itemDescriptionView;
+        final TextView tagNumberView;
+        final TextView locationView;
+        final TextView packSizeView;
+        final TextView receivedDateView;
+        final TextView expirationDateView;
+        final TextView casesView;
+        final Button adjustButton;
+        final Button moveButton;
         ViewHolder(View view) {
             super(view);
             skuView = (TextView) view.findViewById(R.id.search_items_item_sku);
@@ -62,7 +59,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
             locationView = (TextView) view.findViewById(R.id.search_items_location);
             packSizeView = (TextView) view.findViewById(R.id.search_items_pack_size);
             receivedDateView = (TextView) view.findViewById(R.id.search_items_received_date);
-            expirationDateView = (TextView) view.findViewById(R.id.search_items_expirtation_date);
+            expirationDateView = (TextView) view.findViewById(R.id.search_items_expiration_date);
             casesView = (TextView) view.findViewById(R.id.search_items_cases_qty);
             adjustButton = (Button) view.findViewById(R.id.search_items_adjust_button);
             moveButton = (Button) view.findViewById(R.id.search_items_move_button);

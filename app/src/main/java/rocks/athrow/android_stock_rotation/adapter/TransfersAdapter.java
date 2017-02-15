@@ -1,6 +1,7 @@
 package rocks.athrow.android_stock_rotation.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,19 +29,18 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
-        TextView viewDate;
-        TextView viewStatus;
-        TextView viewSku;
-        TextView viewItemDescription;
-        TextView viewTagNumber;
-        TextView viewPackSize;
-        TextView viewReceivedDate;
-        TextView viewExpirationDate;
-        TextView viewType1;
-        TextView viewType2;
-        TextView viewLocation;
-        TextView viewCaseQty;
-        //TextView viewLooseQty;
+        final TextView viewDate;
+        final TextView viewStatus;
+        final TextView viewSku;
+        final TextView viewItemDescription;
+        final TextView viewTagNumber;
+        final TextView viewPackSize;
+        final TextView viewReceivedDate;
+        final TextView viewExpirationDate;
+        final TextView viewType1;
+        final TextView viewType2;
+        final TextView viewLocation;
+        final TextView viewCaseQty;
 
         ViewHolder(View view) {
             super(view);
@@ -94,9 +94,9 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         vh.viewDate.setText(dateString);
         vh.viewStatus.setText(status);
         if ( status.equals("Waiting")){
-            vh.viewStatus.setTextColor(mContext.getResources().getColor(R.color.warning));
+            vh.viewStatus.setTextColor(ContextCompat.getColor(mContext, R.color.warning));
         }else{
-            vh.viewStatus.setTextColor(mContext.getResources().getColor(R.color.primaryText));
+            vh.viewStatus.setTextColor(ContextCompat.getColor(mContext, R.color.primaryText));
         }
         vh.viewSku.setText(skuString);
         vh.viewItemDescription.setText(itemDescription);

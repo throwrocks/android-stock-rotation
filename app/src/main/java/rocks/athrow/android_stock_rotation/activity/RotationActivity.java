@@ -21,12 +21,12 @@ import rocks.athrow.android_stock_rotation.adapter.RotationAdapter;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
+
 import static rocks.athrow.android_stock_rotation.data.Z.MODE;
 import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_STAGING;
 import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
 import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
 /**
@@ -36,7 +36,6 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
 
 public class RotationActivity extends AppCompatActivity {
     private String mRotationType;
-    private RotationAdapter mRotationAdapter;
     private RealmResults<Transaction> mRealmResults;
 
     @Override
@@ -131,7 +130,7 @@ public class RotationActivity extends AppCompatActivity {
             emptyText.setVisibility(View.VISIBLE);
         } else {
             emptyText.setVisibility(View.GONE);
-            mRotationAdapter = new RotationAdapter(mRotationType, RotationActivity.this);
+            RotationAdapter mRotationAdapter = new RotationAdapter(mRotationType, RotationActivity.this);
             RealmTransactionsListAdapter realmTransactionsListAdapter =
                     new RealmTransactionsListAdapter(getApplicationContext(), mRealmResults);
             mRotationAdapter.setRealmAdapter(realmTransactionsListAdapter);
