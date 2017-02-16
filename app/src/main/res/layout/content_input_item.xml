@@ -3,8 +3,8 @@
     android:id="@+id/block_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -35,27 +35,6 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/label_pack_size"
-                style="@style/LabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_pack_size" />
-
-            <TextView
-                android:layout_marginStart="8dp"
-                android:id="@+id/input_pack_size"
-                style="@style/PrimaryTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/n_a"
-                android:textStyle="italic" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
                 android:id="@+id/label_tag_number"
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
@@ -63,14 +42,38 @@
                 android:text="@string/label_tag_number" />
 
             <TextView
-                android:layout_marginStart="8dp"
+                android:textStyle="bold"
                 android:id="@+id/input_tag_number"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/n_a"/>
+                android:layout_marginStart="8dp"
+                android:text="@string/n_a" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label_pack_size"
+                style="@style/LabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_pack_size" />
+
+            <TextView
+                android:id="@+id/input_pack_size"
+                style="@style/PrimaryTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/n_a"
+                android:textStyle="italic" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,12 +87,12 @@
                 android:text="@string/label_received_date" />
 
             <TextView
-                android:layout_marginStart="8dp"
                 android:id="@+id/input_received_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/n_a"/>
+                android:layout_marginStart="8dp"
+                android:text="@string/n_a" />
 
         </LinearLayout>
 
@@ -106,12 +109,12 @@
                 android:text="@string/label_expiration_date" />
 
             <TextView
-                android:layout_marginStart="8dp"
                 android:id="@+id/input_expiration_date"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/n_a"/>
+                android:layout_marginStart="8dp"
+                android:text="@string/n_a" />
 
         </LinearLayout>
     </LinearLayout>

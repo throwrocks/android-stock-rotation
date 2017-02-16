@@ -22,13 +22,13 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmTransactionsListAdapter;
 
-import static rocks.athrow.android_stock_rotation.data.Z.MODE;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 /**
  * RotationActivity
  * Created by joselopez on 1/9/17.

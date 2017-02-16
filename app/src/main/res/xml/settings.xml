@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-        android:inputType="number"
-        android:key="sync_interval"
-        android:summary="Ex. 60 (for every minute)"
-        android:title="Sync Interval (in seconds)" />
-    <EditTextPreference
-        android:inputType="number"
-        android:summary="You district employee #"
-        android:key="employee_number"
-        android:title="Employee Number" />
     <Preference
         android:key="delete_database"
         android:title="Delete Database" />

@@ -15,16 +15,16 @@ import java.util.UUID;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.TransactionAdjustActivity;
 import rocks.athrow.android_stock_rotation.activity.TransactionMoveActivity;
+import rocks.athrow.android_stock_rotation.data.Constants;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
-import rocks.athrow.android_stock_rotation.data.Z;
 
-import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
-import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TAG_NUMBER;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
  * SearchDetailsAdapter
@@ -100,7 +100,7 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
                 String id = UUID.randomUUID().toString();
                 Intent intent = new Intent(mContext, TransactionMoveActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MODULE_TYPE, Z.MODULE_MOVING);
+                intent.putExtra(MODULE_TYPE, Constants.MODULE_MOVING);
                 intent.putExtra(TRANSACTION_ID, id);
                 intent.putExtra(CURRENT_LOCATION, location);
                 intent.putExtra(TAG_NUMBER, tagNumber);

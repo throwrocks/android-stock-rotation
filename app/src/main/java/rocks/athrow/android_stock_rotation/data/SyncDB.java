@@ -125,7 +125,6 @@ public final class SyncDB {
                         item.setReceivedDate(record.getString(Item.FIELD_RECEIVED_DATE));
                         item.setExpirationDate(record.getString(Item.FIELD_EXPIRATION_DATE));
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
-                        item.setEdisonCaseQty(record.getInt(Item.FIELD_EDISON_QTY));
                         item.setPrimaryLocation(record.getString(Item.FIELD_PRIMARY_LOCATION));
                         realm.copyToRealmOrUpdate(item);
                     } catch (JSONException e) {

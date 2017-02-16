@@ -1,11 +1,12 @@
 package rocks.athrow.android_stock_rotation.data;
 
 /**
- * Z
+ * Constants
  * Created by jose on 2/12/17.
  */
 
-public abstract class Z {
+public abstract class Constants {
+    public static final String EMPTY = "";
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
     public static final String MODULE_MOVING = "Move";
@@ -29,4 +30,12 @@ public abstract class Z {
     public static final String SCAN_TYPE = "scan_type";
     public static final String MATCH = "match";
     public static final String MISMATCH = "mismatch";
+    public static final String SEARCH_CRITERIA = "search_criteria";
+    public static final String VALIDATE_TITLE = "Validate";
+    public static final String VALIDATE_TYPE_SKU = "SKU";
+    public static final String VALIDATE_TYPE_TAG = "Tag #";
+    public static final String VALIDATE_INPUT_TEXT = "validate_input_text";
+    public static final String VALIDATE_BARCODE_CONTENTS = "validate_barcode_contents";
+    public static final String VALIDATE_SCAN_TYPE = "validate_scan_type";
+    public static final String PREF_DELETE_DATABASE = "delete_database";
 }

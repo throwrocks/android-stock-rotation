@@ -141,6 +141,7 @@
                 android:text="@string/label_case_qty" />
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/search_items_cases_qty"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"

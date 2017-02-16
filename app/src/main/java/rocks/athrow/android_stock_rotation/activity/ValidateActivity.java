@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,11 +33,18 @@ import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.ParseJSON;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
 import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
 import static android.view.View.GONE;
-
+import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_INPUT_TEXT;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_TITLE;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_TYPE_SKU;
+import static rocks.athrow.android_stock_rotation.data.Constants.VALIDATE_TYPE_TAG;
 
 /**
  * ValidateActivity
@@ -92,18 +100,17 @@ public class ValidateActivity extends AppCompatActivity {
         });
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setTitle("Validate");
+            ab.setTitle(VALIDATE_TITLE);
         }
         if ( savedInstanceState != null ){
-            mInputText = savedInstanceState.getString("input_text");
-            mBarcodeContents = savedInstanceState.getString("barcode_contents");
-            mScanType = savedInstanceState.getString("scan_type");
+            mInputText = savedInstanceState.getString(VALIDATE_INPUT_TEXT);
+            mBarcodeContents = savedInstanceState.getString(VALIDATE_BARCODE_CONTENTS);
+            mScanType = savedInstanceState.getString(VALIDATE_SCAN_TYPE);
             QueryAPI queryAPI = new QueryAPI();
             queryAPI.execute(mScanType);
         }else{
             hideRecyclerView();
         }
-
     }
 
     private void selectSku(){
@@ -122,7 +129,7 @@ public class ValidateActivity extends AppCompatActivity {
             RadioButton radioButton = (RadioButton) findViewById(typeId);
             mScanType = radioButton.getText().toString();
         }
-        if (typeId > 0 && (mScanType.equals("SKU") || mScanType.equals("Tag #"))) {
+        if (typeId > 0 && (mScanType.equals(VALIDATE_TYPE_SKU) || mScanType.equals(VALIDATE_TYPE_TAG))) {
             initiateScan();
         }
     }
@@ -134,17 +141,15 @@ public class ValidateActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (mScanType == null) {
-            Log.e("mScanType", "null");
             return;
         }
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult == null) {
-            Log.e("scanResult", "null");
             return;
         }
         String contents = scanResult.getContents();
         if (contents == null) {
-            Log.e("contents", "null");
+            Utilities.showToast(getApplicationContext(), "Item not found.", Toast.LENGTH_SHORT);
             return;
         }
         mBarcodeContents = contents;
@@ -164,7 +169,7 @@ public class ValidateActivity extends AppCompatActivity {
             ArrayList<LocationItem> fmResults;
             JSONArray edisonResults;
             switch (type) {
-                case "Tag #":
+                case VALIDATE_TYPE_TAG:
                     mInputText = searchCriteria;
                     Comparison tagComparison = new Comparison();
                     APIResponse tagAPIResponse = API.getItemByTag(searchCriteria);
@@ -191,8 +196,8 @@ public class ValidateActivity extends AppCompatActivity {
                         results.add(tagComparison);
                     }
                     break;
-                case "SKU":
-                    mInputText = "";
+                case VALIDATE_TYPE_SKU:
+                    mInputText = EMPTY;
                     int sku = RealmQueries.getSKUFromTag(context, searchCriteria);
                     if (sku == 0) {
                         return results;
@@ -211,7 +216,10 @@ public class ValidateActivity extends AppCompatActivity {
                         try {
                             JSONObject edisonRecord = edisonResults.getJSONObject(i);
                             mItemDescription = edisonRecord.getString(Item.FIELD_DESCRIPTION);
-                            fmResults = RealmQueries.getLocationItems(context, Item.FIELD_TAG_NUMBER, edisonRecord.getString(Item.FIELD_TAG_NUMBER));
+                            fmResults = RealmQueries.getLocationItems(
+                                    context, Item.FIELD_TAG_NUMBER,
+                                    edisonRecord.getString(Item.FIELD_TAG_NUMBER)
+                            );
                             if ((fmResults != null && fmResults.size() > 0) || edisonRecord.getInt(Item.FIELD_EDISON_QTY) > 0) {
                                 skuComparison.setEdisonResult(edisonRecord);
                                 skuComparison.setFmResults(fmResults);
@@ -250,7 +258,7 @@ public class ValidateActivity extends AppCompatActivity {
     }
 
     private void hideRecyclerView(){
-        mScanInput.setText("");
+        mScanInput.setText(EMPTY);
         mScanItem.setVisibility(GONE);
         mResultHeaders.setVisibility(GONE);
         mRecyclerView.setVisibility(GONE);
@@ -271,8 +279,8 @@ public class ValidateActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("input_text", mInputText);
-        outState.putString("barcode_contents", mBarcodeContents);
-        outState.putString("scan_type", mScanType);
+        outState.putString(VALIDATE_INPUT_TEXT, mInputText);
+        outState.putString(VALIDATE_BARCODE_CONTENTS, mBarcodeContents);
+        outState.putString(VALIDATE_SCAN_TYPE, mScanType);
     }
 }

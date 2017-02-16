@@ -19,17 +19,18 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
-import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
-import static rocks.athrow.android_stock_rotation.data.Z.IN;
-import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_VIEW;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Constants.IN;
+import static rocks.athrow.android_stock_rotation.data.Constants.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_VIEW;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
  * TransactionInActivity
@@ -62,7 +63,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
         mButtonCommit = (LinearLayout) findViewById(R.id.button_receive);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setTitle("Receiving");
+            ab.setTitle(MODULE_RECEIVING);
         }
         setCurrentMode();
     }
@@ -120,7 +121,6 @@ public class TransactionInActivity extends TransactionBaseActivity {
                 receiveButton();
             }
         });
-
     }
 
     /**

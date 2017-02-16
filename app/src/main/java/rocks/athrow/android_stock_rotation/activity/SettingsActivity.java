@@ -9,7 +9,10 @@ import android.widget.Toast;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static rocks.athrow.android_stock_rotation.data.Constants.PREF_DELETE_DATABASE;
 
 /**
  * SettingsActivity
@@ -23,7 +26,7 @@ public class SettingsActivity extends PreferenceActivity {
         //noinspection deprecation
         addPreferencesFromResource(R.xml.settings);
         @SuppressWarnings("deprecation")
-        Preference button = findPreference("delete_database");
+        Preference button = findPreference(PREF_DELETE_DATABASE);
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -31,6 +34,8 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
+        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+
     }
 
     private void deleteDatabase(){

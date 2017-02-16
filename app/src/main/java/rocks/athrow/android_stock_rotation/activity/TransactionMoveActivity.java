@@ -21,21 +21,23 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
-import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
-import static rocks.athrow.android_stock_rotation.data.Z.CURRENT_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.IN;
-import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_VIEW;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
-import static rocks.athrow.android_stock_rotation.data.Z.OUT;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_CURRENT_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.TAG_NUMBER;
-import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Constants.CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.IN;
+import static rocks.athrow.android_stock_rotation.data.Constants.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_VIEW;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.NAME;
+import static rocks.athrow.android_stock_rotation.data.Constants.OUT;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TAG_NUMBER;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
  * TransactionMoveActivity
@@ -43,7 +45,6 @@ import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
  */
 
 public class TransactionMoveActivity extends TransactionBaseActivity {
-    private static final String MODULE_TYPE = "type";
     private String mCurrentLocation;
     private String mTagNumber;
     @Override
@@ -80,7 +81,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         setCurrentMode();
         if ( mCurrentLocation != null && mTagNumber != null){
             scanItem(mTagNumber);
-            scanCurrentLocation(mCurrentLocation, "name");
+            scanCurrentLocation(mCurrentLocation, NAME);
         }
     }
 
@@ -202,22 +203,6 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     context,
                     transaction.getId(),
                     transaction.getType1(),
-                    OUT,
-                    transaction.getItemId(),
-                    transaction.getSku(),
-                    transaction.getItemDescription(),
-                    transaction.getTagNumber(),
-                    transaction.getPackSize(),
-                    transaction.getReceivingId(),
-                    transaction.getReceivedDate(),
-                    transaction.getExpirationDate(),
-                    transaction.getLocationStart(),
-                    transaction.getQtyCases()
-            );
-            RealmQueries.saveTransfer(
-                    context,
-                    transaction.getId(),
-                    transaction.getType1(),
                     IN,
                     transaction.getItemId(),
                     transaction.getSku(),
@@ -228,6 +213,22 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate(),
                     transaction.getLocationEnd(),
+                    transaction.getQtyCases()
+            );
+            RealmQueries.saveTransfer(
+                    context,
+                    transaction.getId(),
+                    transaction.getType1(),
+                    OUT,
+                    transaction.getItemId(),
+                    transaction.getSku(),
+                    transaction.getItemDescription(),
+                    transaction.getTagNumber(),
+                    transaction.getPackSize(),
+                    transaction.getReceivingId(),
+                    transaction.getReceivedDate(),
+                    transaction.getExpirationDate(),
+                    transaction.getLocationStart(),
                     transaction.getQtyCases()
             );
             RealmQueries.commitTransaction(context, mTransactionId);

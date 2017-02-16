@@ -13,7 +13,7 @@ import android.widget.TextView;
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
 import rocks.athrow.android_stock_rotation.data.Location;
-import rocks.athrow.android_stock_rotation.data.Z;
+import rocks.athrow.android_stock_rotation.data.Constants;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 
 /**
@@ -62,7 +62,7 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, LocationDetailActivity.class);
-                intent.putExtra(Z.LOCATION, locationName);
+                intent.putExtra(Constants.LOCATION, locationName);
                 mContext.startActivity(intent);
             }
         });

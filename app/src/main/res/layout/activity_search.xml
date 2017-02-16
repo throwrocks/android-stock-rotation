@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp">
 
         <TextView
             style="@style/LabelStyle"
@@ -29,6 +31,12 @@
             android:inputType="text"
             android:maxLines="1" />
     </LinearLayout>
+
+    <View xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/dividerColor" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/location_details_container"

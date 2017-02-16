@@ -181,6 +181,7 @@
                 android:text="@string/label_case_qty" />
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/transfer_case_qty"
                 style="@style/PrimaryTextStyle"
                 android:layout_width="wrap_content"

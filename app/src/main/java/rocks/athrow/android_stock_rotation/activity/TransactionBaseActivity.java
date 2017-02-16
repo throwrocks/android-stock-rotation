@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.EditText;
@@ -26,20 +25,20 @@ import rocks.athrow.android_stock_rotation.zxing.IntentResult;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static rocks.athrow.android_stock_rotation.data.Z.BARCODE;
-import static rocks.athrow.android_stock_rotation.data.Z.BARCODE_CONTENTS;
-import static rocks.athrow.android_stock_rotation.data.Z.ITEM_ID;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE;
-import static rocks.athrow.android_stock_rotation.data.Z.MODE_EDIT;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.data.Z.NAME;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_CURRENT_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_ITEM;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_NEW_LOCATION;
-import static rocks.athrow.android_stock_rotation.data.Z.SCAN_TYPE;
-import static rocks.athrow.android_stock_rotation.data.Z.TRANSACTION_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.BARCODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.BARCODE_CONTENTS;
+import static rocks.athrow.android_stock_rotation.data.Constants.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_EDIT;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.NAME;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_CURRENT_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_ITEM;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_NEW_LOCATION;
+import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
  * TransactionBaseActivity
@@ -94,12 +93,6 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mCaseQtyView != null) {
             mCaseQtyView.setEnabled(false);
         }
-        /*if (mCurrentLocationView != null) {
-            mCurrentLocationView.setEnabled(false);
-        }
-        if (mNewLocationView != null) {
-            mNewLocationView.setEnabled(false);
-        }*/
     }
 
     /**
@@ -122,9 +115,6 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mCaseQtyView != null) {
             mCaseQtyView.setEnabled(true);
         }
-        /*if (mNewLocationView != null) {
-            mNewLocationView.setEnabled(true);
-        }*/
     }
 
     /**
@@ -238,21 +228,17 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (mScanType == null) {
-            Log.e("mScanType", "null");
             return;
         }
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult == null) {
-            Log.e("scanResult", "null");
             return;
         }
         String contents = scanResult.getContents();
         if (contents == null) {
-            Log.e("contents", "null");
             return;
         }
         mBarcodeContents = contents;
-        Log.e("Barcode", contents);
         switch (mScanType) {
             case SCAN_ITEM:
                 scanItem(contents);

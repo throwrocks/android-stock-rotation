@@ -387,22 +387,22 @@ public final class RealmQueries {
         if (itemId != null) {
             inResults = realm.where(Transfer.class).
                     equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, Z.IN).
+                    equalTo(Transfer.FIELD_TYPE, Constants.IN).
                     equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
 
             outResults = realm.where(Transfer.class).
                     equalTo(Transfer.FIELD_LOCATION, location).
-                    equalTo(Transfer.FIELD_TYPE, Z.OUT).
+                    equalTo(Transfer.FIELD_TYPE, Constants.OUT).
                     equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
         } else {
             inResults =
                     realm.where(Transfer.class).
                             equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, Z.IN).findAll();
+                            equalTo(Transfer.FIELD_TYPE, Constants.IN).findAll();
             outResults =
                     realm.where(Transfer.class).
                             equalTo(Transfer.FIELD_LOCATION, location).
-                            equalTo(Transfer.FIELD_TYPE, Z.OUT).findAll();
+                            equalTo(Transfer.FIELD_TYPE, Constants.OUT).findAll();
         }
         Number inTransfers = inResults.sum(Transfer.FIELD_CASE_QTY);
         Number outTransfers = outResults.sum(Transfer.FIELD_CASE_QTY);

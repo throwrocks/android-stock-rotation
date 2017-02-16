@@ -27,10 +27,10 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_ADJUST;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_MOVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_RECEIVING;
-import static rocks.athrow.android_stock_rotation.data.Z.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
 
 public class MainActivity extends AppCompatActivity {
     private static final String NEVER = "Never";

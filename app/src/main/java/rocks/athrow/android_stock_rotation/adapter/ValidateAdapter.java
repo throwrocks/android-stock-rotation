@@ -20,8 +20,8 @@ import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 import static android.view.View.GONE;
-import static rocks.athrow.android_stock_rotation.data.Z.MATCH;
-import static rocks.athrow.android_stock_rotation.data.Z.MISMATCH;
+import static rocks.athrow.android_stock_rotation.data.Constants.MATCH;
+import static rocks.athrow.android_stock_rotation.data.Constants.MISMATCH;
 
 /**
  * ValidateAdapter
@@ -95,7 +95,7 @@ public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHo
                     locationView.setText(location);
                     qtyView.setText(qty);
                 }
-                if (fmTotalCases > 0) {
+                if (!countCases.isEmpty() && fmTotalCases > 0) {
                     holder.viewFileMakerTotalQty.setText(String.valueOf(fmTotalCases));
                     if (fmTotalCases == Integer.parseInt(countCases)) {
                         Utilities.badgeFormat(holder.viewFileMakerTotalQty, MATCH, mContext);

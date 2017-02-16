@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,8 +22,13 @@ import rocks.athrow.android_stock_rotation.adapter.SearchDetailsAdapter;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
+import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
+import static rocks.athrow.android_stock_rotation.data.Constants.SEARCH_CRITERIA;
 
 /**
+ * SearchActivity
  * Created by jose on 1/15/17.
  */
 
@@ -43,7 +49,7 @@ public class SearchActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     mSearchCriteria = mSearchField.getText().toString();
                     PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-                    preferencesHelper.save("items_search_criteria", mSearchCriteria);
+                    preferencesHelper.save(SEARCH_CRITERIA, mSearchCriteria);
                     SearchItemsTask searchItemsTask = new SearchItemsTask(getApplicationContext());
                     searchItemsTask.execute(mSearchCriteria);
                     View view = getCurrentFocus();
@@ -56,29 +62,59 @@ public class SearchActivity extends AppCompatActivity {
                 return handled;
             }
         });
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        mSearchCriteria = preferencesHelper.loadString(SEARCH_CRITERIA, EMPTY);
+        if ( !mSearchCriteria.equals(EMPTY)){
+            SearchItemsTask searchItemsTask = new SearchItemsTask(getApplicationContext());
+            searchItemsTask.execute(mSearchCriteria);
+            mSearchField.setText(mSearchCriteria);
+        }
     }
 
     /**
      * setUpItems
      */
-    private void setupItems(ArrayList<LocationItem> items){
-        if ( items == null ){
+    private void setupItems(ArrayList<LocationItem> items) {
+        if (items == null) {
             return;
         }
         int size = items.size();
-        if ( size > 0){
+        if (size > 0) {
             SearchDetailsAdapter mAdapter = new SearchDetailsAdapter(getApplicationContext(), items);
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_details_container);
             LinearLayoutManager manager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(mAdapter);
+            View view = getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        saveSearchCriteria();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveSearchCriteria();
+
+    }
+
+    private void saveSearchCriteria() {
+        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+        preferencesHelper.save(SEARCH_CRITERIA, mSearchCriteria);
     }
 
     /**
      * SearchItemsTask
      */
-    private class SearchItemsTask extends AsyncTask<String, Void, ArrayList<LocationItem> > {
+    private class SearchItemsTask extends AsyncTask<String, Void, ArrayList<LocationItem>> {
         final Context context;
 
         SearchItemsTask(Context context) {
@@ -86,15 +122,18 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<LocationItem>  doInBackground(String... params) {
+        protected ArrayList<LocationItem> doInBackground(String... params) {
             return RealmQueries.searchActivityQuery(context, params[0]);
         }
 
         @Override
         protected void onPostExecute(ArrayList<LocationItem> items) {
             super.onPostExecute(items);
-            setupItems(items);
+            if (items == null) {
+                Utilities.showToast(getApplicationContext(), "Item not found.", Toast.LENGTH_SHORT);
+            } else {
+                setupItems(items);
+            }
         }
     }
-
 }
