@@ -19,6 +19,7 @@ public class Location extends RealmObject {
     public final static String FIELD_TYPE = "type";
     public final static String FIELD_EDISON_QTY = "edisonCaseQty";
     public final static String FIELD_IS_PRIMARY = "isPrimary";
+    public final static String FIELD_ROW = "row";
     @PrimaryKey
     private int serialNumber;
     private String location;
@@ -29,6 +30,8 @@ public class Location extends RealmObject {
     private Date initDate;
     @Index
     private boolean isPrimary;
+    @Index
+    private String row;
 
     public void setSerialNumber(int serialNumber) {
         this.serialNumber = serialNumber;
@@ -76,5 +79,13 @@ public class Location extends RealmObject {
 
     public void setPrimary(boolean primary) {
         isPrimary = primary;
+    }
+
+    public String getRow() {
+        return row;
+    }
+
+    public void setRow(String row) {
+        this.row = row;
     }
 }

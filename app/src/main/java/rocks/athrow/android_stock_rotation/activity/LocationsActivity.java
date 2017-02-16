@@ -5,23 +5,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
+import rocks.athrow.android_stock_rotation.adapter.LocationRowsAdapter;
 import rocks.athrow.android_stock_rotation.adapter.LocationsAdapter;
 import rocks.athrow.android_stock_rotation.data.Location;
+import rocks.athrow.android_stock_rotation.data.LocationRows;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
@@ -34,7 +34,7 @@ import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
 public class LocationsActivity extends AppCompatActivity {
     private final static String LOCATIONS_FILTER = "locations_filter";
-    private final static String LOCATIONS_SEARCH_CRITERIA = "locations_search_criteria";
+    private final static String LOCATIONS_FILTER_ROW = "locations_search_criteria";
     private final static String LOCATIONS_FILTER_PRIMARY_ONLY = "locations_filter_primary_only";
     private final static String EMPTY = "";
     private final static String ALL = "All";
@@ -44,20 +44,19 @@ public class LocationsActivity extends AppCompatActivity {
     private final static String DRY = "Dry";
     private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
-    private String mSearchCriteria;
     private CheckBox mPrimaryCheckBox;
     private boolean mPrimaryOnly;
     private RealmResults<Location> mRealmResults;
-    private EditText mSearchField;
+    private ArrayList<LocationRows> mRows;
+    private String mSelectedRow;
     private Spinner mSpinner;
+    private LocationRowsAdapter mRowAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Context context = getApplicationContext();
         setContentView(R.layout.activity_locations);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        mSearchField = (EditText) findViewById(R.id.locations_search);
         mSpinner = (Spinner) findViewById(R.id.locations_spinner);
         mPrimaryCheckBox = (CheckBox) findViewById(R.id.locations_primary);
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, SEARCH_FILTERS);
@@ -83,46 +82,39 @@ public class LocationsActivity extends AppCompatActivity {
                 setPrimaryOnly(mPrimaryCheckBox.isChecked());
             }
         });
-        /** Search Field Click Listener  **/
-        mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    mSearchCriteria = mSearchField.getText().toString();
-                    PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-                    preferencesHelper.save(LOCATIONS_SEARCH_CRITERIA, mSearchCriteria);
-                    mRealmResults = RealmQueries.getLocations(getApplicationContext(), mLocationsFilter, mSearchCriteria, mPrimaryOnly);
-                    setupRecyclerView();
-                    View view = getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                    handled = true;
-                }
-                return handled;
-            }
-        });
     }
 
     private void updateRealmResults() {
         Context context = getApplicationContext();
-        if (mSearchCriteria != null && !mSearchCriteria.isEmpty()) {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSearchCriteria, mPrimaryOnly);
-        } else {
-            mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mPrimaryOnly);
-        }
+        mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSelectedRow, mPrimaryOnly);
 
     }
 
     private void filterLocations(String type) {
         Context context = getApplicationContext();
+        mLocationsFilter = type;
+        mRows = RealmQueries.getRows(context, mLocationsFilter);
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save(LOCATIONS_FILTER, type);
-        mLocationsFilter = type;
+        preferencesHelper.save(LOCATIONS_FILTER_ROW, mSelectedRow);
         updateRealmResults();
-        setupRecyclerView();
+        setupRowResults();
+        setupLocationResults();
+    }
+
+    public void setRow(String row){
+        mSelectedRow = row;
+        updateRealmResults();
+        setupLocationResults();
+
+    }
+
+    private void setupRowResults() {
+        mRowAdapter = new LocationRowsAdapter(mRows, LocationsActivity.this, mSelectedRow);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_rows);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mRowAdapter);
     }
 
     private void setPrimaryOnly(boolean primaryOnly) {
@@ -131,10 +123,10 @@ public class LocationsActivity extends AppCompatActivity {
         preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, primaryOnly);
         mPrimaryOnly = primaryOnly;
         updateRealmResults();
-        setupRecyclerView();
+        setupLocationResults();
     }
 
-    private void setupRecyclerView() {
+    private void setupLocationResults() {
         LocationsAdapter mAdapter = new LocationsAdapter(LocationsActivity.this);
         RealmLocationsListAdapter realmAdapter =
                 new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
@@ -150,7 +142,7 @@ public class LocationsActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save(LOCATIONS_FILTER, mLocationsFilter);
-        preferencesHelper.save(LOCATIONS_SEARCH_CRITERIA, mSearchCriteria);
+        preferencesHelper.save(LOCATIONS_FILTER_ROW, mSelectedRow);
         preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, mPrimaryOnly);
         super.onSaveInstanceState(outState);
     }
@@ -159,14 +151,14 @@ public class LocationsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         PreferencesHelper preferencesHelper = new PreferencesHelper(this);
-        mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, ALL);
-        mSearchCriteria = preferencesHelper.loadString(LOCATIONS_SEARCH_CRITERIA, EMPTY);
+        mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, FREEZER);
+        mSelectedRow = preferencesHelper.loadString(LOCATIONS_FILTER_ROW, EMPTY);
         mPrimaryOnly = preferencesHelper.loadBoolean(LOCATIONS_FILTER_PRIMARY_ONLY);
-        mSearchField.setText(mSearchCriteria);
         mSpinner.setSelection(getFilterPosition(mLocationsFilter));
         mPrimaryCheckBox.setChecked(mPrimaryOnly);
         updateRealmResults();
-        setupRecyclerView();
+        setupRowResults();
+        setupLocationResults();
     }
 
     /**
@@ -190,9 +182,6 @@ public class LocationsActivity extends AppCompatActivity {
                 break;
             case PAPER:
                 position = 3;
-                break;
-            case ALL:
-                position = 4;
                 break;
         }
         return position;

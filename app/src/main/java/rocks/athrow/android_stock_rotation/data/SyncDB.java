@@ -156,6 +156,7 @@ public final class SyncDB {
                         location.setLocation(locationName);
                         location.setType(record.getString(Location.FIELD_TYPE));
                         location.setPrimary(record.getBoolean(Location.FIELD_IS_PRIMARY));
+                        location.setRow(record.getString(Location.FIELD_ROW));
                         realm.copyToRealmOrUpdate(location);
                         Log.d(LOG_TAG, "Save Location " + i + ": " + name);
                     } catch (JSONException e) {

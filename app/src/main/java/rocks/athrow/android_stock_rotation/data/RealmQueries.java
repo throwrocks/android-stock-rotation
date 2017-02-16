@@ -12,6 +12,8 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
+import static android.R.attr.type;
+
 /**
  * DataUtilities
  * Created by joselopez on 1/13/17.
@@ -445,7 +447,7 @@ public final class RealmQueries {
     /**
      * getSKUFromTag
      *
-     * @param context required context object
+     * @param context   required context object
      * @param tagNumber the item's tag number
      * @return the item's sku number
      */
@@ -476,69 +478,41 @@ public final class RealmQueries {
      * @param type    the locations type (freezer, cooler, paper, dry)
      * @return a RealmResults object
      */
-    public static RealmResults<Location> getLocations(Context context, String type, boolean isPrimary) {
+    public static RealmResults<Location> getLocations(Context context, String type, String row, boolean isPrimary) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         RealmResults<Location> realmResults;
-        if (type.equals("All") && !isPrimary) {
+        if (row != null && !isPrimary) {
             realmResults =
                     realm.where(Location.class)
+                            .equalTo(Location.FIELD_TYPE, type)
+                            .equalTo(Location.FIELD_ROW, row)
                             .findAll();
-        } else if (type.equals("All") && isPrimary)
+        } else if (row != null ) {
             realmResults =
                     realm.where(Location.class)
+                            .equalTo(Location.FIELD_TYPE, type)
+                            .equalTo(Location.FIELD_ROW, row)
                             .equalTo(Location.FIELD_IS_PRIMARY, true)
                             .findAll();
-        else if (!type.equals("All") && isPrimary) {
+        } else if (isPrimary) {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
                             .equalTo(Location.FIELD_IS_PRIMARY, true)
                             .findAll();
-        } else {
+        } else{
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
                             .findAll();
         }
+
         realm.commitTransaction();
         return realmResults.sort(Location.FIELD_SERIAL_NUMBER);
     }
-
-    /**
-     * getLocations
-     * A method to get locations by type and containing a location name
-     * This is used for the find method in the LocationsListActivity
-     *
-     * @param context      a Context object
-     * @param type         the locations type (freezer, cooler, paper, dry)
-     * @param locationName the location's name
-     * @return a RealmResults object
-     */
-    public static RealmResults<Location> getLocations(Context context, String type, String locationName, boolean isPrimary) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Location> realmResults;
-        if (type.equals("All")) {
-            realmResults = realm.where(Location.class)
-                    .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
-                    .equalTo(Location.FIELD_IS_PRIMARY, isPrimary)
-                    .findAll();
-        } else {
-            realmResults = realm.where(Location.class)
-                    .equalTo(Location.FIELD_TYPE, type)
-                    .contains(Location.FIELD_LOCATION, locationName.toUpperCase())
-                    .equalTo(Location.FIELD_IS_PRIMARY, isPrimary)
-                    .findAll();
-        }
-        realm.commitTransaction();
-        return realmResults;
-    }
-
 
     /**
      * getLocationByBarcode
@@ -586,6 +560,30 @@ public final class RealmQueries {
         return count;
     }
 
+    public static ArrayList<LocationRows> getRows(Context context, String locationType) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Location> realmResults;
+        if (locationType.equals("All")) {
+            realmResults = realm.where(Location.class).findAll().distinct(Location.FIELD_ROW);
+        } else {
+            realmResults = realm.where(Location.class).equalTo(Location.FIELD_TYPE, locationType).findAll().distinct(Location.FIELD_ROW);
+        }
+        int countResults = realmResults.size();
+        if (countResults > 0) {
+            ArrayList<LocationRows> rows = new ArrayList<>();
+            for (int i = 0; i < countResults; i++) {
+                LocationRows locationRows = new LocationRows();
+                locationRows.setRow(realmResults.get(i).getRow());
+                rows.add(locationRows);
+            }
+            return rows;
+        } else {
+            return null;
+        }
+    }
+
     /**--------------------------------------------------------------------------------------------
      LOCATION ITEMS
      ---------------------------------------------------------------------------------------------**/
@@ -614,8 +612,8 @@ public final class RealmQueries {
     /**
      * getLocationItems
      *
-     * @param context required context object
-     * @param searchType the type of search (location, tagNumber , sku, desc (description))
+     * @param context        required context object
+     * @param searchType     the type of search (location, tagNumber , sku, desc (description))
      * @param searchCriteria the search criteria entered in the edit text view
      * @return an ArrayList of LocationItem objects
      */
@@ -661,7 +659,7 @@ public final class RealmQueries {
     /**
      * getLocationItemsFromTransfers
      *
-     * @param context required context object
+     * @param context   required context object
      * @param transfers a transfer object
      * @return an ArrayList of LocationItem objects
      */
