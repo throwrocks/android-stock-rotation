@@ -129,7 +129,6 @@ public final class SyncDB {
                         item.setPrimaryLocation(record.getString(Item.FIELD_PRIMARY_LOCATION));
                         realm.copyToRealmOrUpdate(item);
                     } catch (JSONException e) {
-                        realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
@@ -161,7 +160,6 @@ public final class SyncDB {
                         realm.copyToRealmOrUpdate(location);
                         Log.d(LOG_TAG, "Save Location " + i + ": " + name);
                     } catch (JSONException e) {
-                        realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }
@@ -211,7 +209,6 @@ public final class SyncDB {
                         transfer.setInitDate(new Date());
                         realm.copyToRealmOrUpdate(transfer);
                     } catch (JSONException e) {
-                        realm.cancelTransaction();
                         e.printStackTrace();
                     }
                 }

@@ -33,7 +33,6 @@ public class Item extends RealmObject {
     private int receivingId;
     private String receivedDate;
     private String expirationDate;
-
     private String itemType;
     private int fmCaseQty;
     private int edisonCaseQty;
@@ -47,7 +46,7 @@ public class Item extends RealmObject {
         this.id = id;
     }
 
-    public void setSerialNumber(int serialNumber) {
+    void setSerialNumber(int serialNumber) {
         this.serialNumber = serialNumber;
     }
 
@@ -63,7 +62,7 @@ public class Item extends RealmObject {
         return SKU;
     }
 
-    public void setSKU(int SKU) {
+    void setSKU(int SKU) {
         this.SKU = SKU;
     }
 
@@ -71,7 +70,7 @@ public class Item extends RealmObject {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -87,7 +86,7 @@ public class Item extends RealmObject {
         return receivingId;
     }
 
-    public void setReceivingId(int receivingId) {
+    void setReceivingId(int receivingId) {
         this.receivingId = receivingId;
     }
 
@@ -107,15 +106,15 @@ public class Item extends RealmObject {
         this.expirationDate = expirationDate;
     }
 
-    public void setItemType(String itemType) {
+    void setItemType(String itemType) {
         this.itemType = itemType;
     }
 
-    public void setEdisonCaseQty(int edisonCaseQty) {
+    void setEdisonCaseQty(int edisonCaseQty) {
         this.edisonCaseQty = edisonCaseQty;
     }
 
-    public void setPrimaryLocation(String primaryLocation) {
+    void setPrimaryLocation(String primaryLocation) {
         this.primaryLocation = primaryLocation;
     }
 }
