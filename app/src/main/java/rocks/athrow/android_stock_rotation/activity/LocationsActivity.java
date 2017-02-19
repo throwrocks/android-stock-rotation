@@ -26,6 +26,17 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
+import static rocks.athrow.android_stock_rotation.data.Constants.ALL;
+import static rocks.athrow.android_stock_rotation.data.Constants.COOLER;
+import static rocks.athrow.android_stock_rotation.data.Constants.DRY;
+import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
+import static rocks.athrow.android_stock_rotation.data.Constants.FREEZER;
+import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER;
+import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_PRIMARY_ONLY;
+import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_ROW;
+import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_ROW_INDEX;
+import static rocks.athrow.android_stock_rotation.data.Constants.PAPER;
+
 
 /**
  * LocationsActivity
@@ -33,21 +44,13 @@ import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
  */
 
 public class LocationsActivity extends AppCompatActivity {
-    private final static String LOCATIONS_FILTER = "locations_filter";
-    private final static String LOCATIONS_FILTER_ROW = "locations_search_criteria";
-    private final static String LOCATIONS_FILTER_PRIMARY_ONLY = "locations_filter_primary_only";
-    private final static String EMPTY = "";
-    private final static String ALL = "All";
-    private final static String FREEZER = "Freezer";
-    private final static String COOLER = "Cooler";
-    private final static String PAPER = "Paper";
-    private final static String DRY = "Dry";
     private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
     private String mLocationsFilter;
     private CheckBox mPrimaryCheckBox;
     private boolean mPrimaryOnly;
     private RealmResults<Location> mRealmResults;
     private ArrayList<LocationRows> mRows;
+    private int mSelectedLocationRowIndex;
     private String mSelectedRow;
     private Spinner mSpinner;
     private LocationRowsAdapter mRowAdapter;
@@ -87,30 +90,44 @@ public class LocationsActivity extends AppCompatActivity {
     private void updateRealmResults() {
         Context context = getApplicationContext();
         mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSelectedRow, mPrimaryOnly);
-
     }
 
     private void filterLocations(String type) {
-        Context context = getApplicationContext();
         mLocationsFilter = type;
-        mRows = RealmQueries.getRows(context, mLocationsFilter);
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        preferencesHelper.save(LOCATIONS_FILTER, type);
-        preferencesHelper.save(LOCATIONS_FILTER_ROW, mSelectedRow);
-        updateRealmResults();
-        setupRowResults();
-        setupLocationResults();
+        mRows = RealmQueries.getRows(getApplicationContext(), mLocationsFilter);
+        saveState();
+        setRow(mSelectedRow, mSelectedLocationRowIndex);
     }
 
-    public void setRow(String row){
+    public void setRow(String row, int selectedPosition) {
         mSelectedRow = row;
+        mSelectedLocationRowIndex = selectedPosition;
+        if (mRows != null) {
+            clearRowSelections();
+            mRows.get(selectedPosition).setSelected(true);
+        }
         updateRealmResults();
         setupLocationResults();
+        setupRowResults();
+        if (mRowAdapter != null) {
+            mRowAdapter.notifyDataSetChanged();
+        }
+    }
 
+    private void clearRowSelections() {
+        if (mRows == null) {
+            return;
+        }
+        int count = mRows.size();
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                mRows.get(i).setSelected(false);
+            }
+        }
     }
 
     private void setupRowResults() {
-        mRowAdapter = new LocationRowsAdapter(mRows, LocationsActivity.this, mSelectedRow);
+        mRowAdapter = new LocationRowsAdapter(mRows, LocationsActivity.this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_rows);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,12 +156,14 @@ public class LocationsActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Context context = getApplicationContext();
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        preferencesHelper.save(LOCATIONS_FILTER, mLocationsFilter);
-        preferencesHelper.save(LOCATIONS_FILTER_ROW, mSelectedRow);
-        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, mPrimaryOnly);
+        saveState();
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        saveState();
+        super.onPause();
     }
 
     @Override
@@ -154,11 +173,20 @@ public class LocationsActivity extends AppCompatActivity {
         mLocationsFilter = preferencesHelper.loadString(LOCATIONS_FILTER, FREEZER);
         mSelectedRow = preferencesHelper.loadString(LOCATIONS_FILTER_ROW, EMPTY);
         mPrimaryOnly = preferencesHelper.loadBoolean(LOCATIONS_FILTER_PRIMARY_ONLY);
+        mSelectedLocationRowIndex = preferencesHelper.loadInt(LOCATIONS_FILTER_ROW_INDEX);
         mSpinner.setSelection(getFilterPosition(mLocationsFilter));
         mPrimaryCheckBox.setChecked(mPrimaryOnly);
-        updateRealmResults();
-        setupRowResults();
-        setupLocationResults();
+        mRows = RealmQueries.getRows(getApplicationContext(), mLocationsFilter);
+        setRow(mSelectedRow, mSelectedLocationRowIndex);
+    }
+
+    private void saveState() {
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save(LOCATIONS_FILTER, mLocationsFilter);
+        preferencesHelper.save(LOCATIONS_FILTER_ROW, mSelectedRow);
+        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, mPrimaryOnly);
+        preferencesHelper.save(LOCATIONS_FILTER_ROW_INDEX, mSelectedLocationRowIndex);
     }
 
     /**

@@ -12,7 +12,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
-import static android.R.attr.type;
+import static rocks.athrow.android_stock_rotation.data.Location.FIELD_ROW;
 
 /**
  * DataUtilities
@@ -488,13 +488,13 @@ public final class RealmQueries {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
-                            .equalTo(Location.FIELD_ROW, row)
+                            .equalTo(FIELD_ROW, row)
                             .findAll();
         } else if (row != null ) {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
-                            .equalTo(Location.FIELD_ROW, row)
+                            .equalTo(FIELD_ROW, row)
                             .equalTo(Location.FIELD_IS_PRIMARY, true)
                             .findAll();
         } else if (isPrimary) {
@@ -566,9 +566,9 @@ public final class RealmQueries {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Location> realmResults;
         if (locationType.equals("All")) {
-            realmResults = realm.where(Location.class).findAll().distinct(Location.FIELD_ROW);
+            realmResults = realm.where(Location.class).findAll().distinct(FIELD_ROW);
         } else {
-            realmResults = realm.where(Location.class).equalTo(Location.FIELD_TYPE, locationType).findAll().distinct(Location.FIELD_ROW);
+            realmResults = realm.where(Location.class).equalTo(Location.FIELD_TYPE, locationType).findAll().distinct(FIELD_ROW).sort(FIELD_ROW);
         }
         int countResults = realmResults.size();
         if (countResults > 0) {

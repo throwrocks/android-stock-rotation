@@ -38,4 +38,14 @@ public abstract class Constants {
     public static final String VALIDATE_BARCODE_CONTENTS = "validate_barcode_contents";
     public static final String VALIDATE_SCAN_TYPE = "validate_scan_type";
     public static final String PREF_DELETE_DATABASE = "delete_database";
+    // Locations
+    public static final String LOCATIONS_FILTER = "locations_filter";
+    public static final String LOCATIONS_FILTER_ROW = "locations_search_criteria";
+    public static final String LOCATIONS_FILTER_ROW_INDEX = "locations_filter_row_index";
+    public static final String LOCATIONS_FILTER_PRIMARY_ONLY = "locations_filter_primary_only";
+    public static final String ALL = "All";
+    public static final String FREEZER = "Freezer";
+    public static final String COOLER = "Cooler";
+    public static final String PAPER = "Paper";
+    public static final String DRY = "Dry";
 }

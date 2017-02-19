@@ -17,13 +17,6 @@ public class PreferencesHelper {
     public PreferencesHelper(Context context) {
         prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }
-
-    /**
-     * Save the specified value to the shared preferences
-     *
-     * @param key   The key of the value you wish to load
-     * @param value The value to store
-     */
     public void save(String key, String value) {
         prefs.edit().putString(key, value).apply();
     }
@@ -31,17 +24,18 @@ public class PreferencesHelper {
     public void save(@SuppressWarnings("SameParameterValue") String key, boolean value) {
         prefs.edit().putBoolean(key, value).apply();
     }
+    public void save(@SuppressWarnings("SameParameterValue") String key, int value) {
+        prefs.edit().putInt(key, value).apply();
+    }
 
-    /**
-     * Load the specified value from the shared preferences
-     *
-     * @param key      The key of the value you wish to load
-     * @param defValue The default value to be returned if no value is found
-     */
     public String loadString(String key, @SuppressWarnings("SameParameterValue") String defValue) {
         return prefs.getString(key, defValue);
     }
     public boolean loadBoolean(@SuppressWarnings("SameParameterValue") String key) {
         return prefs.getBoolean(key, false);
     }
+    public int loadInt(@SuppressWarnings("SameParameterValue") String key) {
+        return prefs.getInt(key, 0);
+    }
+
 }

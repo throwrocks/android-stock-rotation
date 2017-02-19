@@ -21,12 +21,10 @@ import rocks.athrow.android_stock_rotation.data.LocationRows;
 public class LocationRowsAdapter extends RecyclerView.Adapter<LocationRowsAdapter.ViewHolder> {
     private final Context mContext;
     private final ArrayList<LocationRows> mItems;
-    private final String mSelectedRow;
 
-    public LocationRowsAdapter(ArrayList<LocationRows> mItems, Context mContext, String mSelectedRow) {
+    public LocationRowsAdapter(ArrayList<LocationRows> mItems, Context mContext) {
         this.mItems = mItems;
         this.mContext = mContext;
-        this.mSelectedRow = mSelectedRow;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -48,6 +46,7 @@ public class LocationRowsAdapter extends RecyclerView.Adapter<LocationRowsAdapte
     @Override
     public void onBindViewHolder(final LocationRowsAdapter.ViewHolder viewHolder, int position) {
         final LocationRows locationRows = mItems.get(position);
+        final int selectedPosition = position;
         final String row = locationRows.getRow();
         final boolean isSelected = locationRows.isSelected();
         TextView rowView = viewHolder.rowView;
@@ -56,8 +55,7 @@ public class LocationRowsAdapter extends RecyclerView.Adapter<LocationRowsAdapte
             @Override
             public void onClick(View v) {
                 if (mContext instanceof LocationsActivity) {
-                    selectRow(locationRows, true);
-                    ((LocationsActivity) mContext).setRow(row);
+                    ((LocationsActivity) mContext).setRow(row, selectedPosition);
                 }
             }
         });
