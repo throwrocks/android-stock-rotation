@@ -174,12 +174,12 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
 
     /**
      * commitTransaction
-     * A method to commit the move transaction
+     * A method to commit the adjust transaction
      */
     private void commitTransaction() {
         Context context = getApplicationContext();
         Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
-        if (transaction != null && transaction.isValidRecord()) {
+        if (transaction != null && transaction.getIsValidRecord()) {
             int newCaseQty = transaction.getQtyCases();
             int remainingQty = RealmQueries.getCountCasesByLocation(context, mCurrentLocation, mItemId).intValue();
             if ( remainingQty > 0) {
@@ -230,7 +230,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                 int save = baseSaveTransaction();
                 if (save == 1) {
                     Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
-                    if (transaction != null && transaction.isValidRecord()) {
+                    if (transaction != null && transaction.getIsValidRecord()) {
                         setViewMode();
                         mMode = MODE_VIEW;
                         invalidateOptionsMenu();

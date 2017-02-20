@@ -76,15 +76,18 @@ public final class SyncDB {
         Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Transfer> transfers;
+        realm.beginTransaction();
         transfers = realm.where(Transfer.class).equalTo(Transfer.FIELD_INIT, false).findAll();
         int size = transfers.size();
-        Log.e(LOG_TAG, "Post Transfers: " + size);
-        realm.beginTransaction();
+        Log.e(LOG_TAG, "Post Transfers: " + "----------------------------");
+        Log.e(LOG_TAG, "Count: " + size);
         if ( size > 0){
             for (int i = 0; i < size; i++) {
                 Transfer transfer = transfers.get(i);
                 String json = transfers.get(i).getJSON();
+                Log.e(LOG_TAG, "JSON : " + json);
                 APIResponse apiResponse = API.postTransfer(json);
+                Log.e(LOG_TAG, "Response Code: " + apiResponse.getResponseCode());
                 if ( apiResponse.getResponseCode() == 201){
                     transfer.setInit(true);
                     transfer.setInitDate(new Date());
@@ -94,6 +97,8 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
+        int responseCode = API.initTransfers().getResponseCode();
+        Log.e(LOG_TAG, "Init Transfers: " + responseCode);
     }
 
     private static void updateDB(Context context, String type, String responseText) {
@@ -186,7 +191,7 @@ public final class SyncDB {
                 realm.beginTransaction();
                 for (int i = 0; i < countTransfers; i++) {
                     try {
-                        Log.d(LOG_TAG, "Transfer update: " + i);
+                        Log.e(LOG_TAG, "Transfer update: " + i);
                         Transfer transfer = new Transfer();
                         JSONObject record = transfersArray.getJSONObject(i);
                         transfer.setId(record.getString(Transfer.FIELD_ID));

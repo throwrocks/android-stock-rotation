@@ -62,13 +62,6 @@ public class SearchActivity extends AppCompatActivity {
                 return handled;
             }
         });
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        mSearchCriteria = preferencesHelper.loadString(SEARCH_CRITERIA, EMPTY);
-        if ( !mSearchCriteria.equals(EMPTY)){
-            SearchItemsTask searchItemsTask = new SearchItemsTask(getApplicationContext());
-            searchItemsTask.execute(mSearchCriteria);
-            mSearchField.setText(mSearchCriteria);
-        }
     }
 
     /**
@@ -103,7 +96,18 @@ public class SearchActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         saveSearchCriteria();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
+        mSearchCriteria = preferencesHelper.loadString(SEARCH_CRITERIA, EMPTY);
+        if ( !mSearchCriteria.equals(EMPTY)){
+            SearchItemsTask searchItemsTask = new SearchItemsTask(getApplicationContext());
+            searchItemsTask.execute(mSearchCriteria);
+            mSearchField.setText(mSearchCriteria);
+        }
     }
 
     private void saveSearchCriteria() {

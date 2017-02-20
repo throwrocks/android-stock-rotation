@@ -211,7 +211,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      */
     void baseBackPressed() {
         Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
-        if (transaction != null && !transaction.isValidRecord()) {
+        if (transaction != null && !transaction.getIsValidRecord()) {
             RealmQueries.deleteTransaction(getApplicationContext(), mTransactionId);
         }
         finish();
@@ -252,7 +252,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
-    void scanItem(String contents){
+    void scanItem(String contents) {
         Context context = getApplicationContext();
         Resources res = getResources();
         int toastLength = Toast.LENGTH_SHORT;
@@ -285,19 +285,19 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      * scanCurrentLocation
      *
      * @param contents the scan or intent contents
-     * @param type barcode number or location name
+     * @param type     barcode number or location name
      */
-    void scanCurrentLocation(String contents, String type){
-        if ( !type.equals(BARCODE) && !type.equals(NAME)){
+    void scanCurrentLocation(String contents, String type) {
+        if (!type.equals(BARCODE) && !type.equals(NAME)) {
             return;
         }
         Context context = getApplicationContext();
         Resources res = getResources();
         int toastLength = Toast.LENGTH_SHORT;
         RealmResults<Location> currentLocations = null;
-        if ( type.equals(BARCODE)){
+        if (type.equals(BARCODE)) {
             currentLocations = RealmQueries.getLocationByBarcode(context, contents);
-        }else if ( type.equals(NAME)){
+        } else if (type.equals(NAME)) {
             currentLocations = RealmQueries.getLocationByName(context, contents);
         }
         if (currentLocations != null && currentLocations.size() > 0) {
@@ -310,7 +310,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
-    private void scanNewLocation(String contents){
+    private void scanNewLocation(String contents) {
         Context context = getApplicationContext();
         Resources res = getResources();
         int toastLength = Toast.LENGTH_SHORT;

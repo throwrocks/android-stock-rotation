@@ -174,7 +174,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
     private void commitTransaction() {
         Context context = getApplicationContext();
         Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
-        if (transaction != null && transaction.isValidRecord()) {
+        if (transaction != null && transaction.getIsValidRecord()) {
             RealmQueries.saveTransfer(
                     context,
                     transaction.getId(),
@@ -205,7 +205,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
                 int save = baseSaveTransaction();
                 if (save == 1) {
                     Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
-                    if (transaction != null && transaction.isValidRecord()) {
+                    if (transaction != null && transaction.getIsValidRecord()) {
                         setViewMode();
                         mMode = MODE_VIEW;
                         invalidateOptionsMenu();

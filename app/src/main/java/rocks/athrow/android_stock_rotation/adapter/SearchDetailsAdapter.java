@@ -63,7 +63,6 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
             casesView = (TextView) view.findViewById(R.id.search_items_cases_qty);
             adjustButton = (Button) view.findViewById(R.id.search_items_adjust_button);
             moveButton = (Button) view.findViewById(R.id.search_items_move_button);
-            //stageButton = (Button) view.findViewById(R.id.search_items_stage_button);
         }
     }
 
@@ -108,20 +107,6 @@ public class SearchDetailsAdapter extends RecyclerView.Adapter<SearchDetailsAdap
                 mContext.startActivity(intent);
             }
         });
-        /*viewHolder.stageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = UUID.randomUUID().toString();
-                Intent intent = new Intent(mContext, TransactionOutActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(MODULE_TYPE, MODULE_STAGING);
-                intent.putExtra(TRANSACTION_ID, id);
-                intent.putExtra(CURRENT_LOCATION, location);
-                intent.putExtra(TAG_NUMBER, tagNumber);
-                intent.putExtra(MODE, MODE_EDIT);
-                mContext.startActivity(intent);
-            }
-        });*/
         viewHolder.adjustButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

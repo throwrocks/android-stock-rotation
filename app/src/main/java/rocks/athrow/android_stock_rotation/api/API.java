@@ -26,6 +26,7 @@ public final class API {
     private static final String API_GET_ITEM_BY_SKU = API_HOST + "/script/api_get_item_by_sku/items.json?RFMkey=" + API_KEY;
     private static final String API_GET_ITEM_BY_TAG = API_HOST + "/script/api_get_item_by_tag/items.json?RFMkey=" + API_KEY;
     private static final String API_UPLOAD_TRANSFER = API_HOST + "/layout/transfers.json?RFMkey=" + API_KEY + "&RFMurlencoded";
+    private static final String API_INIT_TRANSFER = API_HOST + "/script/api_init_item_locations/transfers.json?RFMkey=" + API_KEY;
 
     private API() {
         throw new AssertionError("No API instances for you!");
@@ -70,6 +71,10 @@ public final class API {
 
     public static APIResponse postTransfer(String data){
         return httpConnect("POST", API_UPLOAD_TRANSFER, data);
+    }
+
+    public static APIResponse initTransfers(){
+        return httpConnect("GET", API_INIT_TRANSFER, null);
     }
 
     /**

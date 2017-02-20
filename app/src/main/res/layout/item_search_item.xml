@@ -183,19 +183,6 @@
                 android:includeFontPadding="true"
                 android:text="@string/module_move"
                 android:textSize="12sp" />
-            <!--
-            <Button
-                android:id="@+id/search_items_stage_button"
-                style="@style/Base.Widget.AppCompat.Button.Borderless"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/pick_28"
-                android:includeFontPadding="true"
-                android:text="@string/module_pick"
-                android:textSize="12sp" />
-                -->
-
         </LinearLayout>
 
     </LinearLayout>

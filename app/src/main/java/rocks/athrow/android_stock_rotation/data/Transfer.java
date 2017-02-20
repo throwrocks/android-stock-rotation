@@ -1,5 +1,8 @@
 package rocks.athrow.android_stock_rotation.data;
 
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Date;
 
 import io.realm.RealmObject;

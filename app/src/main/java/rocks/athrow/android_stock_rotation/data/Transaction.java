@@ -6,6 +6,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
+ * Transaction
  * Created by joselopez on 1/9/17.
  */
 
@@ -185,20 +186,11 @@ public class Transaction extends RealmObject {
         this.locationEnd = locationEnd;
     }
 
-    public boolean isValidRecord() {
-        if (getId() == null || getId().isEmpty()) {
-            return false;
-        } else if (getItemId() == null || getItemId().isEmpty()) {
-            return false;
-        } else if (getType1().equals("Moving") && (getLocationStart() == null || getLocationStart().isEmpty()) || (getQtyCases() == 0 )) {
-            return false;
-        }else if (getType1().equals("Adjust") && (getLocationStart() == null || getLocationStart().isEmpty())) {
-            return false;
-        }
-        return true;
+    public boolean getIsValidRecord() {
+        return this.isValidRecord;
     }
 
-    public void setIsValidRecord() {
-        isValidRecord = isValidRecord();
+    public void setIsValid(boolean valid) {
+        this.isValidRecord = valid;
     }
 }

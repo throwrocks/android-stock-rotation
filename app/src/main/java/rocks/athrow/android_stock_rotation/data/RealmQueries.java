@@ -274,7 +274,17 @@ public final class RealmQueries {
         if (transaction.getIsCompleted() == null) {
             transaction.setIsCompleted(false);
         }
-        transaction.setIsValidRecord();
+        boolean valid = true;
+        if (transaction.getId() == null || transaction.getId().isEmpty()) {
+            valid = false;
+        } else if (transaction.getItemId() == null || transaction.getItemId().isEmpty()) {
+            valid = false;
+        } else if (transaction.getType1().equals("Moving") && ( transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty() || (transaction.getQtyCases() == 0))) {
+            valid = false;
+        } else if (transaction.getType1().equals("Adjust") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty())) {
+            valid = false;
+        }
+        transaction.setIsValid(valid);
         realm.copyToRealmOrUpdate(transaction);
         realm.commitTransaction();
         realm.close();
@@ -322,7 +332,7 @@ public final class RealmQueries {
 
     /**
      * saveTransfer
-     * A method to save a Trasnfer record
+     * A method to save a Transfer record
      * The only required value is the transaction id
      *
      * @return an APIResponse object

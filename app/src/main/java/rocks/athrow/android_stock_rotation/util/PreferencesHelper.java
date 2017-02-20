@@ -12,7 +12,7 @@ public class PreferencesHelper {
 
     private final SharedPreferences prefs;
 
-    private static final String FILE_NAME = "rocks.throw.service_tickets.preferences";
+    private static final String FILE_NAME = "rocks.throw.stock_rotation.preferences";
 
     public PreferencesHelper(Context context) {
         prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
