@@ -1,14 +1,13 @@
 package rocks.athrow.android_stock_rotation.data;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import rocks.athrow.android_stock_rotation.util.Utilities;
+
+import static android.R.attr.y;
 
 /**
  * Transfer
@@ -35,6 +34,7 @@ public class Transfer extends RealmObject {
     final static String FIELD_LOCATION = "location";
     final static String FIELD_CASE_QTY = "caseQty";
     final static String FIELD_INIT = "init";
+    final static String FIELD_ITEMLOCATION_KEY = "itemLocationKey";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -46,6 +46,7 @@ public class Transfer extends RealmObject {
     private String itemId;
     private int sku;
     private String itemDescription;
+    @Index
     private String tagNumber;
     private String packSize;
     @Index
@@ -58,6 +59,8 @@ public class Transfer extends RealmObject {
     @Index
     private boolean init;
     private Date initDate;
+    @Index
+    private String itemLocationKey;
 
     public String getId() {
         return id;
@@ -209,5 +212,13 @@ public class Transfer extends RealmObject {
                 + ", \"location\":\"" + location + "\""
                 + ", \"caseQty\":\"" + caseQty + "\""
                 + "}]}";
+    }
+
+    public String getItemLocationKey() {
+        return itemLocationKey;
+    }
+
+    public void setItemLocationKey() {
+        this.itemLocationKey = this.tagNumber + "-" + this.location ;
     }
 }

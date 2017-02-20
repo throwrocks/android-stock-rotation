@@ -374,6 +374,7 @@ public final class RealmQueries {
         transfer.setExpirationDate(expirationDate);
         transfer.setLocation(location);
         transfer.setCaseQty(caseQty);
+        transfer.setItemLocationKey();
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
@@ -646,6 +647,7 @@ public final class RealmQueries {
                 transfers = realm.where(Transfer.class).
                         equalTo(Transfer.FIELD_SKU, skuNumber).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                transfers.distinct(Transfer.FIELD_ITEMLOCATION_KEY);
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
                 break;
             case "tagNumber":
@@ -658,6 +660,7 @@ public final class RealmQueries {
                 transfers = realm.where(Transfer.class).
                         contains(Transfer.FIELD_ITEM_DESCRIPTION, searchCriteria).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
+                transfers.distinct(Transfer.FIELD_ITEMLOCATION_KEY);
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
                 break;
             default:

@@ -89,6 +89,7 @@ public final class SyncDB {
                 APIResponse apiResponse = API.postTransfer(json);
                 Log.e(LOG_TAG, "Response Code: " + apiResponse.getResponseCode());
                 if ( apiResponse.getResponseCode() == 201){
+                    transfer.setItemLocationKey();
                     transfer.setInit(true);
                     transfer.setInitDate(new Date());
                     realm.copyToRealmOrUpdate(transfer);
@@ -212,6 +213,7 @@ public final class SyncDB {
                         transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
                         transfer.setInit(true);
                         transfer.setInitDate(new Date());
+                        transfer.setItemLocationKey();
                         realm.copyToRealmOrUpdate(transfer);
                     } catch (JSONException e) {
                         e.printStackTrace();
