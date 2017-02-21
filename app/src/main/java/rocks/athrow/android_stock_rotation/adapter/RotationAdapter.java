@@ -129,9 +129,6 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
                     case MODULE_ADJUST:
                         intent = new Intent(mContext, TransactionAdjustActivity.class);
                         break;
-                    /*case MODULE_STAGING:
-                        intent = new Intent(mContext, TransactionOutActivity.class);
-                        break;*/
                     default:
                         intent = new Intent(mContext, TransactionInActivity.class);
                 }

@@ -34,7 +34,6 @@ public class LocationDetailActivity extends AppCompatActivity {
         }
         TextView locationView = (TextView) findViewById(R.id.location_details_location);
         locationView.setText(mLocation);
-        setupItems();
     }
 
     /**

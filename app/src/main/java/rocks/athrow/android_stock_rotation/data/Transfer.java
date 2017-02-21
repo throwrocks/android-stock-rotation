@@ -8,6 +8,11 @@ import io.realm.annotations.PrimaryKey;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
 import static android.R.attr.y;
+import static rocks.athrow.android_stock_rotation.data.Constants.IN;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.OUT;
 
 /**
  * Transfer
@@ -22,6 +27,7 @@ public class Transfer extends RealmObject {
     final static String FIELD_TRANSACTION_ID = "transactionId";
     final static String FIELD_TRANSACTION_TYPE = "transactionType";
     final static String FIELD_TYPE = "type";
+    final static String FIELD_TYPE_KEY = "typeKey";
     final static String FIELD_DATE = "date";
     final static String FIELD_ITEM_ID = "itemId";
     final static String FIELD_SKU = "sku";
@@ -34,7 +40,7 @@ public class Transfer extends RealmObject {
     final static String FIELD_LOCATION = "location";
     final static String FIELD_CASE_QTY = "caseQty";
     final static String FIELD_INIT = "init";
-    final static String FIELD_ITEMLOCATION_KEY = "itemLocationKey";
+    final static String FIELD_ITEM_LOCATION_KEY = "itemLocationKey";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -42,6 +48,7 @@ public class Transfer extends RealmObject {
     private String transactionType;
     private Date date;
     private String type; // In or out
+    private int typeKey;
     @Index
     private String itemId;
     private int sku;
@@ -219,6 +226,26 @@ public class Transfer extends RealmObject {
     }
 
     public void setItemLocationKey() {
-        this.itemLocationKey = this.tagNumber + "-" + this.location ;
+        this.itemLocationKey = this.tagNumber + "-" + this.location;
+    }
+
+    public int getTypeKey() {
+        return typeKey;
+    }
+
+    public void setTypeKey() {
+        int typeKey = 0;
+        if (this.getTransactionType().equals(MODULE_RECEIVING)) {
+            typeKey = 1;
+        } else if (this.getTransactionType().equals(MODULE_MOVING) && this.getType().equals(IN)) {
+            typeKey = 2;
+        } else if (this.getTransactionType().equals(MODULE_MOVING) && this.getType().equals(OUT)) {
+            typeKey = 3;
+        } else if (this.getTransactionType().equals(MODULE_ADJUST) && this.getType().equals(IN)) {
+            typeKey = 5;
+        } else if (this.getTransactionType().equals(MODULE_ADJUST) && this.getType().equals(OUT)) {
+            typeKey = 6;
+        }
+        this.typeKey = typeKey;
     }
 }

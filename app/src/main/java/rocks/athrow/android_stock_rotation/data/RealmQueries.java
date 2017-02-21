@@ -94,25 +94,6 @@ public final class RealmQueries {
     }
 
     /**
-     * getTransactions
-     * A method to get a transaction record by id
-     *
-     * @param context a Context object
-     * @return a Transaction object
-     */
-    public static RealmResults<Transfer> getTransfers(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(realmConfig);
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmResults<Transfer> realmResults =
-                realm.where(Transfer.class).findAll().sort(Transfer.FIELD_DATE, Sort.DESCENDING);
-        realm.commitTransaction();
-        return realmResults;
-    }
-
-
-    /**
      * deleteInvalidTransactions
      *
      * @param context required context object
@@ -329,7 +310,23 @@ public final class RealmQueries {
     /**--------------------------------------------------------------------------------------------
      TRANSFERS
      ---------------------------------------------------------------------------------------------**/
-
+    /**
+     * getTransactions
+     * A method to get all transfer records
+     *
+     * @param context a Context object
+     * @return a Transaction object
+     */
+    public static RealmResults<Transfer> getTransfers(Context context) {
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<Transfer> realmResults =
+                realm.where(Transfer.class).findAll().sort(Transfer.FIELD_DATE, Sort.DESCENDING);
+        realm.commitTransaction();
+        return realmResults;
+    }
     /**
      * saveTransfer
      * A method to save a Transfer record
@@ -375,6 +372,7 @@ public final class RealmQueries {
         transfer.setLocation(location);
         transfer.setCaseQty(caseQty);
         transfer.setItemLocationKey();
+        transfer.setTypeKey();
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
@@ -402,7 +400,6 @@ public final class RealmQueries {
                     equalTo(Transfer.FIELD_LOCATION, location).
                     equalTo(Transfer.FIELD_TYPE, Constants.IN).
                     equalTo(Transfer.FIELD_ITEM_ID, itemId).findAll();
-
             outResults = realm.where(Transfer.class).
                     equalTo(Transfer.FIELD_LOCATION, location).
                     equalTo(Transfer.FIELD_TYPE, Constants.OUT).
@@ -647,7 +644,7 @@ public final class RealmQueries {
                 transfers = realm.where(Transfer.class).
                         equalTo(Transfer.FIELD_SKU, skuNumber).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
-                transfers.distinct(Transfer.FIELD_ITEMLOCATION_KEY);
+                transfers.distinct(Transfer.FIELD_ITEM_LOCATION_KEY);
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
                 break;
             case "tagNumber":
@@ -660,7 +657,7 @@ public final class RealmQueries {
                 transfers = realm.where(Transfer.class).
                         contains(Transfer.FIELD_ITEM_DESCRIPTION, searchCriteria).
                         equalTo(Transfer.FIELD_TYPE, "in").findAll();
-                transfers.distinct(Transfer.FIELD_ITEMLOCATION_KEY);
+                transfers.distinct(Transfer.FIELD_ITEM_LOCATION_KEY);
                 transfers = transfers.sort(Transfer.FIELD_RECEIVING_ID);
                 break;
             default:

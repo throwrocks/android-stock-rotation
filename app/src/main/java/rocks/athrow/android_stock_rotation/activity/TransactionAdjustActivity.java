@@ -37,6 +37,7 @@ import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 public class TransactionAdjustActivity extends TransactionBaseActivity {
     private String mCurrentLocation;
     private String mTagNumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +68,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
             ab.setTitle(MODULE_ADJUST);
         }
         setCurrentMode();
-        if ( mCurrentLocation != null && mTagNumber != null){
+        if (mCurrentLocation != null && mTagNumber != null) {
             scanItem(mTagNumber);
             scanCurrentLocation(mCurrentLocation, NAME);
         }
@@ -158,9 +159,11 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                 .setTitle("Adjust Item");
         builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                commitTransaction();
-                Utilities.showToast(getApplicationContext(), "Adjustment Completed!", Toast.LENGTH_SHORT);
-                finish();
+                if ( commitTransaction() ){
+                    Utilities.showToast(getApplicationContext(), "Adjustment Completed!", Toast.LENGTH_SHORT);
+                    finish();
+                }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -176,15 +179,35 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
      * commitTransaction
      * A method to commit the adjust transaction
      */
-    private void commitTransaction() {
+    private boolean commitTransaction() {
         Context context = getApplicationContext();
         Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
         if (transaction != null && transaction.getIsValidRecord()) {
             int newCaseQty = transaction.getQtyCases();
             int remainingQty = RealmQueries.getCountCasesByLocation(context, mCurrentLocation, mItemId).intValue();
-            if ( remainingQty > 0) {
+            if ( newCaseQty == remainingQty ){
+                Utilities.showToast(getApplicationContext(), "The new quantity and the existing quantity are the same.", Toast.LENGTH_SHORT);
+                return false;
+            } else if (newCaseQty > remainingQty) {
                 RealmQueries.saveTransfer(
                         context,
+                        transaction.getId(),
+                        transaction.getType1(),
+                        IN,
+                        transaction.getItemId(),
+                        transaction.getSku(),
+                        transaction.getItemDescription(),
+                        transaction.getTagNumber(),
+                        transaction.getPackSize(),
+                        transaction.getReceivingId(),
+                        transaction.getReceivedDate(),
+                        transaction.getExpirationDate(),
+                        transaction.getLocationStart(),
+                        ( newCaseQty - remainingQty )
+                );
+            }
+            else if ( newCaseQty < remainingQty ){
+                RealmQueries.saveTransfer(context,
                         transaction.getId(),
                         transaction.getType1(),
                         OUT,
@@ -197,27 +220,21 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                         transaction.getReceivedDate(),
                         transaction.getExpirationDate(),
                         transaction.getLocationStart(),
-                        remainingQty
+                        ( remainingQty - newCaseQty )
                 );
             }
-            RealmQueries.saveTransfer(
-                    context,
-                    transaction.getId(),
-                    transaction.getType1(),
-                    IN,
-                    transaction.getItemId(),
-                    transaction.getSku(),
-                    transaction.getItemDescription(),
-                    transaction.getTagNumber(),
-                    transaction.getPackSize(),
-                    transaction.getReceivingId(),
-                    transaction.getReceivedDate(),
-                    transaction.getExpirationDate(),
-                    transaction.getLocationStart(),
-                    newCaseQty
-            );
+
             RealmQueries.commitTransaction(context, mTransactionId);
+            return true;
+        }else{
+            return false;
         }
+
+    }
+
+    private boolean isQtyEmpty() {
+        String caseQty = mCaseQtyView.getText().toString();
+        return caseQty.isEmpty();
     }
 
     @Override
@@ -227,17 +244,23 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                 baseDeleteTransaction(mTransactionId);
                 return super.onOptionsItemSelected(item);
             case R.id.scan_save:
-                int save = baseSaveTransaction();
-                if (save == 1) {
-                    Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
-                    if (transaction != null && transaction.getIsValidRecord()) {
-                        setViewMode();
-                        mMode = MODE_VIEW;
-                        invalidateOptionsMenu();
-                    } else {
-                        Utilities.showToast(getApplicationContext(),
-                                "Invalid record. The item, the current location, and the quantity are required.",
-                                Toast.LENGTH_SHORT);
+                if (isQtyEmpty()) {
+                    Utilities.showToast(getApplicationContext(),
+                            "Please enter a case quantity.",
+                            Toast.LENGTH_SHORT);
+                } else {
+                    int save = baseSaveTransaction();
+                    if (save == 1) {
+                        Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
+                        if (transaction != null && transaction.getIsValidRecord()) {
+                            setViewMode();
+                            mMode = MODE_VIEW;
+                            invalidateOptionsMenu();
+                        } else {
+                            Utilities.showToast(getApplicationContext(),
+                                    "Invalid record. The item, the current location, and the quantity are required.",
+                                    Toast.LENGTH_SHORT);
+                        }
                     }
                 }
                 return super.onOptionsItemSelected(item);
@@ -253,6 +276,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mScanType = savedInstanceState.getString(SCAN_TYPE);
@@ -262,5 +286,13 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
         mMode = savedInstanceState.getString(MODE);
         setCurrentMode();
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        if (isQtyEmpty()) {
+            baseDeleteTransaction(mTransactionId);
+        }
+        super.onPause();
     }
 }
