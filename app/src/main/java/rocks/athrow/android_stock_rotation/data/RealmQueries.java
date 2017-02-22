@@ -260,7 +260,7 @@ public final class RealmQueries {
             valid = false;
         } else if (transaction.getItemId() == null || transaction.getItemId().isEmpty()) {
             valid = false;
-        } else if (transaction.getType1().equals("Moving") && ( transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty() || (transaction.getQtyCases() == 0))) {
+        } else if (transaction.getType1().equals("Moving") && ( transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty() ) || (transaction.getQtyCases() == 0)) {
             valid = false;
         } else if (transaction.getType1().equals("Adjust") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty())) {
             valid = false;
