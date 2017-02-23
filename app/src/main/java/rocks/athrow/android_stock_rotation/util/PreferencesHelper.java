@@ -38,4 +38,8 @@ public class PreferencesHelper {
         return prefs.getInt(key, 0);
     }
 
+    public void clear(){
+        prefs.edit().clear().apply();
+    }
+
 }

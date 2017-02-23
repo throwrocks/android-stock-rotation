@@ -44,7 +44,7 @@ import static rocks.athrow.android_stock_rotation.data.Constants.PAPER;
  */
 
 public class LocationsActivity extends AppCompatActivity {
-    private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER, ALL};
+    private final static CharSequence[] SEARCH_FILTERS = {FREEZER, COOLER, DRY, PAPER};
     private String mLocationsFilter;
     private CheckBox mPrimaryCheckBox;
     private boolean mPrimaryOnly;
@@ -87,16 +87,24 @@ public class LocationsActivity extends AppCompatActivity {
         });
     }
 
-    private void updateRealmResults() {
+    private void queryLocations() {
         Context context = getApplicationContext();
         mRealmResults = RealmQueries.getLocations(context, mLocationsFilter, mSelectedRow, mPrimaryOnly);
     }
 
+    private void queryRows() {
+        mRows = RealmQueries.getRows(getApplicationContext(), mLocationsFilter);
+    }
+
     private void filterLocations(String type) {
         mLocationsFilter = type;
-        mRows = RealmQueries.getRows(getApplicationContext(), mLocationsFilter);
-        saveState();
-        setRow(mSelectedRow, mSelectedLocationRowIndex);
+        queryRows();
+        mSelectedLocationRowIndex = 0;
+        if (mRows != null) {
+            mSelectedRow = mRows.get(mSelectedLocationRowIndex).getRow();
+            saveState();
+            setRow(mSelectedRow, mSelectedLocationRowIndex);
+        }
     }
 
     public void setRow(String row, int selectedPosition) {
@@ -104,11 +112,12 @@ public class LocationsActivity extends AppCompatActivity {
         mSelectedLocationRowIndex = selectedPosition;
         if (mRows != null) {
             clearRowSelections();
-            mRows.get(selectedPosition).setSelected(true);
+            mRows.get(mSelectedLocationRowIndex).setSelected(true);
         }
-        updateRealmResults();
-        setupLocationResults();
-        setupRowResults();
+        setupRowsRecyclerView();
+        queryLocations();
+        setupLocationsRecyclerView();
+
         if (mRowAdapter != null) {
             mRowAdapter.notifyDataSetChanged();
         }
@@ -126,7 +135,17 @@ public class LocationsActivity extends AppCompatActivity {
         }
     }
 
-    private void setupRowResults() {
+
+    private void setPrimaryOnly(boolean primaryOnly) {
+        Context context = getApplicationContext();
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, primaryOnly);
+        mPrimaryOnly = primaryOnly;
+        queryLocations();
+        setupLocationsRecyclerView();
+    }
+
+    private void setupRowsRecyclerView() {
         mRowAdapter = new LocationRowsAdapter(mRows, LocationsActivity.this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.location_rows);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -134,16 +153,7 @@ public class LocationsActivity extends AppCompatActivity {
         recyclerView.setAdapter(mRowAdapter);
     }
 
-    private void setPrimaryOnly(boolean primaryOnly) {
-        Context context = getApplicationContext();
-        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
-        preferencesHelper.save(LOCATIONS_FILTER_PRIMARY_ONLY, primaryOnly);
-        mPrimaryOnly = primaryOnly;
-        updateRealmResults();
-        setupLocationResults();
-    }
-
-    private void setupLocationResults() {
+    private void setupLocationsRecyclerView() {
         LocationsAdapter mAdapter = new LocationsAdapter(LocationsActivity.this);
         RealmLocationsListAdapter realmAdapter =
                 new RealmLocationsListAdapter(getApplicationContext(), mRealmResults);
@@ -176,7 +186,7 @@ public class LocationsActivity extends AppCompatActivity {
         mSelectedLocationRowIndex = preferencesHelper.loadInt(LOCATIONS_FILTER_ROW_INDEX);
         mSpinner.setSelection(getFilterPosition(mLocationsFilter));
         mPrimaryCheckBox.setChecked(mPrimaryOnly);
-        mRows = RealmQueries.getRows(getApplicationContext(), mLocationsFilter);
+        queryRows();
         setRow(mSelectedRow, mSelectedLocationRowIndex);
     }
 

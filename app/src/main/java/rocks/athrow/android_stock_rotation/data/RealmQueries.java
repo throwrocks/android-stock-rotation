@@ -1,6 +1,7 @@
 package rocks.athrow.android_stock_rotation.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +12,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
 import static rocks.athrow.android_stock_rotation.data.Location.FIELD_ROW;
 

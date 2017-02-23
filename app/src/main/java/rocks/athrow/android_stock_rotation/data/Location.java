@@ -20,9 +20,9 @@ public class Location extends RealmObject {
     public final static String FIELD_EDISON_QTY = "edisonCaseQty";
     public final static String FIELD_IS_PRIMARY = "isPrimary";
     public final static String FIELD_ROW = "row";
-    @PrimaryKey
     private int serialNumber;
     private String location;
+    @PrimaryKey
     private String barcode;
     private String type;
     private int fmCaseQty;

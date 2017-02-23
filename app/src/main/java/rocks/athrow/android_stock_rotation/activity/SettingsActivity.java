@@ -1,6 +1,7 @@
 package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -34,7 +35,6 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
-        PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
 
     }
 
@@ -46,6 +46,8 @@ public class SettingsActivity extends PreferenceActivity {
             public void onClick(DialogInterface dialog, int id) {
                 RealmQueries.deleteDatabase(getApplicationContext());
                 Utilities.showToast(getApplicationContext(), "Database deleted!", Toast.LENGTH_SHORT);
+                PreferencesHelper prefs = new PreferencesHelper(getApplicationContext());
+                prefs.clear();
                 finish();
             }
         });
