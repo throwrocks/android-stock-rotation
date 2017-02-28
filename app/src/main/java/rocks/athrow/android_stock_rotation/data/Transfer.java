@@ -41,6 +41,8 @@ public class Transfer extends RealmObject {
     final static String FIELD_CASE_QTY = "caseQty";
     final static String FIELD_INIT = "init";
     final static String FIELD_ITEM_LOCATION_KEY = "itemLocationKey";
+    final static String FIELD_EMPLOYEE_NUMBER = "employeeNumber";
+    final static String FIELD_EMPLOYEE_NAME = "employeeName";
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -68,6 +70,8 @@ public class Transfer extends RealmObject {
     private Date initDate;
     @Index
     private String itemLocationKey;
+    private int employeeNumber;
+    private String employeeName;
 
     public String getId() {
         return id;
@@ -201,6 +205,22 @@ public class Transfer extends RealmObject {
         this.initDate = initDate;
     }
 
+    public int getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public void setEmployeeNumber(int employeeNumber) {
+        this.employeeNumber = employeeNumber;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
     String getJSON() {
         return "{\"data\":[{"
                 + "\"id\":\"" + id + "\""
@@ -218,6 +238,7 @@ public class Transfer extends RealmObject {
                 + ", \"expirationDate\":\"" + expirationDate + "\""
                 + ", \"location\":\"" + location + "\""
                 + ", \"caseQty\":\"" + caseQty + "\""
+                + ", \"employeeNumber\":\"" + employeeNumber + "\""
                 + "}]}";
     }
 

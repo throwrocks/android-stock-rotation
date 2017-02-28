@@ -26,7 +26,7 @@ import static android.R.attr.name;
  */
 
 public final class SyncDB {
-    private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy hh:mm:ss a";
     private static final String LOG_TAG = "SyncDB";
 
     public static void downloadNewRecords(Context context) {
@@ -211,6 +211,8 @@ public final class SyncDB {
                         transfer.setExpirationDate(record.getString(Transfer.FIELD_EXPIRATION_DATE));
                         transfer.setLocation(record.getString(Transfer.FIELD_LOCATION));
                         transfer.setCaseQty(record.getInt(Transfer.FIELD_CASE_QTY));
+                        transfer.setEmployeeNumber(record.getInt(Transfer.FIELD_EMPLOYEE_NUMBER));
+                        transfer.setEmployeeName(record.getString(Transfer.FIELD_EMPLOYEE_NAME));
                         transfer.setInit(true);
                         transfer.setInitDate(new Date());
                         transfer.setItemLocationKey();

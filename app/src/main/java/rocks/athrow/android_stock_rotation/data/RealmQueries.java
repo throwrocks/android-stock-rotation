@@ -14,6 +14,9 @@ import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
+import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
+import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NAME;
+import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Location.FIELD_ROW;
 
 /**
@@ -262,7 +265,7 @@ public final class RealmQueries {
             valid = false;
         } else if (transaction.getItemId() == null || transaction.getItemId().isEmpty()) {
             valid = false;
-        } else if (transaction.getType1().equals("Moving") && ( transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty() ) || (transaction.getQtyCases() == 0)) {
+        } else if (transaction.getType1().equals("Moving") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty()) || (transaction.getQtyCases() == 0)) {
             valid = false;
         } else if (transaction.getType1().equals("Adjust") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty())) {
             valid = false;
@@ -329,6 +332,7 @@ public final class RealmQueries {
         realm.commitTransaction();
         return realmResults;
     }
+
     /**
      * saveTransfer
      * A method to save a Transfer record
@@ -352,6 +356,9 @@ public final class RealmQueries {
             String location,
             int caseQty
     ) {
+        PreferencesHelper prefs = new PreferencesHelper(context);
+        int employeeNumber = prefs.loadInt(SETTINGS_EMPLOYEE_NUMBER);
+        String employeeName = prefs.loadString(SETTINGS_EMPLOYEE_NAME, EMPTY);
         APIResponse apiResponse = new APIResponse();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
@@ -375,6 +382,8 @@ public final class RealmQueries {
         transfer.setCaseQty(caseQty);
         transfer.setItemLocationKey();
         transfer.setTypeKey();
+        transfer.setEmployeeNumber(employeeNumber);
+        transfer.setEmployeeName(employeeName);
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
@@ -500,7 +509,7 @@ public final class RealmQueries {
                             .equalTo(Location.FIELD_TYPE, type)
                             .equalTo(FIELD_ROW, row)
                             .findAll();
-        } else if (row != null ) {
+        } else if (row != null) {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
@@ -513,7 +522,7 @@ public final class RealmQueries {
                             .equalTo(Location.FIELD_TYPE, type)
                             .equalTo(Location.FIELD_IS_PRIMARY, true)
                             .findAll();
-        } else{
+        } else {
             realmResults =
                     realm.where(Location.class)
                             .equalTo(Location.FIELD_TYPE, type)
@@ -521,7 +530,7 @@ public final class RealmQueries {
         }
 
         realm.commitTransaction();
-        return realmResults.sort(Location.FIELD_SERIAL_NUMBER);
+        return realmResults.sort(Location.FIELD_LOCATION);
     }
 
     /**

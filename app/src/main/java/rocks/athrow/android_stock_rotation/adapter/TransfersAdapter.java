@@ -41,6 +41,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         final TextView viewType2;
         final TextView viewLocation;
         final TextView viewCaseQty;
+        final TextView viewUser;
 
         ViewHolder(View view) {
             super(view);
@@ -56,7 +57,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
             viewType2 = (TextView) view.findViewById(R.id.transfer_type2);
             viewLocation = (TextView) view.findViewById(R.id.transfer_location);
             viewCaseQty = (TextView) view.findViewById(R.id.transfer_case_qty);
-            //viewLooseQty = (TextView) view.findViewById(R.id.transfer_loose_qty);
+            viewUser = (TextView) view.findViewById(R.id.transfer_employee);
         }
     }
 
@@ -88,6 +89,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String type1 = transfer.getTransactionType();
         String type2 = transfer.getType();
         String location = transfer.getLocation();
+        String user = transfer.getEmployeeName();
         int caseQty = transfer.getCaseQty();
         String skuString = String.valueOf(sku);
         String caseQtyString = String.valueOf(caseQty);
@@ -110,6 +112,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         Utilities.badgeFormat(vh.viewType2, type2, mContext);
         vh.viewLocation.setText(location);
         vh.viewCaseQty.setText(caseQtyString);
+        vh.viewUser.setText(user);
     }
 
     @Override

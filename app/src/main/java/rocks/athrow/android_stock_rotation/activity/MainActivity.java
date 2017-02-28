@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -26,15 +27,19 @@ import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
+import rocks.athrow.android_stock_rotation.util.Utilities;
 
+import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
+import static rocks.athrow.android_stock_rotation.data.Constants.LAST_SYNC;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NAME;
+import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NUMBER;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String NEVER = "Never";
-    private static final String LAST_SYNC = "last_sync";
+
     private ProgressBar mSyncProgressBar;
     private ImageView mSyncIcon;
     private Runnable mSyncStatusRunnable;
@@ -64,19 +69,19 @@ public class MainActivity extends AppCompatActivity {
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(MODULE_RECEIVING);
+                startRotationActivity(MODULE_RECEIVING);
             }
         });
         moduleMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(MODULE_MOVING);
+                startRotationActivity(MODULE_MOVING);
             }
         });
         moduleAdjust.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(MODULE_ADJUST);
+                startRotationActivity(MODULE_ADJUST);
             }
         });
         moduleLocations.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         updateSyncDate();
-        scheduleSyncDB();
     }
 
     private void scheduleSyncDB() {
@@ -111,6 +115,19 @@ public class MainActivity extends AppCompatActivity {
         jobInfo.setPeriodic(10000);
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo.build());
+    }
+
+    private void openRegistration() {
+        Utilities.showToast(getApplicationContext(), "This device is not registered. Please enter your API Key.", Toast.LENGTH_SHORT);
+        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private boolean isRegistered() {
+        PreferencesHelper prefs = new PreferencesHelper(getApplicationContext());
+        String employeeNumber = prefs.loadString(SETTINGS_EMPLOYEE_NUMBER, EMPTY);
+        String employeeName = prefs.loadString(SETTINGS_EMPLOYEE_NAME, EMPTY);
+        return !employeeNumber.isEmpty() && !employeeName.isEmpty();
     }
 
     private void setUpCounts() {
@@ -127,15 +144,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.main_search:
-                Intent searchIntent = new Intent(this, SearchActivity.class);
-                startActivity(searchIntent);
-                break;
-            case R.id.main_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                break;
+        if (isRegistered()) {
+            switch (item.getItemId()) {
+                case R.id.main_search:
+                    Intent searchIntent = new Intent(this, SearchActivity.class);
+                    startActivity(searchIntent);
+                    break;
+                case R.id.main_settings:
+                    Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                    startActivity(settingsIntent);
+                    break;
+            }
+        } else {
+            openRegistration();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -156,15 +177,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * startActivity
+     * startRotationActivity
      *
      * @param type the type of RotationActivity
      *             Receiving, Moving, Picking, or Salvage
      */
-    private void startActivity(String type) {
-        Intent intent = new Intent(this, RotationActivity.class);
-        intent.putExtra(MODULE_TYPE, type);
-        startActivity(intent);
+    private void startRotationActivity(String type) {
+        if (isRegistered()) {
+            Intent intent = new Intent(this, RotationActivity.class);
+            intent.putExtra(MODULE_TYPE, type);
+            startActivity(intent);
+        } else {
+            openRegistration();
+        }
     }
 
     /**
@@ -188,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-        String lastSyncString = preferencesHelper.loadString(LAST_SYNC, NEVER);
+        String lastSyncString = preferencesHelper.loadString(LAST_SYNC, "Never");
         TextView syncDate = (TextView) findViewById(R.id.text_sync);
         syncDate.setText(lastSyncString);
     }
@@ -214,6 +239,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         updateSyncStatus();
         setUpCounts();
+        if (isRegistered()) {
+            scheduleSyncDB();
+        } else {
+            openRegistration();
+        }
         super.onResume();
     }
 

@@ -94,14 +94,6 @@ public class RotationActivity extends AppCompatActivity {
                         moveIntent.putExtra(MODE, MODE_EDIT);
                         startActivity(moveIntent);
                         break;
-                    /*case MODULE_STAGING:
-                        String pickTransactionId = UUID.randomUUID().toString();
-                        Intent pickIntent = new Intent(this, TransactionOutActivity.class);
-                        pickIntent.putExtra(TRANSACTION_ID, pickTransactionId);
-                        pickIntent.putExtra(MODULE_TYPE, mRotationType);
-                        pickIntent.putExtra(MODE, MODE_EDIT);
-                        startActivity(pickIntent);
-                        break;*/
                     case MODULE_RECEIVING:
                         String receiveTransactionId = UUID.randomUUID().toString();
                         Intent receiveIntent = new Intent(this, TransactionInActivity.class);

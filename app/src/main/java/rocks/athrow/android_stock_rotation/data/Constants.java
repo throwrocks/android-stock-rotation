@@ -6,6 +6,7 @@ package rocks.athrow.android_stock_rotation.data;
  */
 
 public abstract class Constants {
+    public static final String LAST_SYNC = "last_sync";
     public static final String EMPTY = "";
     public static final String MODULE_TYPE = "type";
     public static final String MODULE_RECEIVING = "Receive";
@@ -40,7 +41,7 @@ public abstract class Constants {
     public static final String PREF_DELETE_DATABASE = "delete_database";
     // Locations
     public static final String LOCATIONS_FILTER = "locations_filter";
-    public static final String LOCATIONS_FILTER_ROW = "locations_search_criteria";
+    public static final String LOCATIONS_FILTER_ROW = "locations_filter_row";
     public static final String LOCATIONS_FILTER_ROW_INDEX = "locations_filter_row_index";
     public static final String LOCATIONS_FILTER_PRIMARY_ONLY = "locations_filter_primary_only";
     public static final String ALL = "All";
@@ -48,4 +49,10 @@ public abstract class Constants {
     public static final String COOLER = "Cooler";
     public static final String PAPER = "Paper";
     public static final String DRY = "Dry";
+    // Settings
+    public static final String SETTINGS_API_KEY = "api_key";
+    public static final String SETTINGS_EMPLOYEE_NUMBER = "employee_number";
+    public static final String SETTINGS_EMPLOYEE_NAME = "employee_name";
+    public static final String UNKNOWN = "Unknown";
+
 }

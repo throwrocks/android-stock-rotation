@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Authentication"/>
+    <EditTextPreference
+        android:inputType="number"
+        android:key="api_key"
+        android:summary="Empty Key"
+        android:title="API Key" />
+    <EditTextPreference
+        android:enabled="false"
+        android:key="employee_number"
+        android:summary="Unknown"
+        android:title="Employee Number" />
+    <EditTextPreference
+        android:enabled="false"
+        android:key="employee_name"
+        android:summary="Unknown"
+        android:title="Employee Name" />
+    <PreferenceCategory android:title="System"/>
     <Preference
         android:key="delete_database"
         android:title="Delete Database" />

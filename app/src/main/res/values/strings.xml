@@ -24,6 +24,7 @@
     <string name="label_current_case_qty">Current Case Qty:</string>
     <string name="label_edison">Edison</string>
     <string name="label_filemaker">FileMaker</string>
+    <string name="label_user">User: </string>
     <!-- Buttons -->
     <string name="button_view">View</string>
     <!-- Radio Buttons -->

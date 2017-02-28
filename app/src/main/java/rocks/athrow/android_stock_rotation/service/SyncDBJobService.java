@@ -41,7 +41,7 @@ public class SyncDBJobService extends JobService {
         @Override
         protected void onPostExecute(JobParameters[] result) {
             for (JobParameters params : result) {
-                    jobFinished(params, true);
+                jobFinished(params, true);
             }
         }
     }
