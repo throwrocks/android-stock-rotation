@@ -1,7 +1,6 @@
 package rocks.athrow.android_stock_rotation.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Date;

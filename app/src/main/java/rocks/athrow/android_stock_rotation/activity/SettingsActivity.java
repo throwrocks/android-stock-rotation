@@ -22,16 +22,15 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
 import static rocks.athrow.android_stock_rotation.data.Constants.LAST_SYNC;
 import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER;
 import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_PRIMARY_ONLY;
 import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_ROW;
 import static rocks.athrow.android_stock_rotation.data.Constants.LOCATIONS_FILTER_ROW_INDEX;
+import static rocks.athrow.android_stock_rotation.data.Constants.PREF_DELETE_DATABASE;
 import static rocks.athrow.android_stock_rotation.data.Constants.SEARCH_CRITERIA;
 import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_API_KEY;
-import static rocks.athrow.android_stock_rotation.data.Constants.PREF_DELETE_DATABASE;
 import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NAME;
 import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Constants.UNKNOWN;

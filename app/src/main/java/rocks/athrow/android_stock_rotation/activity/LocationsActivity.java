@@ -26,7 +26,6 @@ import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmLocationsListAdapter;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
-import static rocks.athrow.android_stock_rotation.data.Constants.ALL;
 import static rocks.athrow.android_stock_rotation.data.Constants.COOLER;
 import static rocks.athrow.android_stock_rotation.data.Constants.DRY;
 import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;

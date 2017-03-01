@@ -74,9 +74,4 @@ public class LocationRowsAdapter extends RecyclerView.Adapter<LocationRowsAdapte
             return 0;
         }
     }
-
-    private void selectRow(LocationRows row, boolean isSelected){
-        row.setSelected(isSelected);
-    }
-
 }
