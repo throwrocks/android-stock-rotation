@@ -51,7 +51,6 @@ public class LocationItem {
         this.packSize = packSize;
     }
 
-
     public String getReceivedDate() {
         return receivedDate;
     }

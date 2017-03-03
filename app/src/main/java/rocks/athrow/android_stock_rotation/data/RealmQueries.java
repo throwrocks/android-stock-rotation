@@ -13,6 +13,7 @@ import io.realm.Sort;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
+import static rocks.athrow.android_stock_rotation.data.Constants.ALL;
 import static rocks.athrow.android_stock_rotation.data.Constants.EMPTY;
 import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NAME;
 import static rocks.athrow.android_stock_rotation.data.Constants.SETTINGS_EMPLOYEE_NUMBER;
@@ -356,7 +357,7 @@ public final class RealmQueries {
             int caseQty
     ) {
         PreferencesHelper prefs = new PreferencesHelper(context);
-        int employeeNumber = prefs.loadInt(SETTINGS_EMPLOYEE_NUMBER);
+        int employeeNumber = Integer.parseInt(prefs.loadString(SETTINGS_EMPLOYEE_NUMBER, EMPTY));
         String employeeName = prefs.loadString(SETTINGS_EMPLOYEE_NAME, EMPTY);
         APIResponse apiResponse = new APIResponse();
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -583,7 +584,7 @@ public final class RealmQueries {
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Location> realmResults;
-        if (locationType.equals("All")) {
+        if (locationType.equals(ALL)) {
             realmResults = realm.where(Location.class).findAll().distinct(FIELD_ROW);
         } else {
             realmResults = realm.where(Location.class).equalTo(Location.FIELD_TYPE, locationType).findAll().distinct(FIELD_ROW).sort(FIELD_ROW);
