@@ -66,6 +66,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
     EditText mCaseQtyView;
     EditText mNewLocationView;
     LinearLayout mButtonCommit;
+    boolean isScanning;
 
     /**
      * baseSetViewMode
@@ -176,6 +177,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      */
     void initiateScan() {
         if (mScanType != null) {
+            isScanning = true;
             IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.initiateScan();
         }
@@ -227,6 +229,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      * @param intent      the intent from the barcode initiateScan
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        isScanning = false;
         if (mScanType == null) {
             return;
         }

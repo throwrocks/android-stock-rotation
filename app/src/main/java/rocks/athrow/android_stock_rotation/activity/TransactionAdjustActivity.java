@@ -290,7 +290,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
 
     @Override
     protected void onPause() {
-        if (isQtyEmpty()) {
+        if (!isScanning && isQtyEmpty()) {
             baseDeleteTransaction(mTransactionId);
         }
         super.onPause();
