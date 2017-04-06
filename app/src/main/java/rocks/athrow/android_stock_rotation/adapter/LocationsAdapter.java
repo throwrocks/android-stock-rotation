@@ -66,8 +66,9 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
                 mContext.startActivity(intent);
             }
         });
-        if ( !isPrimary ){
-            vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.secondaryText));
+        if ( isPrimary ){
+            vh.viewLocationName.setBackgroundColor(ContextCompat.getColor(mContext, R.color.highlight));
+            //vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.primaryLocation));
         }
     }
 

@@ -62,6 +62,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
     LinearLayout mButtonScanItem;
     LinearLayout mButtonScanCurrentLocation;
     LinearLayout mButtonScanNewLocation;
+    LinearLayout mButtonSetPrimaryLocation;
     EditText mCurrentLocationView;
     EditText mCaseQtyView;
     EditText mNewLocationView;
@@ -326,6 +327,11 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         } else {
             Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLength);
         }
+    }
+
+    void setPrimaryLocation(String location){
+        baseSetNewLocationView(location);
+        baseSaveTransaction();
     }
 
     /**

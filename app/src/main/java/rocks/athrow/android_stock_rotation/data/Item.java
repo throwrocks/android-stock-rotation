@@ -117,4 +117,8 @@ public class Item extends RealmObject {
     void setPrimaryLocation(String primaryLocation) {
         this.primaryLocation = primaryLocation;
     }
+
+    public String getPrimaryLocation() {
+        return primaryLocation;
+    }
 }

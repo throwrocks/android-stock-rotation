@@ -70,6 +70,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         mButtonScanItem = (LinearLayout) findViewById(R.id.scan_item);
         mButtonScanCurrentLocation = (LinearLayout) findViewById(R.id.scan_current_location);
         mButtonScanNewLocation = (LinearLayout) findViewById(R.id.scan_new_location);
+        mButtonSetPrimaryLocation = (LinearLayout) findViewById(R.id.set_primary);
         mCurrentLocationView = (EditText) findViewById(R.id.input_current_location);
         mCaseQtyView = (EditText) findViewById(R.id.input_case_qty);
         mNewLocationView = (EditText) findViewById(R.id.input_new_location);
@@ -125,6 +126,18 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
             public void onClick(View view) {
                 mScanType = SCAN_NEW_LOCATION;
                 initiateScan();
+            }
+        });
+        mButtonSetPrimaryLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( !mTagNumber.isEmpty() ){
+                    String location = RealmQueries.getItemPrimaryLocation(getApplicationContext(),mTagNumber);
+                    setPrimaryLocation(location);
+                }else{
+                    Utilities.showToast(getApplicationContext(), "Please scan an item first.", Toast.LENGTH_SHORT);
+                }
+
             }
         });
     }
