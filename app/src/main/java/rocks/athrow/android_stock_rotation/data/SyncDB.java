@@ -26,7 +26,7 @@ import static android.R.attr.name;
  */
 
 public final class SyncDB {
-    private final static String DATE_TIME_DISPLAY = "MM/dd/yy hh:mm:ss a";
+    private final static String DATE_TIME_DISPLAY = "MM/dd/yy hh:mm:ss";
     private static final String LOG_TAG = "SyncDB";
 
     public static void downloadNewRecords(Context context) {
