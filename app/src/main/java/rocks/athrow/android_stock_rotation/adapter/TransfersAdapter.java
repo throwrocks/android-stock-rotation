@@ -71,14 +71,16 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+        String WAITING = mContext.getResources().getString(R.string.waiting);
+        String POSTED = mContext.getResources().getString(R.string.posted);
         TransfersAdapter.ViewHolder vh = (TransfersAdapter.ViewHolder) viewHolder;
         Transfer transfer = getItem(position);
         Date date = transfer.getDate();
         String dateString = Utilities.getDateAsString(date, DATE_TIME_DISPLAY, null);
         boolean statusBoolean = transfer.getInit();
-        String status = "Waiting";
+        String status = WAITING;
         if ( statusBoolean ){
-            status = "Posted";
+            status = POSTED;
         }
         int sku = transfer.getSku();
         String itemDescription = transfer.getItemDescription();
@@ -95,7 +97,7 @@ public class TransfersAdapter extends RealmRecyclerViewAdapter<Transfer> {
         String caseQtyString = String.valueOf(caseQty);
         vh.viewDate.setText(dateString);
         vh.viewStatus.setText(status);
-        if ( status.equals("Waiting")){
+        if ( status.equals(WAITING)){
             vh.viewStatus.setTextColor(ContextCompat.getColor(mContext, R.color.warning));
         }else{
             vh.viewStatus.setTextColor(ContextCompat.getColor(mContext, R.color.primaryText));

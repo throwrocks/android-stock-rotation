@@ -18,9 +18,16 @@ import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 
+import static android.view.View.GONE;
+import static rocks.athrow.android_stock_rotation.data.Constants.ITEM_ID;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODE_VIEW;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_ADJUST;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_MOVING;
 import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVING;
+import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TAG_NUMBER;
+import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
  * RotationAdapter
@@ -28,11 +35,6 @@ import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_RECEIVIN
  */
 
 public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
-    private final static String ROTATION_TYPE = "type";
-    private final static String TRANSACTION_ID = "transaction_id";
-    private final static String ITEM_ID = "item_id";
-    private final static String MODE = "mode";
-    private final static String VIEW = "view";
     private final String mRotationType;
     private final Context mContext;
 
@@ -48,6 +50,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final TextView viewPackSize;
         final TextView viewReceivedDate;
         final TextView viewExpirationDate;
+        final TextView viewLocation1Label;
         final TextView viewLocation1;
         final TextView viewLocation2Label;
         final TextView viewLocation2;
@@ -62,6 +65,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             viewPackSize = (TextView) view.findViewById(R.id.transaction_pack_size);
             viewReceivedDate = (TextView) view.findViewById(R.id.transaction_received_date);
             viewExpirationDate = (TextView) view.findViewById(R.id.transaction_expiration_date);
+            viewLocation1Label = (TextView) view.findViewById(R.id.transaction_label_current_location);
             viewLocation1 = (TextView) view.findViewById(R.id.transaction_location1);
             viewLocation2Label = (TextView) view.findViewById(R.id.transaction_label_new_location);
             viewLocation2 = (TextView) view.findViewById(R.id.transaction_location2);
@@ -85,7 +89,7 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         final String itemId = transaction.getItemId();
         String sku = transaction.getSkuString();
         String description = transaction.getItemDescription();
-        String tagNumber = transaction.getTagNumber();
+        final String tagNumber = transaction.getTagNumber();
         String packSize = transaction.getPackSize();
         String receivedDate = transaction.getReceivedDate();
         String expirationDate = transaction.getExpirationDate();
@@ -100,9 +104,13 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
         vh.viewExpirationDate.setText(expirationDate);
         vh.viewLocation1.setText(locationStart);
         vh.viewCaseQty.setText(caseQty);
-        if (mRotationType.equals("Move") ||  mRotationType.equals("Receive")) {
+        if (mRotationType.equals(MODULE_MOVING) ||  mRotationType.equals(MODULE_RECEIVING)) {
             vh.viewLocation2Label.setVisibility(View.VISIBLE);
             vh.viewLocation2.setVisibility(View.VISIBLE);
+            if ( mRotationType.equals(MODULE_RECEIVING)){
+                vh.viewLocation1Label.setVisibility(GONE);
+                vh.viewLocation1.setVisibility(GONE);
+            }
             if (locationEnd.isEmpty()) {
                 vh.viewLocation2.setTextColor(ContextCompat.getColor(mContext, R.color.warning));
                 vh.viewLocation2.setTypeface(null, Typeface.ITALIC);
@@ -112,8 +120,8 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
             }
 
         } else {
-            vh.viewLocation2Label.setVisibility(View.GONE);
-            vh.viewLocation2.setVisibility(View.GONE);
+            vh.viewLocation2Label.setVisibility(GONE);
+            vh.viewLocation2.setVisibility(GONE);
         }
         vh.viewButtons.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,10 +140,11 @@ public class RotationAdapter extends RealmRecyclerViewAdapter<Transaction> {
                     default:
                         intent = new Intent(mContext, TransactionInActivity.class);
                 }
-                intent.putExtra(ROTATION_TYPE, mRotationType);
+                intent.putExtra(TAG_NUMBER, tagNumber);
+                intent.putExtra(MODULE_TYPE, mRotationType);
                 intent.putExtra(TRANSACTION_ID, id);
                 intent.putExtra(ITEM_ID, itemId);
-                intent.putExtra(MODE, VIEW);
+                intent.putExtra(MODE, MODE_VIEW);
                 mContext.startActivity(intent);
             }
         });

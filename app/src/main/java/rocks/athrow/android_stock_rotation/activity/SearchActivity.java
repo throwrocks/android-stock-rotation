@@ -134,7 +134,8 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<LocationItem> items) {
             super.onPostExecute(items);
             if (items == null) {
-                Utilities.showToast(getApplicationContext(), "Item not found.", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(),
+                        getResources().getString(R.string.item_not_found), Toast.LENGTH_SHORT);
             } else {
                 setupItems(items);
             }

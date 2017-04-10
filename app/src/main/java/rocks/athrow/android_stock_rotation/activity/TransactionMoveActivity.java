@@ -1,11 +1,10 @@
 package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Context;
-
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
@@ -46,7 +45,7 @@ import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 public class TransactionMoveActivity extends TransactionBaseActivity {
     private String mCurrentLocation;
-    private String mTagNumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +79,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
             ab.setTitle(MODULE_MOVING);
         }
         setCurrentMode();
-        if ( mCurrentLocation != null && mTagNumber != null){
+        if (mCurrentLocation != null && mTagNumber != null) {
             scanItem(mTagNumber);
             scanCurrentLocation(mCurrentLocation, NAME);
         }
@@ -131,11 +130,12 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         mButtonSetPrimaryLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( !mTagNumber.isEmpty() ){
-                    String location = RealmQueries.getItemPrimaryLocation(getApplicationContext(),mTagNumber);
+                if (mTagNumber != null && !mTagNumber.isEmpty()) {
+                    String location = RealmQueries.getItemPrimaryLocation(getApplicationContext(), mTagNumber);
                     setPrimaryLocation(location);
-                }else{
-                    Utilities.showToast(getApplicationContext(), "Please scan an item first.", Toast.LENGTH_SHORT);
+                } else {
+                    Utilities.showToast(getApplicationContext(),
+                            getResources().getString(R.string.scan_item_first), Toast.LENGTH_SHORT);
                 }
 
             }
@@ -169,6 +169,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
      * 4. Set the item views (sku, item desc., etc)
      */
     private void setTransactionViews() {
+        Context context = getApplicationContext();
         Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
         if (transaction != null) {
             baseSetItemViews(
@@ -179,23 +180,28 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate()
             );
-            baseSetCurrentLocationView(transaction.getLocationStart());
-            baseSetNewLocationView(transaction.getLocationEnd());
+            boolean currentIsPrimary = RealmQueries.isLocationPrimary(context, transaction.getLocationStart());
+            boolean newIsPrimary = RealmQueries.isLocationPrimary(context, transaction.getLocationEnd());
+            baseSetCurrentLocationView(transaction.getLocationStart(), currentIsPrimary);
+            baseSetNewLocationView(transaction.getLocationEnd(), newIsPrimary);
             baseSetCaseQtyView(transaction.getQtyCasesString());
         }
     }
+
     private void moveButton() {
+        final Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Complete the move of this item?")
-                .setTitle("Move Item");
-        builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
+        builder.setMessage(res.getString(R.string.move_complete_moving))
+                .setTitle(res.getString(R.string.move_item));
+        builder.setPositiveButton(res.getString(R.string.commit), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 commitTransaction();
-                Utilities.showToast(getApplicationContext(), "Move Completed!", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(),
+                        res.getString(R.string.move_completed), Toast.LENGTH_SHORT);
                 finish();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
@@ -265,7 +271,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
                         invalidateOptionsMenu();
                     } else {
                         Utilities.showToast(getApplicationContext(),
-                                "Invalid record. The item, the current location, and the quantity are required.",
+                                getResources().getString(R.string.move_invalid_record),
                                 Toast.LENGTH_SHORT);
                     }
                 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,6 +59,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
     String mMode;
     String mTransactionId;
     String mItemId;
+    String mTagNumber;
     private int mReceivingId;
     LinearLayout mButtonScanItem;
     LinearLayout mButtonScanCurrentLocation;
@@ -82,6 +84,9 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
         if (mButtonScanNewLocation != null) {
             mButtonScanNewLocation.setVisibility(GONE);
+        }
+        if (mButtonSetPrimaryLocation!=null){
+            mButtonSetPrimaryLocation.setVisibility(GONE);
         }
         if (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_RECEIVING)) {
             if (mButtonCommit != null && (mNewLocationView != null && !mNewLocationView.getText().toString().isEmpty())) {
@@ -110,6 +115,9 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
         if (mButtonScanNewLocation != null) {
             mButtonScanNewLocation.setVisibility(VISIBLE);
+        }
+        if (mButtonSetPrimaryLocation!=null){
+            mButtonSetPrimaryLocation.setVisibility(VISIBLE);
         }
         if (mButtonCommit != null) {
             mButtonCommit.setVisibility(GONE);
@@ -158,8 +166,13 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      *
      * @param location the transaction's current location (for move and stage)
      */
-    void baseSetCurrentLocationView(String location) {
+    void baseSetCurrentLocationView(String location, boolean isPrimary) {
         mCurrentLocationView.setText(location);
+        if ( isPrimary ){
+            mCurrentLocationView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.primaryLocation));
+        }else{
+            mCurrentLocationView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.primaryText));;
+        }
     }
 
     /**
@@ -167,8 +180,13 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      *
      * @param location the transaction's new location (for receive and move)
      */
-    void baseSetNewLocationView(String location) {
+    void baseSetNewLocationView(String location, boolean isPrimary) {
         mNewLocationView.setText(location);
+        if ( isPrimary ){
+            mNewLocationView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.primaryLocation));
+        }else{
+            mNewLocationView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.primaryText));;
+        }
     }
 
 
@@ -264,6 +282,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (items.size() > 0) {
             Item record = items.get(0);
             mItemId = record.getId();
+            mTagNumber = record.getTagNumber();
             String sku = Integer.toString(record.getSKU());
             String description = record.getDescription();
             String tagNumber = record.getTagNumber();
@@ -307,7 +326,8 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (currentLocations != null && currentLocations.size() > 0) {
             Location record = currentLocations.get(0);
             String location = record.getLocation();
-            baseSetCurrentLocationView(location);
+            boolean isPrimary = record.isPrimary();
+            baseSetCurrentLocationView(location, isPrimary);
             baseSaveTransaction();
         } else {
             Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLength);
@@ -322,7 +342,8 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (newLocations.size() > 0) {
             Location record = newLocations.get(0);
             String location = record.getLocation();
-            baseSetNewLocationView(location);
+            boolean isPrimary = record.isPrimary();
+            baseSetNewLocationView(location, isPrimary);
             baseSaveTransaction();
         } else {
             Utilities.showToast(context, res.getString(R.string.error_location_not_found), toastLength);
@@ -330,7 +351,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
     }
 
     void setPrimaryLocation(String location){
-        baseSetNewLocationView(location);
+        baseSetNewLocationView(location, true);
         baseSaveTransaction();
     }
 

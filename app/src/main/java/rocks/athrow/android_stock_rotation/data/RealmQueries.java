@@ -32,6 +32,7 @@ public final class RealmQueries {
     /*--------------------------------------------------------------------------------------------
      GENERAL
      ---------------------------------------------------------------------------------------------*/
+
     /**
      * deleteDatabase
      *
@@ -249,7 +250,7 @@ public final class RealmQueries {
                 transaction.setExpirationDate(expirationDate);
             }
         }
-        int caseQty;
+        int caseQty ;
         if (caseQtyString != null && !caseQtyString.isEmpty()) {
             caseQty = Integer.parseInt(caseQtyString);
             transaction.setQtyCases(caseQty);
@@ -265,10 +266,14 @@ public final class RealmQueries {
             valid = false;
         } else if (transaction.getItemId() == null || transaction.getItemId().isEmpty()) {
             valid = false;
-        } else if (transaction.getType1().equals("Moving") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty()) || (transaction.getQtyCases() == 0)) {
-            valid = false;
-        } else if (transaction.getType1().equals("Adjust") && (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty())) {
-            valid = false;
+        } else if (transaction.getType1().equals("Move")) {
+            if (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty() || transaction.getQtyCases() == 0) {
+                valid = false;
+            }
+        } else if (transaction.getType1().equals("Adjust")) {
+            if (transaction.getLocationStart() == null || transaction.getLocationStart().isEmpty()) {
+                valid = false;
+            }
         }
         transaction.setIsValid(valid);
         realm.copyToRealmOrUpdate(transaction);
@@ -315,6 +320,7 @@ public final class RealmQueries {
     /*--------------------------------------------------------------------------------------------
      TRANSFERS
      ---------------------------------------------------------------------------------------------*/
+
     /**
      * getTransactions
      * A method to get all transfer records
@@ -488,11 +494,12 @@ public final class RealmQueries {
 
     /**
      * getItemPrimaryLocation
+     *
      * @param context   required context object
      * @param tagNumber the item's tag number
      * @return the item's primary location
      */
-    public static String getItemPrimaryLocation(Context context, String tagNumber){
+    public static String getItemPrimaryLocation(Context context, String tagNumber) {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -621,6 +628,16 @@ public final class RealmQueries {
             return rows;
         } else {
             return null;
+        }
+    }
+
+    public static boolean isLocationPrimary(Context context, String location) {
+        RealmResults<Location> locations = RealmQueries.getLocationByName(context, location);
+        int size = locations.size();
+        if (size > 0) {
+            return locations.get(0).isPrimary();
+        } else {
+            return false;
         }
     }
 

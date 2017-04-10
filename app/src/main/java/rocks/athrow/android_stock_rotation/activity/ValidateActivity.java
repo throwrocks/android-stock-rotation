@@ -149,11 +149,11 @@ public class ValidateActivity extends AppCompatActivity {
         }
         String contents = scanResult.getContents();
         if (contents == null) {
-            Utilities.showToast(getApplicationContext(), "Item not found.", Toast.LENGTH_SHORT);
+            Utilities.showToast(getApplicationContext(),
+                    getResources().getString(R.string.item_not_found), Toast.LENGTH_SHORT);
             return;
         }
         mBarcodeContents = contents;
-        Log.e("Barcode", contents);
         QueryAPI queryAPI = new QueryAPI();
         queryAPI.execute(mScanType);
     }

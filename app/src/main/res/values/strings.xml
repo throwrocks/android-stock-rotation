@@ -38,8 +38,33 @@
     <string name="menu_add_search">Search</string>
     <string name="menu_add_settings">Settings</string>
     <!-- Message Values -->
+    <string name="never">Never</string>
+    <string name="scan_item_first">Please scan an item first.</string>
+    <string name="item_not_found">Item not found.</string>
     <string name="hint_find_items"><small>Enter a SKU or an Item Description</small></string>
     <string name="rotation_no_items">You don\'t have any items in the queue.</string>
+    <string name="unregistered_device">This device is not registered. Please enter your API Key.</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_database">Delete database</string>
+    <string name="delete_all_records">Delete all the records in the database?</string>
+    <string name="delete">Delete</string>
+    <string name="database_deleted">Database Deleted!</string>
+    <string name="api_key_not_found">API key not found.</string>
+    <string name="api_key_validated">API key validated!</string>
+    <string name="enter_case_qty">Please enter a case quantity.</string>
+    <string name="adjust_same_quantities">The new quantity and the existing quantity are the same.</string>
+    <string name="adjust_invalid_record">Invalid record. The item, the current location, and the quantity are required.</string>
+    <string name="receive_commit">Commit receiving?</string>
+    <string name="receive_item">Receive Item</string>
+    <string name="commit">Commit</string>
+    <string name="receive_complete">Receiving Completed!</string>
+    <string name="receive_invalid_record">Invalid record. The item, the new location, and the quantity are required.</string>
+    <string name="move_complete_moving">Complete moving this item?</string>
+    <string name="move_item">Move Item</string>
+    <string name="move_completed">Move Completed!</string>
+    <string name="move_invalid_record">Invalid record. The item, the current location, and the quantity are required.</string>
+    <string name="waiting">Waiting</string>
+    <string name="posted">Posted</string>
     <!-- Dummy values-->
     <string name="no_item_selected">No item selected</string>
     <string name="n_a">N/A</string>

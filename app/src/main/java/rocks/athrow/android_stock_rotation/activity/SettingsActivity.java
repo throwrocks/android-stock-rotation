@@ -2,6 +2,7 @@ package rocks.athrow.android_stock_rotation.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -103,13 +104,14 @@ public class SettingsActivity extends PreferenceActivity {
 
 
     private void deleteDatabase() {
+        final Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Delete all records in the device?")
-                .setTitle("Delete Database");
-        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        builder.setMessage(res.getString(R.string.delete_all_records))
+                .setTitle(res.getString(R.string.delete_database));
+        builder.setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 RealmQueries.deleteDatabase(getApplicationContext());
-                Utilities.showToast(getApplicationContext(), "Database deleted!", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(), res.getString(R.string.database_deleted), Toast.LENGTH_SHORT);
                 PreferencesHelper prefs = new PreferencesHelper(getApplicationContext());
                 prefs.deleteKey(LOCATIONS_FILTER);
                 prefs.deleteKey(LOCATIONS_FILTER_PRIMARY_ONLY);
@@ -119,7 +121,7 @@ public class SettingsActivity extends PreferenceActivity {
                 prefs.deleteKey(LAST_SYNC);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
@@ -160,6 +162,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         protected void onPostExecute(String[] result) {
             super.onPostExecute(result);
+            Resources res = getResources();
             String employeeNumber = result[0];
             String employeeName = result[1];
             boolean valid;
@@ -177,11 +180,13 @@ public class SettingsActivity extends PreferenceActivity {
             if (!valid) {
                 updatePreference(SETTINGS_EMPLOYEE_NAME, EMPTY);
                 updatePreference(SETTINGS_EMPLOYEE_NUMBER, EMPTY);
-                Utilities.showToast(getApplicationContext(), "API Key not found", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(),
+                        res.getString(R.string.api_key_not_found), Toast.LENGTH_SHORT);
             } else {
                 updatePreference(SETTINGS_EMPLOYEE_NAME, employeeName);
                 updatePreference(SETTINGS_EMPLOYEE_NUMBER, employeeNumber);
-                Utilities.showToast(getApplicationContext(), "API Key validated!", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(),
+                        res.getString(R.string.api_key_validated), Toast.LENGTH_SHORT);
             }
         }
     }

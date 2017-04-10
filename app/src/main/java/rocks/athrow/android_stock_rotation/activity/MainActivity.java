@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openRegistration() {
-        Utilities.showToast(getApplicationContext(), "This device is not registered. Please enter your API Key.", Toast.LENGTH_SHORT);
+        Utilities.showToast(getApplicationContext(), getResources().getString(R.string.unregistered_device), Toast.LENGTH_SHORT);
         Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
         startActivity(intent);
     }
@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateSyncDate() {
         PreferencesHelper preferencesHelper = new PreferencesHelper(getApplicationContext());
-        String lastSyncString = preferencesHelper.loadString(LAST_SYNC, "Never");
+        String lastSyncString = preferencesHelper.loadString(LAST_SYNC,
+                getResources().getString(R.string.never));
         TextView syncDate = (TextView) findViewById(R.id.text_sync);
         syncDate.setText(lastSyncString);
     }

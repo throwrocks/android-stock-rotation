@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.activity.LocationDetailActivity;
-import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.Constants;
+import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter;
 
 /**
@@ -21,7 +21,7 @@ import rocks.athrow.android_stock_rotation.realmadapter.RealmRecyclerViewAdapter
  * Created by jose on 1/15/17.
  */
 
-public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
+public class LocationsAdapter extends RealmRecyclerViewAdapter<Location> {
     private final Context mContext;
 
     public LocationsAdapter(Context context) {
@@ -66,9 +66,11 @@ public class LocationsAdapter  extends RealmRecyclerViewAdapter<Location> {
                 mContext.startActivity(intent);
             }
         });
-        if ( isPrimary ){
-            vh.viewLocationName.setBackgroundColor(ContextCompat.getColor(mContext, R.color.highlight));
-            //vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.primaryLocation));
+        if (isPrimary) {
+            vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.primaryLocation));
+        } else {
+            vh.viewLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.primaryText));
+            ;
         }
     }
 

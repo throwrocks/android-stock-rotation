@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +31,7 @@ import static rocks.athrow.android_stock_rotation.data.Constants.MODULE_TYPE;
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_ITEM;
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_NEW_LOCATION;
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TAG_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
@@ -48,6 +50,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
             mTransactionId = intent.getStringExtra(TRANSACTION_ID);
             mItemId = intent.getStringExtra(ITEM_ID);
             mMode = intent.getStringExtra(MODE);
+            mTagNumber = intent.getStringExtra(TAG_NUMBER);
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         mInputItemSku = (TextView) findViewById(R.id.input_item_sku);
@@ -59,6 +62,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
         mNewLocationView = (EditText) findViewById(R.id.input_new_location);
         mButtonScanItem = (LinearLayout) findViewById(R.id.scan_item);
         mButtonScanNewLocation = (LinearLayout) findViewById(R.id.scan_new_location);
+        mButtonSetPrimaryLocation = (LinearLayout) findViewById(R.id.set_primary);
         mCaseQtyView = (EditText) findViewById(R.id.input_case_qty);
         mButtonCommit = (LinearLayout) findViewById(R.id.button_receive);
         ActionBar ab = getSupportActionBar();
@@ -103,6 +107,19 @@ public class TransactionInActivity extends TransactionBaseActivity {
                 initiateScan();
             }
         });
+        mButtonSetPrimaryLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTagNumber != null && !mTagNumber.isEmpty()) {
+                    String location = RealmQueries.getItemPrimaryLocation(getApplicationContext(), mTagNumber);
+                    setPrimaryLocation(location);
+                } else {
+                    Utilities.showToast(getApplicationContext(),
+                            getResources().getString(R.string.scan_item_first), Toast.LENGTH_SHORT);
+                }
+
+            }
+        });
 
     }
 
@@ -142,23 +159,26 @@ public class TransactionInActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate()
             );
-            baseSetNewLocationView(transaction.getLocationEnd());
+            boolean newIsPrimary = RealmQueries.getLocationByName(getApplicationContext(), transaction.getLocationEnd()).get(0).isPrimary();
+            baseSetNewLocationView(transaction.getLocationEnd(), newIsPrimary);
             baseSetCaseQtyView(transaction.getQtyCasesString());
         }
     }
 
     private void receiveButton() {
+        final Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Commit receiving?")
-                .setTitle("Receive Item");
-        builder.setPositiveButton("Commit", new DialogInterface.OnClickListener() {
+        builder.setMessage(res.getString(R.string.receive_commit))
+                .setTitle(res.getString(R.string.receive_item));
+        builder.setPositiveButton(res.getString(R.string.commit), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 commitTransaction();
-                Utilities.showToast(getApplicationContext(), "Receiving Completed!", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(),
+                        res.getString(R.string.receive_complete), Toast.LENGTH_SHORT);
                 finish();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
@@ -211,7 +231,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
                         invalidateOptionsMenu();
                     } else {
                         Utilities.showToast(getApplicationContext(),
-                                "Invalid record. The item, the new location, and the quantity are required.",
+                                getResources().getString(R.string.receive_invalid_record),
                                 Toast.LENGTH_SHORT);
                     }
                 }
@@ -228,6 +248,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mScanType = savedInstanceState.getString(SCAN_TYPE);

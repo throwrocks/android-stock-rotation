@@ -15,13 +15,14 @@ import rocks.athrow.android_stock_rotation.adapter.LocationDetailsAdapter;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 
+import static rocks.athrow.android_stock_rotation.data.Constants.LOCATION;
+
 /**
  * LocationDetailActivity
  * Created by jose on 1/15/17.
  */
 
 public class LocationDetailActivity extends AppCompatActivity {
-    private static final String LOCATION = "location";
     private String mLocation;
 
     @Override

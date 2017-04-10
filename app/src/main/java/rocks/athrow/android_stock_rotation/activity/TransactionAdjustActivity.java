@@ -3,6 +3,7 @@ package rocks.athrow.android_stock_rotation.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -148,7 +149,8 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate()
             );
-            baseSetCurrentLocationView(transaction.getLocationStart());
+            boolean isPrimary = RealmQueries.getLocationByName(getApplicationContext(), transaction.getLocationStart()).get(0).isPrimary();
+            baseSetCurrentLocationView(transaction.getLocationStart(), isPrimary);
             baseSetCaseQtyView(transaction.getQtyCasesString());
         }
     }
@@ -180,13 +182,14 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
      * A method to commit the adjust transaction
      */
     private boolean commitTransaction() {
+        Resources res = getResources();
         Context context = getApplicationContext();
         Transaction transaction = RealmQueries.getTransaction(context, mTransactionId);
         if (transaction != null && transaction.getIsValidRecord()) {
             int newCaseQty = transaction.getQtyCases();
             int remainingQty = RealmQueries.getCountCasesByLocation(context, mCurrentLocation, mItemId).intValue();
             if ( newCaseQty == remainingQty ){
-                Utilities.showToast(getApplicationContext(), "The new quantity and the existing quantity are the same.", Toast.LENGTH_SHORT);
+                Utilities.showToast(getApplicationContext(), res.getString(R.string.adjust_same_quantities), Toast.LENGTH_SHORT);
                 return false;
             } else if (newCaseQty > remainingQty) {
                 RealmQueries.saveTransfer(
@@ -246,7 +249,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
             case R.id.scan_save:
                 if (isQtyEmpty()) {
                     Utilities.showToast(getApplicationContext(),
-                            "Please enter a case quantity.",
+                            getResources().getString(R.string.enter_case_qty),
                             Toast.LENGTH_SHORT);
                 } else {
                     int save = baseSaveTransaction();
@@ -258,7 +261,7 @@ public class TransactionAdjustActivity extends TransactionBaseActivity {
                             invalidateOptionsMenu();
                         } else {
                             Utilities.showToast(getApplicationContext(),
-                                    "Invalid record. The item, the current location, and the quantity are required.",
+                                    getResources().getString(R.string.adjust_invalid_record),
                                     Toast.LENGTH_SHORT);
                         }
                     }
