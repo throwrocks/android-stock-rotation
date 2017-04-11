@@ -39,6 +39,7 @@ import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_CURRENT_LO
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_ITEM;
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_NEW_LOCATION;
 import static rocks.athrow.android_stock_rotation.data.Constants.SCAN_TYPE;
+import static rocks.athrow.android_stock_rotation.data.Constants.TAG_NUMBER;
 import static rocks.athrow.android_stock_rotation.data.Constants.TRANSACTION_ID;
 
 /**
@@ -432,6 +433,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         outState.putString(SCAN_TYPE, mScanType);
         outState.putString(TRANSACTION_ID, mTransactionId);
         outState.putString(ITEM_ID, mItemId);
+        outState.putString(TAG_NUMBER, mTagNumber);
         outState.putString(MODE, mMode);
         super.onSaveInstanceState(outState);
     }

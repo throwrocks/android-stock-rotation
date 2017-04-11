@@ -295,6 +295,7 @@ public class TransactionMoveActivity extends TransactionBaseActivity {
         mBarcodeContents = savedInstanceState.getString(BARCODE_CONTENTS);
         mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
         mItemId = savedInstanceState.getString(ITEM_ID);
+        mTagNumber = savedInstanceState.getString(TAG_NUMBER);
         mMode = savedInstanceState.getString(MODE);
         setCurrentMode();
         super.onRestoreInstanceState(savedInstanceState);

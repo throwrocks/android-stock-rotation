@@ -15,7 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
+import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.data.Transaction;
 import rocks.athrow.android_stock_rotation.util.Utilities;
@@ -149,6 +151,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
      * 4. Set the item views (sku, item desc., etc)
      */
     private void setTransactionViews() {
+        boolean newIsPrimary = false;
         Transaction transaction = RealmQueries.getTransaction(getApplicationContext(), mTransactionId);
         if (transaction != null) {
             baseSetItemViews(
@@ -159,7 +162,10 @@ public class TransactionInActivity extends TransactionBaseActivity {
                     transaction.getReceivedDate(),
                     transaction.getExpirationDate()
             );
-            boolean newIsPrimary = RealmQueries.getLocationByName(getApplicationContext(), transaction.getLocationEnd()).get(0).isPrimary();
+            RealmResults<Location> locations =  RealmQueries.getLocationByName(getApplicationContext(), transaction.getLocationEnd());
+            if ( locations != null && locations.size() > 0 ){
+                newIsPrimary = locations.get(0).isPrimary();
+            }
             baseSetNewLocationView(transaction.getLocationEnd(), newIsPrimary);
             baseSetCaseQtyView(transaction.getQtyCasesString());
         }
@@ -255,6 +261,7 @@ public class TransactionInActivity extends TransactionBaseActivity {
         mBarcodeContents = savedInstanceState.getString(BARCODE_CONTENTS);
         mTransactionId = savedInstanceState.getString(TRANSACTION_ID);
         mItemId = savedInstanceState.getString(ITEM_ID);
+        mTagNumber = savedInstanceState.getString(TAG_NUMBER);
         mMode = savedInstanceState.getString(MODE);
         setCurrentMode();
         super.onRestoreInstanceState(savedInstanceState);
