@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
+import rocks.athrow.android_stock_rotation.data.SyncDB;
 import rocks.athrow.android_stock_rotation.service.SyncDBJobService;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mSyncIcon;
     private Runnable mSyncStatusRunnable;
     private Handler mSyncStatusHandler;
+    private boolean isUpdateThreadRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
         LinearLayout moduleValidate = (LinearLayout) findViewById(R.id.module_validate);
+        LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
 
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +107,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ValidateActivity.class);
                 startActivity(intent);
+            }
+        });
+        moduleSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncButton();
+                Log.e("lel", "lul");
+                updateSyncDate();
+                Log.e("lil", "lol");
             }
         });
         updateSyncDate();
@@ -165,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         mSyncStatusRunnable = new Runnable() {
             @Override
             public void run() {
-                if (isMyServiceRunning()) {
+                if (isMyServiceRunning() || isUpdateThreadRunning) {
                     updateSyncView(true);
                 } else {
                     updateSyncView(false);
@@ -175,6 +188,28 @@ public class MainActivity extends AppCompatActivity {
         };
         mSyncStatusHandler.post(mSyncStatusRunnable);
     }
+
+    private void syncButton() {
+        Context context = getApplicationContext();
+        boolean isConnected = Utilities.isConnected(context);
+        if (isConnected) {
+            isUpdateThreadRunning = true;
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    Context context = getApplicationContext();
+                    SyncDB.postTransfers(context);
+                    SyncDB.downloadNewRecords(context);
+                    isUpdateThreadRunning = false;
+                }
+            };
+            thread.start();
+        } else {
+            updateSyncView(false);
+            Utilities.showToast(context, "You are not connected to the network.", Toast.LENGTH_SHORT);
+        }
+    }
+
 
     /**
      * startRotationActivity

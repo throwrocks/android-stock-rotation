@@ -76,6 +76,9 @@ public class SettingsActivity extends PreferenceActivity {
                 String apiKey = newValue.toString();
                 if (!apiKey.isEmpty()) {
                     validateKeyTask.execute(newValue.toString());
+                }else{
+                    updatePreference(SETTINGS_EMPLOYEE_NAME, EMPTY);
+                    updatePreference(SETTINGS_EMPLOYEE_NUMBER, EMPTY);
                 }
                 updatePreference(SETTINGS_API_KEY, newValue.toString());
                 return false;

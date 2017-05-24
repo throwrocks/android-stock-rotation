@@ -190,7 +190,6 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * initiateScan
      * Initiates the barcode scanner app

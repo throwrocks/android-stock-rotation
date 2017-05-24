@@ -186,7 +186,7 @@
 
         <LinearLayout
             android:id="@+id/module_sync"
-            style="@style/syncDisplay"
+            style="@style/mainButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">

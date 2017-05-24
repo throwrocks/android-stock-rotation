@@ -1,6 +1,8 @@
 package rocks.athrow.android_stock_rotation.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +102,21 @@ public final class Utilities {
                 view.setBackground(ContextCompat.getDrawable(context, R.drawable.badge_validate_mismatch));
                 break;
         }
+    }
+
+    /**
+     * isConnected
+     * This method is used to check for network connectivity before attempting a network call
+     *
+     * @param context the activity from where the method is called
+     * @return true for is connected and false for is not connected
+     */
+    public static boolean isConnected(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
 }

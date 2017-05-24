@@ -20,7 +20,6 @@ public class SyncDBJobService extends JobService {
         return true;
     }
 
-
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         return true;
