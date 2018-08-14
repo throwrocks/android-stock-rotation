@@ -30,7 +30,8 @@ public final class SyncDB {
     private static final String LOG_TAG = "SyncDB";
 
     public static void downloadNewRecords(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -71,7 +72,8 @@ public final class SyncDB {
     }
 
     public static void postTransfers(Context context){
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -103,7 +105,8 @@ public final class SyncDB {
     }
 
     private static void updateDB(Context context, String type, String responseText) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();

@@ -19,8 +19,8 @@ import io.realm.RealmResults;
  * http://gradlewhy.ghost.io/realm-results-with-recyclerview/
  */
 class RealmModelAdapter<T extends RealmObject> extends RealmBaseAdapter<T> {
-    RealmModelAdapter(Context context, RealmResults<T> realmResults) {
-        super(context, realmResults);
+    RealmModelAdapter(RealmResults<T> realmResults) {
+        super(realmResults);
     }
 
     @Override
