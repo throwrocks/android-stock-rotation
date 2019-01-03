@@ -17,7 +17,7 @@ import rocks.athrow.android_stock_rotation.BuildConfig;
  * Created by joselopez on 1/9/17.
  */
 
-public final class API {
+public final class APIRestFM {
     private static final String API_HOST = BuildConfig.API_HOST;
     private static final String API_KEY = BuildConfig.API_KEY;
     private static final String API_GET_ITEMS = API_HOST + "/script/api_get_items/items.json?RFMkey=" + API_KEY;
@@ -29,8 +29,8 @@ public final class API {
     private static final String API_INIT_TRANSFER = API_HOST + "/script/api_init_item_locations/transfers.json?RFMkey=" + API_KEY;
     private static final String API_VALIDATE_KEY = API_HOST + "/script/api_validate_key/api_keys.json?RFMkey=" + API_KEY;
 
-    private API() {
-        throw new AssertionError("No API instances for you!");
+    private APIRestFM() {
+        throw new AssertionError("No APIRestFM instances for you!");
     }
 
     /**

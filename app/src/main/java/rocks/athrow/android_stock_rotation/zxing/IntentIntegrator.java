@@ -82,7 +82,7 @@ import java.util.Map;
  *
  * <p>Finally, you can use {@link #addExtra(String, Object)} to add more parameters to the Intent used
  * to invoke the scanner. This can be used to set additional options not directly exposed by this
- * simplified API.</p>
+ * simplified APIRestFM.</p>
  *
  * <p>By default, this will only allow applications that are known to respond to this intent correctly
  * do so. The apps that are allowed to response can be set with {@link #setTargetApplications(List)}.

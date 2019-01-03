@@ -7,7 +7,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.APIRestFM;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
 import static junit.framework.Assert.assertTrue;
@@ -41,7 +41,7 @@ public class PostUnitTests extends Robolectric {
                         "\"caseQty\":\"114\"}" +
                         "]" +
                         "}";
-        APIResponse apiResponse = API.postTransfer(transferJSON);
+        APIResponse apiResponse = APIRestFM.postTransfer(transferJSON);
         System.out.println(apiResponse.getResponseText());
         assertTrue(apiResponse.getResponseCode() == 201);
 

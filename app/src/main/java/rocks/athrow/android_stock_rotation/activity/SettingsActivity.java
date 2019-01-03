@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.APIRestFM;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.data.ParseJSON;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
@@ -143,7 +143,7 @@ public class SettingsActivity extends PreferenceActivity {
         protected String[] doInBackground(String... params) {
             String[] result = new String[3];
             int key = Integer.parseInt(params[0]);
-            APIResponse apiResponse = API.validateKey(key);
+            APIResponse apiResponse = APIRestFM.validateKey(key);
             int responseCode = apiResponse.getResponseCode();
             if (responseCode == 200) {
                 try {

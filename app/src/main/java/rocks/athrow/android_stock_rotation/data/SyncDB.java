@@ -12,7 +12,7 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
-import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.APIRestFM;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
@@ -54,9 +54,9 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-        APIResponse itemsResponse = API.getItems(itemSerialNumber);
-        APIResponse transfersResponse = API.getTransfers(transfersSerialNumber);
-        APIResponse locationsResponse = API.getLocations(locationSerialNumber);
+        APIResponse itemsResponse = APIRestFM.getItems(itemSerialNumber);
+        APIResponse transfersResponse = APIRestFM.getTransfers(transfersSerialNumber);
+        APIResponse locationsResponse = APIRestFM.getLocations(locationSerialNumber);
         if (itemsResponse.getResponseCode() == 200) {
             updateDB(context, "items", itemsResponse.getResponseText());
         }
@@ -86,7 +86,7 @@ public final class SyncDB {
                 Transfer transfer = transfers.get(i);
                 String json = transfers.get(i).getJSON();
                 Log.e(LOG_TAG, "JSON : " + json);
-                APIResponse apiResponse = API.postTransfer(json);
+                APIResponse apiResponse = APIRestFM.postTransfer(json);
                 Log.e(LOG_TAG, "Response Code: " + apiResponse.getResponseCode());
                 if ( apiResponse.getResponseCode() == 201){
                     transfer.setItemLocationKey();
@@ -98,7 +98,7 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-        int responseCode = API.initTransfers().getResponseCode();
+        int responseCode = APIRestFM.initTransfers().getResponseCode();
         Log.e(LOG_TAG, "Init Transfers: " + responseCode);
     }
 

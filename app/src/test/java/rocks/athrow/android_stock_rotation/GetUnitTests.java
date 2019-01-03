@@ -12,7 +12,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.APIRestFM;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 
 import static junit.framework.Assert.assertTrue;
@@ -29,13 +29,13 @@ public class GetUnitTests extends Robolectric {
     private APIResponse mTransfers = null;
 
     private APIResponse getItems(int lastSerialNumber) {
-        return API.getItems(lastSerialNumber);
+        return APIRestFM.getItems(lastSerialNumber);
     }
     private APIResponse getLocations(int lastSerialNumber) {
-        return API.getLocations(lastSerialNumber);
+        return APIRestFM.getLocations(lastSerialNumber);
     }
     private APIResponse getTransfers(int lastSerialNumber) {
-        return API.getTransfers(lastSerialNumber);
+        return APIRestFM.getTransfers(lastSerialNumber);
     }
     @Before
     public void setUp() throws Exception {

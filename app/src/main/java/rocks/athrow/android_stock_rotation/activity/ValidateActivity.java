@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.ValidateAdapter;
-import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.APIRestFM;
 import rocks.athrow.android_stock_rotation.api.APIResponse;
 import rocks.athrow.android_stock_rotation.data.Comparison;
 import rocks.athrow.android_stock_rotation.data.Item;
@@ -172,7 +171,7 @@ public class ValidateActivity extends AppCompatActivity {
                 case VALIDATE_TYPE_TAG:
                     mInputText = searchCriteria;
                     Comparison tagComparison = new Comparison();
-                    APIResponse tagAPIResponse = API.getItemByTag(searchCriteria);
+                    APIResponse tagAPIResponse = APIRestFM.getItemByTag(searchCriteria);
                     String tagResponseText = tagAPIResponse.getResponseText();
                     edisonResults = ParseJSON.getJSONArray(tagResponseText);
                     if (edisonResults == null || edisonResults.length() == 0) {
@@ -202,7 +201,7 @@ public class ValidateActivity extends AppCompatActivity {
                     if (sku == 0) {
                         return results;
                     }
-                    APIResponse skuAPIResponse = API.getItemBySKU(sku);
+                    APIResponse skuAPIResponse = APIRestFM.getItemBySKU(sku);
                     String skuResponseText = skuAPIResponse.getResponseText();
                     edisonResults = ParseJSON.getJSONArray(skuResponseText);
                     if (edisonResults == null || edisonResults.length() == 0) {

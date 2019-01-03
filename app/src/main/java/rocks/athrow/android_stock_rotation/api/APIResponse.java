@@ -15,7 +15,7 @@ public final class APIResponse {
     /**
      * setResponseCode
      *
-     * @param responseCode the API's response code number
+     * @param responseCode the APIRestFM's response code number
      */
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
@@ -24,7 +24,7 @@ public final class APIResponse {
     /**
      * setResponseText
      *
-     * @param responseText the API's response text
+     * @param responseText the APIRestFM's response text
      */
     public void setResponseText(String responseText) {
         this.responseText = responseText;
@@ -33,7 +33,7 @@ public final class APIResponse {
     /**
      * getResponseCode
      *
-     * @return the API's response code number
+     * @return the APIRestFM's response code number
      */
     public int getResponseCode() {
         return responseCode;
@@ -42,7 +42,7 @@ public final class APIResponse {
     /**
      * getResponseText
      *
-     * @return the API's response text
+     * @return the APIRestFM's response text
      */
     public String getResponseText() {
         return responseText;
