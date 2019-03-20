@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout moduleAdjust = (LinearLayout) findViewById(R.id.module_adjust);
         LinearLayout moduleTransfers = (LinearLayout) findViewById(R.id.module_transfers);
         LinearLayout moduleLocations = (LinearLayout) findViewById(R.id.module_locations);
-        LinearLayout moduleValidate = (LinearLayout) findViewById(R.id.module_validate);
+        //LinearLayout moduleValidate = (LinearLayout) findViewById(R.id.module_validate);
         LinearLayout moduleSync = (LinearLayout) findViewById(R.id.module_sync);
 
         moduleReceiving.setOnClickListener(new View.OnClickListener() {
@@ -103,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        moduleValidate.setOnClickListener(new View.OnClickListener() {
+        /*moduleValidate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ValidateActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
         moduleSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

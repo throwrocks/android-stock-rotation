@@ -10,7 +10,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.api.LocalResponse;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 
 import static rocks.athrow.android_stock_rotation.data.Constants.ALL;
@@ -39,7 +39,8 @@ public final class RealmQueries {
      * @param context required context object
      */
     public static void deleteDatabase(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         final RealmResults<Transfer> transfers = realm.where(Transfer.class).findAll();
@@ -86,7 +87,8 @@ public final class RealmQueries {
      * @return a Transaction object
      */
     public static Transaction getTransaction(Context context, String transactionId) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -105,7 +107,8 @@ public final class RealmQueries {
      * @param context required context object
      */
     public static void deleteInvalidTransactions(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         final RealmResults<Transaction> results =
@@ -126,11 +129,12 @@ public final class RealmQueries {
      *
      * @param context       a context object
      * @param transactionId the transaction id to delete
-     * @return an APIResponse object
+     * @return an LocalResponse object
      */
-    public static APIResponse deleteTransaction(Context context, String transactionId) {
-        final APIResponse apiResponse = new APIResponse();
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+    public static LocalResponse deleteTransaction(Context context, String transactionId) {
+        final LocalResponse localResponse = new LocalResponse();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         final RealmResults<Transaction> results =
@@ -140,15 +144,15 @@ public final class RealmQueries {
             public void execute(Realm realm) {
                 results.deleteAllFromRealm();
                 if (results.size() == 0) {
-                    apiResponse.setResponseCode(200);
-                    apiResponse.setResponseText("Record deleted");
+                    localResponse.setResponseCode(200);
+                    localResponse.setResponseText("Record deleted");
                 } else {
-                    apiResponse.setResponseCode(0);
-                    apiResponse.setResponseText("Could not delete record");
+                    localResponse.setResponseCode(0);
+                    localResponse.setResponseText("Could not delete record");
                 }
             }
         });
-        return apiResponse;
+        return localResponse;
     }
 
     /**
@@ -156,13 +160,14 @@ public final class RealmQueries {
      *
      * @param context       required context object
      * @param transactionId the transaction's id
-     * @return an APIResponse object
+     * @return an LocalResponse object
      */
-    public static APIResponse commitTransaction(Context context, String transactionId) {
-        APIResponse apiResponse = new APIResponse();
+    public static LocalResponse commitTransaction(Context context, String transactionId) {
+        LocalResponse localResponse = new LocalResponse();
         Transaction transaction = getTransaction(context, transactionId);
         if (transaction != null) {
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            Realm.init(context);
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
             Realm.setDefaultConfiguration(realmConfig);
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
@@ -178,10 +183,10 @@ public final class RealmQueries {
             if (newLocation != null) {
                 updateLocationQty(context, newLocation);
             }
-            apiResponse.setResponseCode(200);
+            localResponse.setResponseCode(200);
             realm.close();
         }
-        return apiResponse;
+        return localResponse;
     }
 
     /**
@@ -196,10 +201,10 @@ public final class RealmQueries {
      *                        // @param looseQtyString  the loose qty as string
      * @param currentLocation the current location
      * @param newLocation     the new location
-     * @return an APIResponse object
+     * @return an LocalResponse object
      */
 
-    public static APIResponse saveTransaction(
+    public static LocalResponse saveTransaction(
             Context context,
             String transactionType,
             String transactionId,
@@ -214,17 +219,18 @@ public final class RealmQueries {
             String caseQtyString,
             String currentLocation,
             String newLocation) {
-        APIResponse apiResponse = new APIResponse();
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        LocalResponse localResponse = new LocalResponse();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Transaction transaction = new Transaction();
         // transactionId: If not transaction id was provided, we can't save a record
         if (transactionId == null || transactionId.isEmpty()) {
-            apiResponse.setResponseCode(0);
-            apiResponse.setResponseText("Error: No transaction id was provided.");
-            return apiResponse;
+            localResponse.setResponseCode(0);
+            localResponse.setResponseText("Error: No transaction id was provided.");
+            return localResponse;
         } else {
             transaction.setId(transactionId);
         }
@@ -279,9 +285,9 @@ public final class RealmQueries {
         realm.copyToRealmOrUpdate(transaction);
         realm.commitTransaction();
         realm.close();
-        apiResponse.setResponseCode(200);
-        apiResponse.setResponseText("Record saved!");
-        return apiResponse;
+        localResponse.setResponseCode(200);
+        localResponse.setResponseText("Record saved!");
+        return localResponse;
     }
 
     /**
@@ -306,7 +312,8 @@ public final class RealmQueries {
      */
 
     public static RealmResults<Transaction> getPendingTransactions(Context context, String type) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -329,7 +336,8 @@ public final class RealmQueries {
      * @return a Transaction object
      */
     public static RealmResults<Transfer> getTransfers(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -344,9 +352,9 @@ public final class RealmQueries {
      * A method to save a Transfer record
      * The only required value is the transaction id
      *
-     * @return an APIResponse object
+     * @return an LocalResponse object
      */
-    public static APIResponse saveTransfer(
+    public static LocalResponse saveTransfer(
             Context context,
             String transactionId,
             String transactionType,
@@ -365,8 +373,9 @@ public final class RealmQueries {
         PreferencesHelper prefs = new PreferencesHelper(context);
         int employeeNumber = Integer.parseInt(prefs.loadString(SETTINGS_EMPLOYEE_NUMBER, EMPTY));
         String employeeName = prefs.loadString(SETTINGS_EMPLOYEE_NAME, EMPTY);
-        APIResponse apiResponse = new APIResponse();
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        LocalResponse localResponse = new LocalResponse();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -393,9 +402,9 @@ public final class RealmQueries {
         realm.copyToRealmOrUpdate(transfer);
         realm.commitTransaction();
         realm.close();
-        apiResponse.setResponseCode(200);
-        apiResponse.setResponseText("Record saved!");
-        return apiResponse;
+        localResponse.setResponseCode(200);
+        localResponse.setResponseText("Record saved!");
+        return localResponse;
     }
 
     /**
@@ -407,7 +416,8 @@ public final class RealmQueries {
      * @return the total number of cases
      */
     public static Number getCountCasesByLocation(Context context, String location, String itemId) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Transfer> inResults;
@@ -460,7 +470,8 @@ public final class RealmQueries {
      * @return an Item object
      */
     public static RealmResults<Item> getItemByTagNumber(Context context, String tagNumber) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Item> realmResults = realm.where(Item.class).equalTo(Item.FIELD_TAG_NUMBER, tagNumber).findAll();
@@ -477,7 +488,8 @@ public final class RealmQueries {
      * @return the item's sku number
      */
     public static int getSKUFromTag(Context context, String tagNumber) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -500,7 +512,8 @@ public final class RealmQueries {
      * @return the item's primary location
      */
     public static String getItemPrimaryLocation(Context context, String tagNumber) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -526,7 +539,8 @@ public final class RealmQueries {
      * @return a RealmResults object
      */
     public static RealmResults<Location> getLocations(Context context, String type, String row, boolean isPrimary) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -570,7 +584,8 @@ public final class RealmQueries {
      * @return a Location object
      */
     public static RealmResults<Location> getLocationByBarcode(Context context, String barcode) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Location> realmResults =
@@ -581,7 +596,8 @@ public final class RealmQueries {
     }
 
     public static RealmResults<Location> getLocationByName(Context context, String locationName) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Location> realmResults =
@@ -596,7 +612,8 @@ public final class RealmQueries {
         RealmResults<Location> locations = getLocationByName(context, locationName);
         if (locations.size() > 0) {
             Location location = locations.get(0);
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            Realm.init(context);
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
             Realm.setDefaultConfiguration(realmConfig);
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
@@ -608,7 +625,8 @@ public final class RealmQueries {
     }
 
     public static ArrayList<LocationRows> getRows(Context context, String locationType) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Location> realmResults;
@@ -675,7 +693,8 @@ public final class RealmQueries {
      * @return an ArrayList of LocationItem objects
      */
     public static ArrayList<LocationItem> getLocationItems(Context context, String searchType, String searchCriteria) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

@@ -17,20 +17,20 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joselopezrosario.androidfm.FmData;
+import com.joselopezrosario.androidfm.FmRecord;
+import com.joselopezrosario.androidfm.FmResponse;
+
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import rocks.athrow.android_stock_rotation.R;
 import rocks.athrow.android_stock_rotation.adapter.ValidateAdapter;
-import rocks.athrow.android_stock_rotation.api.APIRestFM;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.data.Comparison;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.LocationItem;
-import rocks.athrow.android_stock_rotation.data.ParseJSON;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 import rocks.athrow.android_stock_rotation.zxing.IntentIntegrator;
@@ -101,21 +101,22 @@ public class ValidateActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setTitle(VALIDATE_TITLE);
         }
-        if ( savedInstanceState != null ){
+        if (savedInstanceState != null) {
             mInputText = savedInstanceState.getString(VALIDATE_INPUT_TEXT);
             mBarcodeContents = savedInstanceState.getString(VALIDATE_BARCODE_CONTENTS);
             mScanType = savedInstanceState.getString(VALIDATE_SCAN_TYPE);
             QueryAPI queryAPI = new QueryAPI();
             queryAPI.execute(mScanType);
-        }else{
+        } else {
             hideRecyclerView();
         }
     }
 
-    private void selectSku(){
+    private void selectSku() {
         hideRecyclerView();
     }
-    private void selectTagNumber(){
+
+    private void selectTagNumber() {
         hideRecyclerView();
     }
 
@@ -163,6 +164,7 @@ public class ValidateActivity extends AppCompatActivity {
      */
     private class QueryAPI extends AsyncTask<String, Void, ArrayList<Comparison>> {
         final Context context = getApplicationContext();
+
         private ArrayList<Comparison> getResults(String type, String searchCriteria) {
             ArrayList<Comparison> results = new ArrayList<>();
             ArrayList<LocationItem> fmResults;
@@ -171,27 +173,21 @@ public class ValidateActivity extends AppCompatActivity {
                 case VALIDATE_TYPE_TAG:
                     mInputText = searchCriteria;
                     Comparison tagComparison = new Comparison();
-                    APIResponse tagAPIResponse = APIRestFM.getItemByTag(searchCriteria);
-                    String tagResponseText = tagAPIResponse.getResponseText();
-                    edisonResults = ParseJSON.getJSONArray(tagResponseText);
-                    if (edisonResults == null || edisonResults.length() == 0) {
+                    FmResponse tagResponse = API.getItemByTag(searchCriteria);
+                    if (tagResponse == null || !tagResponse.isOk()) {
                         return results;
                     }
-                    JSONObject tagComparisonEdisonRecord = null;
-                    try {
-                        tagComparisonEdisonRecord = edisonResults.getJSONObject(0);
-                        mItemDescription = tagComparisonEdisonRecord.getString(Item.FIELD_DESCRIPTION);
-                        mSKU = tagComparisonEdisonRecord.getString(Item.FIELD_SKU);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (tagComparisonEdisonRecord == null) {
+                    FmData tagData = new FmData(tagResponse);
+                    if (tagData.size() == 0) {
                         return results;
                     }
+                    FmRecord tagRecord = tagData.getRecord(0);
+                    mItemDescription = tagRecord.getString(Item.FIELD_DESCRIPTION);
+                    mSKU = tagRecord.getString(Item.FIELD_SKU);
                     fmResults = RealmQueries.getLocationItems(context, Item.FIELD_TAG_NUMBER, searchCriteria);
                     if (fmResults != null && fmResults.size() > 0) {
                         tagComparison.setFmResults(fmResults);
-                        tagComparison.setEdisonResult(tagComparisonEdisonRecord);
+                        tagComparison.setEdisonResult(tagRecord);
                         results.add(tagComparison);
                     }
                     break;
@@ -201,31 +197,29 @@ public class ValidateActivity extends AppCompatActivity {
                     if (sku == 0) {
                         return results;
                     }
-                    APIResponse skuAPIResponse = APIRestFM.getItemBySKU(sku);
-                    String skuResponseText = skuAPIResponse.getResponseText();
-                    edisonResults = ParseJSON.getJSONArray(skuResponseText);
-                    if (edisonResults == null || edisonResults.length() == 0) {
+                    FmResponse skuResponse = API.getItemBySKU(sku);
+                    if (skuResponse == null || !skuResponse.isOk()) {
+                        return results;
+                    }
+                    FmData skuData = new FmData(skuResponse);
+                    if (skuData.size() == 0) {
                         return results;
                     }
                     mSKU = String.valueOf(sku);
                     mInputText = mSKU;
-                    int countEdisonResults = edisonResults.length();
+                    int countEdisonResults = skuData.size();
                     for (int i = 0; i < countEdisonResults; i++) {
                         Comparison skuComparison = new Comparison();
-                        try {
-                            JSONObject edisonRecord = edisonResults.getJSONObject(i);
-                            mItemDescription = edisonRecord.getString(Item.FIELD_DESCRIPTION);
-                            fmResults = RealmQueries.getLocationItems(
-                                    context, Item.FIELD_TAG_NUMBER,
-                                    edisonRecord.getString(Item.FIELD_TAG_NUMBER)
-                            );
-                            if ((fmResults != null && fmResults.size() > 0) || edisonRecord.getInt(Item.FIELD_EDISON_QTY) > 0) {
-                                skuComparison.setEdisonResult(edisonRecord);
-                                skuComparison.setFmResults(fmResults);
-                                results.add(skuComparison);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        FmRecord edisonRecord = skuData.getRecord(i);
+                        mItemDescription = edisonRecord.getString(Item.FIELD_DESCRIPTION);
+                        fmResults = RealmQueries.getLocationItems(
+                                context, Item.FIELD_TAG_NUMBER,
+                                edisonRecord.getString(Item.FIELD_TAG_NUMBER)
+                        );
+                        if ((fmResults != null && fmResults.size() > 0) || edisonRecord.getInt(Item.FIELD_EDISON_QTY) > 0) {
+                            skuComparison.setEdisonResult(edisonRecord);
+                            skuComparison.setFmResults(fmResults);
+                            results.add(skuComparison);
                         }
                     }
                     break;
@@ -256,7 +250,7 @@ public class ValidateActivity extends AppCompatActivity {
         }
     }
 
-    private void hideRecyclerView(){
+    private void hideRecyclerView() {
         mScanInput.setText(EMPTY);
         mScanItem.setVisibility(GONE);
         mResultHeaders.setVisibility(GONE);

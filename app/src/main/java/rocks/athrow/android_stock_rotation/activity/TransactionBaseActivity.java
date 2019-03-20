@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import io.realm.RealmResults;
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.api.LocalResponse;
 import rocks.athrow.android_stock_rotation.data.Item;
 import rocks.athrow.android_stock_rotation.data.Location;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
@@ -209,9 +209,9 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
      * @param transactionId the id of the transaction to be deleted
      */
     void baseDeleteTransaction(String transactionId) {
-        APIResponse apiResponse = RealmQueries.deleteTransaction(getApplicationContext(), transactionId);
-        Utilities.showToast(getApplicationContext(), apiResponse.getResponseText(), Toast.LENGTH_SHORT);
-        if (apiResponse.getResponseCode() == 200) {
+        LocalResponse localResponse = RealmQueries.deleteTransaction(getApplicationContext(), transactionId);
+        Utilities.showToast(getApplicationContext(), localResponse.getResponseText(), Toast.LENGTH_SHORT);
+        if (localResponse.getResponseCode() == 200) {
             finish();
         }
     }
@@ -384,7 +384,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
         if (mNewLocationView != null && (mRotationType.equals(MODULE_MOVING) || mRotationType.equals(MODULE_RECEIVING))) {
             newLocation = mNewLocationView.getText().toString();
         }
-        APIResponse apiResponse = RealmQueries.saveTransaction(
+        LocalResponse localResponse = RealmQueries.saveTransaction(
                 getApplicationContext(),
                 mRotationType,
                 mTransactionId,
@@ -399,7 +399,7 @@ public abstract class TransactionBaseActivity extends AppCompatActivity {
                 caseQtyString,
                 currentLocation,
                 newLocation);
-        if (apiResponse.getResponseCode() == 200) {
+        if (localResponse.getResponseCode() == 200) {
             return 1;
         } else {
             return 0;

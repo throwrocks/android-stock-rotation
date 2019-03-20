@@ -22,8 +22,10 @@ import static rocks.athrow.android_stock_rotation.data.Constants.OUT;
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Transfer extends RealmObject {
     private final static String DATE_TIME_DISPLAY = "MM/dd/yy h:mm:ss a";
+    final static String RECORD_ID = "recordId";
+    final static String MOD_ID = "modId";
     final static String FIELD_ID = "id";
-    final static String FIELD_SERIAL_NUMBER = "serialNumber";
+    public final static String FIELD_SERIAL_NUMBER = "serialNumber";
     final static String FIELD_TRANSACTION_ID = "transactionId";
     final static String FIELD_TRANSACTION_TYPE = "transactionType";
     final static String FIELD_TYPE = "type";
@@ -43,6 +45,8 @@ public class Transfer extends RealmObject {
     final static String FIELD_ITEM_LOCATION_KEY = "itemLocationKey";
     final static String FIELD_EMPLOYEE_NUMBER = "employeeNumber";
     final static String FIELD_EMPLOYEE_NAME = "employeeName";
+    private int recordId;
+    private int modId;
     @PrimaryKey
     private String id;
     private int serialNumber;
@@ -73,6 +77,22 @@ public class Transfer extends RealmObject {
     private int employeeNumber;
     private String employeeName;
 
+    public int getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(int recordId) {
+        this.recordId = recordId;
+    }
+
+    public int getModId() {
+        return modId;
+    }
+
+    public void setModId(int modId) {
+        this.modId = modId;
+    }
+
     public String getId() {
         return id;
     }
@@ -87,6 +107,10 @@ public class Transfer extends RealmObject {
 
     void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
     }
 
     public String getTransactionType() {

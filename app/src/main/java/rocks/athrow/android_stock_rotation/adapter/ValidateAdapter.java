@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.joselopezrosario.androidfm.FmRecord;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,50 +67,46 @@ public class ValidateAdapter extends RecyclerView.Adapter<ValidateAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Comparison comparison = mItems.get(position);
-        JSONObject edisonResult = comparison.getEdisonResult();
+        FmRecord edisonResult = comparison.getEdisonResult();
         ArrayList<LocationItem> fmResults = comparison.getFmResults();
-        try {
-            String tagNumber = edisonResult.getString(Item.FIELD_TAG_NUMBER);
-            String packSize = edisonResult.getString(Item.FIELD_PACK_SIZE);
-            String receivedDate = edisonResult.getString(Item.FIELD_RECEIVED_DATE);
-            String expirationDate = edisonResult.getString(Item.FIELD_EXPIRATION_DATE);
-            String countCases = edisonResult.getString(Item.FIELD_EDISON_QTY);
-            holder.viewTagNumber.setText(tagNumber);
-            holder.viewPackSize.setText(packSize);
-            holder.viewReceivedDate.setText(receivedDate);
-            holder.viewExpirationDate.setText(expirationDate);
-            holder.viewEdisonTotalQty.setText(countCases);
-            if (fmResults != null) {
-                int count = fmResults.size();
-                int fmTotalCases = 0;
-                holder.viewFmContainer.removeAllViews();
-                for (int i = 0; i < count; i++) {
-                    LinearLayout fmColumn = getFmColumn(holder);
-                    holder.viewFmContainer.addView(fmColumn);
-                    LocationItem item = fmResults.get(i);
-                    String location = item.getLocation();
-                    String qty = item.getCaseQty();
-                    fmTotalCases = fmTotalCases + Integer.parseInt(qty);
-                    TextView locationView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_location);
-                    locationView.setVisibility(View.VISIBLE);
-                    TextView qtyView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_case_qty);
-                    locationView.setText(location);
-                    qtyView.setText(qty);
-                }
-                if (!countCases.isEmpty() && fmTotalCases > 0) {
-                    holder.viewFileMakerTotalQty.setText(String.valueOf(fmTotalCases));
-                    if (fmTotalCases == Integer.parseInt(countCases)) {
-                        Utilities.badgeFormat(holder.viewFileMakerTotalQty, MATCH, mContext);
-                    } else {
-                        Utilities.badgeFormat(holder.viewFileMakerTotalQty, MISMATCH, mContext);
-                    }
-                }
-            } else {
-                holder.viewFileMakerTotalQtyLabel.setVisibility(GONE);
-                holder.viewFileMakerTotalQty.setVisibility(GONE);
+        String tagNumber = edisonResult.getString(Item.FIELD_TAG_NUMBER);
+        String packSize = edisonResult.getString(Item.FIELD_PACK_SIZE);
+        String receivedDate = edisonResult.getString(Item.FIELD_RECEIVED_DATE);
+        String expirationDate = edisonResult.getString(Item.FIELD_EXPIRATION_DATE);
+        String countCases = edisonResult.getString(Item.FIELD_EDISON_QTY);
+        holder.viewTagNumber.setText(tagNumber);
+        holder.viewPackSize.setText(packSize);
+        holder.viewReceivedDate.setText(receivedDate);
+        holder.viewExpirationDate.setText(expirationDate);
+        holder.viewEdisonTotalQty.setText(countCases);
+        if (fmResults != null) {
+            int count = fmResults.size();
+            int fmTotalCases = 0;
+            holder.viewFmContainer.removeAllViews();
+            for (int i = 0; i < count; i++) {
+                LinearLayout fmColumn = getFmColumn(holder);
+                holder.viewFmContainer.addView(fmColumn);
+                LocationItem item = fmResults.get(i);
+                String location = item.getLocation();
+                String qty = item.getCaseQty();
+                fmTotalCases = fmTotalCases + Integer.parseInt(qty);
+                TextView locationView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_location);
+                locationView.setVisibility(View.VISIBLE);
+                TextView qtyView = (TextView) fmColumn.findViewById(R.id.validate_filemaker_case_qty);
+                locationView.setText(location);
+                qtyView.setText(qty);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            if (!countCases.isEmpty() && fmTotalCases > 0) {
+                holder.viewFileMakerTotalQty.setText(String.valueOf(fmTotalCases));
+                if (fmTotalCases == Integer.parseInt(countCases)) {
+                    Utilities.badgeFormat(holder.viewFileMakerTotalQty, MATCH, mContext);
+                } else {
+                    Utilities.badgeFormat(holder.viewFileMakerTotalQty, MISMATCH, mContext);
+                }
+            }
+        } else {
+            holder.viewFileMakerTotalQtyLabel.setVisibility(GONE);
+            holder.viewFileMakerTotalQty.setVisibility(GONE);
         }
     }
 

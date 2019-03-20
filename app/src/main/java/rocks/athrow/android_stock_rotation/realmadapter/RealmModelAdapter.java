@@ -20,7 +20,7 @@ import io.realm.RealmResults;
  */
 class RealmModelAdapter<T extends RealmObject> extends RealmBaseAdapter<T> {
     RealmModelAdapter(Context context, RealmResults<T> realmResults) {
-        super(context, realmResults);
+        super(realmResults);
     }
 
     @Override

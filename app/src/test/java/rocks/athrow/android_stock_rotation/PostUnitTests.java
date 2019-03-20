@@ -1,14 +1,10 @@
 package rocks.athrow.android_stock_rotation;
 
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import rocks.athrow.android_stock_rotation.api.APIRestFM;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -20,7 +16,7 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 public class PostUnitTests extends Robolectric {
 
-    @Test
+    /*@Test
     public void postTransfer() throws Exception {
         String transferJSON =
                 "{\"data\":[" +
@@ -41,10 +37,10 @@ public class PostUnitTests extends Robolectric {
                         "\"caseQty\":\"114\"}" +
                         "]" +
                         "}";
-        APIResponse apiResponse = APIRestFM.postTransfer(transferJSON);
-        System.out.println(apiResponse.getResponseText());
-        assertTrue(apiResponse.getResponseCode() == 201);
+        LocalResponse localResponse = API.postTransfer(transferJSON);
+        System.out.println(localResponse.getResponseText());
+        assertTrue(localResponse.getResponseCode() == 201);
 
-    }
+    }*/
 
 }

@@ -130,7 +130,7 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/module_validate"
             style="@style/mainButton"
             android:layout_width="match_parent"
@@ -151,7 +151,7 @@
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/module_transfers"

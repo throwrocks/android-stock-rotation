@@ -3,17 +3,16 @@ package rocks.athrow.android_stock_rotation.data;
 import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.joselopezrosario.androidfm.FmData;
+import com.joselopezrosario.androidfm.FmEdit;
+import com.joselopezrosario.androidfm.FmRecord;
+import com.joselopezrosario.androidfm.FmResponse;
 import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
-import rocks.athrow.android_stock_rotation.api.APIRestFM;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
 
@@ -30,7 +29,8 @@ public final class SyncDB {
     private static final String LOG_TAG = "SyncDB";
 
     public static void downloadNewRecords(Context context) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -54,24 +54,25 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-        APIResponse itemsResponse = APIRestFM.getItems(itemSerialNumber);
-        APIResponse transfersResponse = APIRestFM.getTransfers(transfersSerialNumber);
-        APIResponse locationsResponse = APIRestFM.getLocations(locationSerialNumber);
-        if (itemsResponse.getResponseCode() == 200) {
-            updateDB(context, "items", itemsResponse.getResponseText());
+        FmResponse itemsResponse = API.getItems(itemSerialNumber);
+        FmResponse transfersResponse = API.getTransfers(transfersSerialNumber);
+        FmResponse locationsResponse = API.getLocations(locationSerialNumber);
+        if (itemsResponse != null && itemsResponse.getHttpCode() == 200) {
+            updateDB(context, "items", itemsResponse);
         }
-        if (transfersResponse.getResponseCode() == 200) {
-            updateDB(context, "transfers", transfersResponse.getResponseText());
+        if (transfersResponse != null && transfersResponse.getHttpCode() == 200) {
+            updateDB(context, "transfers", transfersResponse);
         }
-        if (locationsResponse.getResponseCode() == 200) {
-            updateDB(context, "locations", locationsResponse.getResponseText());
+        if (locationsResponse != null && locationsResponse.getHttpCode() == 200) {
+            updateDB(context, "locations", locationsResponse);
         }
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         preferencesHelper.save("last_sync", new Date().toString());
     }
 
     public static void postTransfers(Context context){
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();
@@ -83,12 +84,26 @@ public final class SyncDB {
         Log.e(LOG_TAG, "Count: " + size);
         if ( size > 0){
             for (int i = 0; i < size; i++) {
-                Transfer transfer = transfers.get(i);
-                String json = transfers.get(i).getJSON();
-                Log.e(LOG_TAG, "JSON : " + json);
-                APIResponse apiResponse = APIRestFM.postTransfer(json);
-                Log.e(LOG_TAG, "Response Code: " + apiResponse.getResponseCode());
-                if ( apiResponse.getResponseCode() == 201){
+                Transfer transfer = transfers.get(0);
+                FmEdit edit = new FmEdit()
+                        .set(Transfer.FIELD_ID,transfer.getId())
+                        .set(Transfer.FIELD_TRANSACTION_ID,transfer.getTransactionId())
+                        .set(Transfer.FIELD_TRANSACTION_TYPE,transfer.getTransactionType())
+                        .set(Transfer.FIELD_DATE, Utilities.getDateAsString(transfer.getDate(), DATE_TIME_DISPLAY, null))
+                        .set(Transfer.FIELD_TYPE,transfer.getType())
+                        .set(Transfer.FIELD_ITEM_ID,transfer.getItemId())
+                        .set(Transfer.FIELD_SKU,transfer.getSku())
+                        .set(Transfer.FIELD_ITEM_DESCRIPTION,transfer.getItemDescription())
+                        .set(Transfer.FIELD_TAG_NUMBER,transfer.getTagNumber())
+                        .set(Transfer.FIELD_PACK_SIZE,transfer.getPackSize())
+                        .set(Transfer.FIELD_RECEIVING_ID,transfer.getReceivingId())
+                        .set(Transfer.FIELD_RECEIVED_DATE,transfer.getReceivedDate())
+                        .set(Transfer.FIELD_EXPIRATION_DATE,transfer.getExpirationDate())
+                        .set(Transfer.FIELD_LOCATION,transfer.getLocation())
+                        .set(Transfer.FIELD_CASE_QTY,transfer.getCaseQty())
+                        .set(Transfer.FIELD_EMPLOYEE_NUMBER,transfer.getEmployeeNumber());
+                FmResponse apiResponse = API.postTransfer(edit);
+                if ( apiResponse != null && apiResponse.getHttpCode() == 200){
                     transfer.setItemLocationKey();
                     transfer.setInit(true);
                     transfer.setInitDate(new Date());
@@ -98,29 +113,27 @@ public final class SyncDB {
         }
         realm.commitTransaction();
         realm.close();
-        int responseCode = APIRestFM.initTransfers().getResponseCode();
-        Log.e(LOG_TAG, "Init Transfers: " + responseCode);
     }
 
-    private static void updateDB(Context context, String type, String responseText) {
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+    private static void updateDB(Context context, String type, FmResponse response) {
+        Realm.init(context);
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfig);
         Realm.compactRealm(realmConfig);
         Realm realm = Realm.getDefaultInstance();
         switch (type) {
             case "items":
-                JSONArray itemsArray = ParseJSON.getJSONArray(responseText);
-                if (itemsArray == null) {
+                FmData itemsData = new FmData(response);
+                if (itemsData.size() == 0) {
                     return;
                 }
-                int countItems = itemsArray.length();
+                int countItems = itemsData.size();
                 Log.e(LOG_TAG, "Items: " + countItems);
                 realm.beginTransaction();
                 for (int i = 0; i < countItems; i++) {
-                    try {
                         Log.d(LOG_TAG, "Item update: " + i);
                         Item item = new Item();
-                        JSONObject record = itemsArray.getJSONObject(i);
+                        FmRecord record = itemsData.getRecord(i);
                         item.setId(record.getString(Item.FIELD_ID));
                         item.setSerialNumber(record.getInt(Item.FIELD_SERIAL_NUMBER));
                         item.setTagNumber(record.getString(Item.FIELD_TAG_NUMBER));
@@ -133,68 +146,65 @@ public final class SyncDB {
                         item.setItemType(record.getString(Item.FIELD_ITEM_TYPE));
                         item.setPrimaryLocation(record.getString(Item.FIELD_PRIMARY_LOCATION));
                         realm.copyToRealmOrUpdate(item);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 }
                 realm.commitTransaction();
                 realm.close();
                 Realm.compactRealm(realmConfig);
                 break;
             case "locations":
-                JSONArray locationsArray = ParseJSON.getJSONArray(responseText);
-                if (locationsArray == null) {
+                FmData locationsData = new FmData(response);
+                if (locationsData.size() == 0) {
                     return;
                 }
-                int countLocations = locationsArray.length();
+                int countLocations = locationsData.size();
                 Log.e(LOG_TAG, "Locations: " + countLocations);
                 realm.beginTransaction();
                 String[] locationNames = new String[countLocations];
                 // Save the locations
                 for (int i = 0; i < countLocations; i++) {
-                    try {
                         Location location = new Location();
-                        JSONObject record = locationsArray.getJSONObject(i);
+                        FmRecord record = locationsData.getRecord(i);
                         String locationName = record.getString(Location.FIELD_LOCATION);
                         locationNames[i] = locationName;
                         location.setSerialNumber(record.getInt(Location.FIELD_SERIAL_NUMBER));
                         location.setBarcode(record.getString(Location.FIELD_BARCODE));
                         location.setLocation(locationName);
                         location.setType(record.getString(Location.FIELD_TYPE));
-                        location.setPrimary(record.getBoolean(Location.FIELD_IS_PRIMARY));
+                        location.setPrimary(Boolean.getBoolean(record.getString(Location.FIELD_IS_PRIMARY)));
                         location.setRow(record.getString(Location.FIELD_ROW));
                         realm.copyToRealmOrUpdate(location);
                         Log.d(LOG_TAG, "Save Location " + i + ": " + name);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 }
                 // Store the location case quantities
                 for ( int i = 0; i < countLocations; i++){
                     String locationName = locationNames[i];
                     int qty = Integer.parseInt(RealmQueries.getCountCasesByLocation(context, locationName, null).toString());
-                    Location location = realm.where(Location.class).equalTo(Location.FIELD_LOCATION, locationName).findAll().get(0);
-                    location.setFmCaseQty(qty);
-                    realm.copyToRealmOrUpdate(location);
-                    Log.d(LOG_TAG, "Location count " + i + ": " + locationName + " = " + qty);
+                    RealmResults<Location> locations = realm.where(Location.class).equalTo(Location.FIELD_LOCATION, locationName).findAll();
+                    if ( locations.size() > 0 ){
+                        Location location = realm.where(Location.class).equalTo(Location.FIELD_LOCATION, locationName).findAll().get(0);
+                        location.setFmCaseQty(qty);
+                        realm.copyToRealmOrUpdate(location);
+                        Log.d(LOG_TAG, "Location count " + i + ": " + locationName + " = " + qty);
+                    }
                 }
                 realm.commitTransaction();
                 realm.close();
                 Realm.compactRealm(realmConfig);
                 break;
             case "transfers":
-                JSONArray transfersArray = ParseJSON.getJSONArray(responseText);
-                if (transfersArray == null) {
+                FmData transfersData = new FmData(response);
+                if (transfersData.size() ==0) {
                     return;
                 }
-                int countTransfers = transfersArray.length();
+                int countTransfers = transfersData.size();
                 Log.e(LOG_TAG, "Transfers: " + countTransfers);
                 realm.beginTransaction();
                 for (int i = 0; i < countTransfers; i++) {
-                    try {
                         Log.e(LOG_TAG, "Transfer update: " + i);
                         Transfer transfer = new Transfer();
-                        JSONObject record = transfersArray.getJSONObject(i);
+                        FmRecord record = transfersData.getRecord(i);
+                        transfer.setRecordId(record.getRecordId());
+                        transfer.setModId(record.getModId());
                         transfer.setId(record.getString(Transfer.FIELD_ID));
                         transfer.setType(record.getString(Transfer.FIELD_TYPE));
                         transfer.setSerialNumber(record.getInt(Transfer.FIELD_SERIAL_NUMBER));
@@ -217,9 +227,6 @@ public final class SyncDB {
                         transfer.setInitDate(new Date());
                         transfer.setItemLocationKey();
                         realm.copyToRealmOrUpdate(transfer);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 }
                 realm.commitTransaction();
                 realm.close();

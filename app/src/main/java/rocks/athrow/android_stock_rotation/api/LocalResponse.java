@@ -1,21 +1,21 @@
 package rocks.athrow.android_stock_rotation.api;
 
 /**
- * APIResponse
+ * LocalResponse
  * Created by joselopez on 1/9/17.
  */
 
-public final class APIResponse {
+public final class LocalResponse {
     private String responseText;
     private int responseCode;
 
-    public APIResponse() {
+    public LocalResponse() {
     }
 
     /**
      * setResponseCode
      *
-     * @param responseCode the APIRestFM's response code number
+     * @param responseCode the API's response code number
      */
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
@@ -24,7 +24,7 @@ public final class APIResponse {
     /**
      * setResponseText
      *
-     * @param responseText the APIRestFM's response text
+     * @param responseText the API's response text
      */
     public void setResponseText(String responseText) {
         this.responseText = responseText;
@@ -33,7 +33,7 @@ public final class APIResponse {
     /**
      * getResponseCode
      *
-     * @return the APIRestFM's response code number
+     * @return the API's response code number
      */
     public int getResponseCode() {
         return responseCode;
@@ -42,7 +42,7 @@ public final class APIResponse {
     /**
      * getResponseText
      *
-     * @return the APIRestFM's response text
+     * @return the API's response text
      */
     public String getResponseText() {
         return responseText;

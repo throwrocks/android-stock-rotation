@@ -1,5 +1,6 @@
-package rocks.athrow.android_stock_rotation;
+/*
 
+package rocks.athrow.android_stock_rotation;
 
 import android.content.Context;
 
@@ -12,8 +13,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import rocks.athrow.android_stock_rotation.api.APIRestFM;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
+import rocks.athrow.android_stock_rotation.api.API;
+import rocks.athrow.android_stock_rotation.api.LocalResponse;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -24,18 +25,18 @@ import static junit.framework.Assert.assertTrue;
 public class GetUnitTests extends Robolectric {
     @Mock
     private Context mContext;
-    private APIResponse mItems = null;
-    private APIResponse mLocations = null;
-    private APIResponse mTransfers = null;
+    private LocalResponse mItems = null;
+    private LocalResponse mLocations = null;
+    private LocalResponse mTransfers = null;
 
-    private APIResponse getItems(int lastSerialNumber) {
-        return APIRestFM.getItems(lastSerialNumber);
+    private LocalResponse getItems(int lastSerialNumber) {
+        return API.getItems(lastSerialNumber);
     }
-    private APIResponse getLocations(int lastSerialNumber) {
-        return APIRestFM.getLocations(lastSerialNumber);
+    private LocalResponse getLocations(int lastSerialNumber) {
+        return API.getLocations(lastSerialNumber);
     }
-    private APIResponse getTransfers(int lastSerialNumber) {
-        return APIRestFM.getTransfers(lastSerialNumber);
+    private LocalResponse getTransfers(int lastSerialNumber) {
+        return API.getTransfers(lastSerialNumber);
     }
     @Before
     public void setUp() throws Exception {
@@ -70,4 +71,4 @@ public class GetUnitTests extends Robolectric {
         assertTrue(responseCode == 200);
     }
 
-}
+}*/

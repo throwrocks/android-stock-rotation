@@ -1,5 +1,7 @@
 package rocks.athrow.android_stock_rotation.data;
 
+import com.joselopezrosario.androidfm.FmRecord;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 
 public class Comparison {
     private ArrayList<LocationItem> fmResults;
-    private JSONObject edisonResult;
+    private FmRecord edisonResult;
 
     public Comparison() {
     }
@@ -24,11 +26,11 @@ public class Comparison {
         this.fmResults = fmResults;
     }
 
-    public JSONObject getEdisonResult() {
+    public FmRecord getEdisonResult() {
         return edisonResult;
     }
 
-    public void setEdisonResult(JSONObject edisonResult) {
+    public void setEdisonResult(FmRecord edisonResult) {
         this.edisonResult = edisonResult;
     }
 }

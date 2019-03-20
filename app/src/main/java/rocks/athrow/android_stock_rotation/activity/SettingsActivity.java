@@ -11,14 +11,12 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.joselopezrosario.androidfm.FmData;
+import com.joselopezrosario.androidfm.FmRecord;
+import com.joselopezrosario.androidfm.FmResponse;
 
 import rocks.athrow.android_stock_rotation.R;
-import rocks.athrow.android_stock_rotation.api.APIRestFM;
-import rocks.athrow.android_stock_rotation.api.APIResponse;
-import rocks.athrow.android_stock_rotation.data.ParseJSON;
+import rocks.athrow.android_stock_rotation.api.API;
 import rocks.athrow.android_stock_rotation.data.RealmQueries;
 import rocks.athrow.android_stock_rotation.util.PreferencesHelper;
 import rocks.athrow.android_stock_rotation.util.Utilities;
@@ -76,7 +74,7 @@ public class SettingsActivity extends PreferenceActivity {
                 String apiKey = newValue.toString();
                 if (!apiKey.isEmpty()) {
                     validateKeyTask.execute(newValue.toString());
-                }else{
+                } else {
                     updatePreference(SETTINGS_EMPLOYEE_NAME, EMPTY);
                     updatePreference(SETTINGS_EMPLOYEE_NUMBER, EMPTY);
                 }
@@ -143,20 +141,19 @@ public class SettingsActivity extends PreferenceActivity {
         protected String[] doInBackground(String... params) {
             String[] result = new String[3];
             int key = Integer.parseInt(params[0]);
-            APIResponse apiResponse = APIRestFM.validateKey(key);
-            int responseCode = apiResponse.getResponseCode();
-            if (responseCode == 200) {
-                try {
-                    JSONArray itemsArray = ParseJSON.getJSONArray(apiResponse.getResponseText());
-                    if (itemsArray != null && itemsArray.length() == 1) {
-                        JSONObject item = itemsArray.getJSONObject(0);
-                        String employeeNumber = item.getString(SETTINGS_EMPLOYEE_NUMBER);
-                        String employeeName = item.getString(SETTINGS_EMPLOYEE_NAME);
-                        result[0] = employeeNumber;
-                        result[1] = employeeName;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            FmResponse response = API.validateKey(key);
+            if (response == null) {
+                return result;
+            }
+            String scriptResult = response.getScriptResult();
+            if (scriptResult.equals("Ok")) {
+                FmData data = new FmData(response);
+                if (data.size() == 1) {
+                    FmRecord item = data.getRecord(0);
+                    String employeeNumber = item.getString(SETTINGS_EMPLOYEE_NUMBER);
+                    String employeeName = item.getString(SETTINGS_EMPLOYEE_NAME);
+                    result[0] = employeeNumber;
+                    result[1] = employeeName;
                 }
             }
             return result;
@@ -169,13 +166,13 @@ public class SettingsActivity extends PreferenceActivity {
             String employeeNumber = result[0];
             String employeeName = result[1];
             boolean valid;
-            if ( employeeName == null ){
+            if (employeeName == null) {
                 valid = false;
-            } else if ( employeeName.isEmpty()){
+            } else if (employeeName.isEmpty()) {
                 valid = false;
-            } else if ( employeeNumber == null ){
+            } else if (employeeNumber == null) {
                 valid = false;
-            } else if ( employeeNumber.isEmpty()){
+            } else if (employeeNumber.isEmpty()) {
                 valid = false;
             } else {
                 valid = true;
